@@ -1,14 +1,15 @@
 import React, { Component } from 'react';
+import Visualizer from './Visualizer/Visualizer';
 
 type Props = {
-  audioNode: HTMLMediaElement;
-}
+  audioElement: HTMLMediaElement;
+};
 
 type State = {
   data: Uint8Array;
 };
 
-export default class AudioAnalyzer extends Component<Props, State> {
+export default class Analyser extends Component<Props, State> {
 
   state = { data: new Uint8Array(0) };
 
@@ -20,9 +21,9 @@ export default class AudioAnalyzer extends Component<Props, State> {
   rafId = 1;
 
   componentDidMount() {
-    const { audioNode } = this.props;
+    const { audioElement } = this.props;
 
-    this.source = this.audioContext.createMediaElementSource(audioNode);
+    this.source = this.audioContext.createMediaElementSource(audioElement);
     this.source.connect(this.analyser);
     this.analyser.connect(this.audioContext.destination);
 
@@ -45,13 +46,8 @@ export default class AudioAnalyzer extends Component<Props, State> {
     const { data } = this.state;
 
     return (
-      <div>
-        <textarea
-          value={String(data)}
-          rows={45}
-          cols={100}
-          readOnly
-        />
+      <div style={{ height: '600px' }}>
+        <Visualizer data={data} />
       </div>
     );
   }

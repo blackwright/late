@@ -1,38 +1,37 @@
 import React, { Component } from 'react';
-import AudioAnalyser from './components/AudioAnalyser';
-
-type State = {
-  audioNode: HTMLAudioElement | null;
-}
+import Analyser from './components/Analyser';
 
 type Props = {};
 
-export default class App extends Component<Props, State>  {
+type State = {
+  audioElement: HTMLAudioElement | null;
+};
 
-  state = { audioNode: null };
+export default class App extends Component<Props, State> {
 
-  audioElement: React.RefObject<HTMLAudioElement> = React.createRef();
+  state = { audioElement: null };
+
+  audioRef: React.RefObject<HTMLAudioElement> = React.createRef();
 
   componentDidMount() {
-    this.setState({ audioNode: this.audioElement.current });
+    this.setState({ audioElement: this.audioRef.current });
   }
 
   render() {
-    const { audioNode } = this.state;
+    const { audioElement } = this.state;
 
     return (
       <>
         <audio
-          ref={this.audioElement}
+          ref={this.audioRef}
           controls
-          autoPlay
         >
           <source
             src="/media/lackluster-so_youre_still_waiting.mp3"
             type="audio/mp3"
           />
         </audio>
-        {audioNode ? <AudioAnalyser audioNode={audioNode} /> : null }
+        {audioElement ? <Analyser audioElement={audioElement} /> : null }
       </>
     );
   }
