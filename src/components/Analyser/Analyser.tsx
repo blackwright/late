@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import Visualizer from './Visualizer/Visualizer';
+import Visualizer from '../Visualizer/Visualizer';
 
 type Props = {
   context: AudioContext;

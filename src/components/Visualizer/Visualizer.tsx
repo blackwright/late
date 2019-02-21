@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import './Visualizer.scss';
 
 type Props = {
   data: Uint8Array;

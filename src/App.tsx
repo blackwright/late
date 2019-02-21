@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import Analyser from './components/Analyser';
+import Analyser from './components/Analyser/Analyser';
 
 type Props = {};
 
