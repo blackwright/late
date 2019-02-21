@@ -2,7 +2,8 @@ import React, { Component } from 'react';
 import Visualizer from './Visualizer/Visualizer';
 
 type Props = {
-  audioElement: HTMLMediaElement;
+  context: AudioContext;
+  source: MediaElementAudioSourceNode;
 };
 
 type State = {
@@ -13,27 +14,24 @@ export default class Analyser extends Component<Props, State> {
 
   state = { data: new Uint8Array(0) };
 
-  audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
-  analyser = this.audioContext.createAnalyser();
+  analyser = this.props.context.createAnalyser();
   dataArray = new Uint8Array(this.analyser.frequencyBinCount);
 
-  source?: MediaElementAudioSourceNode;
   rafId = 1;
 
   componentDidMount() {
-    const { audioElement } = this.props;
-
-    this.source = this.audioContext.createMediaElementSource(audioElement);
-    this.source.connect(this.analyser);
-    this.analyser.connect(this.audioContext.destination);
-
+    const { context, source } = this.props;
+    source.connect(this.analyser);
+    this.analyser.connect(context.destination);
     this.rafId = requestAnimationFrame(this.tick);
   }
 
   componentWillUnmount() {
+    const { source } = this.props;
+
     this.rafId != null && window.cancelAnimationFrame(this.rafId);
     this.analyser != null && this.analyser.disconnect();
-    this.source != null && this.source.disconnect();
+    source.disconnect();
   }
 
   tick = () => {
