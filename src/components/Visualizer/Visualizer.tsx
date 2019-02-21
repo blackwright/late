@@ -3,16 +3,18 @@ import './Visualizer.scss';
 
 type Props = {
   data: Uint8Array;
-  colors?: string[];
+  colors: string[];
 };
 
-const LINE_WIDTH = 3;
+const LINE_WIDTH = 7;
+const LINE_X_OFFSET = 0;
+const LINE_Y_OFFSET = -14;
 
 export default class Visualizer extends Component<Props> {
 
   static defaultProps: Props = {
     data: new Uint8Array(),
-    colors: ['#000']
+    colors: ['#E300FF', '#FFF', '#22FFAC']
   };
 
   canvasRef: React.RefObject<HTMLCanvasElement> = React.createRef();
@@ -30,29 +32,37 @@ export default class Visualizer extends Component<Props> {
   }
 
   drawWaveform(data: Uint8Array) {
-    const canvas = this.canvasRef.current!;
+    const { colors } = this.props;
 
+    const canvas = this.canvasRef.current!;
     const { width, height } = canvas;
+
     const context = canvas.getContext('2d') as CanvasRenderingContext2D;
 
-    context.lineWidth = 3;
+    context.lineWidth = LINE_WIDTH;
     context.lineCap = 'round';
-    context.strokeStyle = '#000';
     context.clearRect(0, 0, width, height);
-    context.beginPath();
-    context.moveTo(0, height / 2);
 
-    const sliceWidth = width * 1.0 / data.length;
-    let x = 0;
+    const startingXOffset = -100;
+    const slicePadding = 5;
+    const sliceWidth = width * 1.0 / data.length + slicePadding;
 
-    data.forEach((dataElement) => {
-      const y = dataElement / 255.0 * height;
-      context.lineTo(x, y);
-      x += sliceWidth;
+    colors.forEach((color, i) => {
+      context.strokeStyle = color;
+      context.beginPath();
+
+      let x = LINE_X_OFFSET * i + startingXOffset;
+      context.moveTo(x, height / 2);
+
+      data.forEach((dataElement) => {
+        const y = dataElement / 255.0 * height;
+        context.lineTo(x, y + LINE_Y_OFFSET * i);
+        x += sliceWidth;
+      });
+
+      context.lineTo(x, height / 2);
+      context.stroke();
     });
-
-    context.lineTo(x, height / 2);
-    context.stroke();
   }
 
   render() {

@@ -17,36 +17,36 @@ export default class Analyser extends Component<Props, State> {
   analyser = this.props.context.createAnalyser();
   dataArray = new Uint8Array(this.analyser.frequencyBinCount);
 
-  rafId = 1;
+  requestAnimationId = 1;
 
   componentDidMount() {
     const { context, source } = this.props;
+
+    this.analyser.fftSize = 1024;
+    this.analyser.smoothingTimeConstant = 0.3;
+
     source.connect(this.analyser);
     this.analyser.connect(context.destination);
-    this.rafId = requestAnimationFrame(this.tick);
+    this.requestAnimationId = window.requestAnimationFrame(this.tick);
   }
 
   componentWillUnmount() {
     const { source } = this.props;
 
-    this.rafId != null && window.cancelAnimationFrame(this.rafId);
+    this.requestAnimationId != null && window.cancelAnimationFrame(this.requestAnimationId);
     this.analyser != null && this.analyser.disconnect();
-    source.disconnect();
+    source && source.disconnect();
   }
 
   tick = () => {
     this.analyser.getByteTimeDomainData(this.dataArray);
     this.setState({ data: this.dataArray });
-    this.rafId = window.requestAnimationFrame(this.tick);
+    this.requestAnimationId = window.requestAnimationFrame(this.tick);
   }
 
   render() {
     const { data } = this.state;
 
-    return (
-      <div style={{ height: '600px' }}>
-        <Visualizer data={data} />
-      </div>
-    );
+    return <Visualizer data={data} />;
   }
 }
