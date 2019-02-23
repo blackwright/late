@@ -20,7 +20,10 @@ app.use('/', (req, res) => {
     .noVideo()
     .format('mp3')
     .on('end', () => console.log('end of stream'))
-    .on('error', (err) => console.error(err))
+    .on('error', (err) => {
+      console.error('Ending response:', err);
+      res.end()
+    })
     .pipe(res, { end: true });
 });
 
