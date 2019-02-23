@@ -1,10 +1,12 @@
 import React, { Component } from 'react';
+import Loading from './components/Loading/Loading';
 import Analyser from './components/Analyser/Analyser';
 
 type Props = {};
 
 type State = {
   audioElement: HTMLAudioElement | null;
+  wantsToPlay: boolean;
   isPlaying: boolean;
   context?: AudioContext;
   source?: MediaElementAudioSourceNode;
@@ -14,6 +16,7 @@ export default class App extends Component<Props, State> {
 
   state: State = {
     audioElement: null,
+    wantsToPlay: false,
     isPlaying: false,
     context: undefined,
     source: undefined
@@ -49,8 +52,10 @@ export default class App extends Component<Props, State> {
   onClick = () => {
     const audioElement = this.state.audioElement!;
     if (audioElement.paused) {
+      this.setState({ wantsToPlay: true });
       audioElement.play();
     } else {
+      this.setState({ wantsToPlay: false });
       audioElement.pause();
     }
   };
@@ -61,6 +66,7 @@ export default class App extends Component<Props, State> {
 
   render() {
     const {
+      wantsToPlay,
       isPlaying,
       context,
       source
@@ -68,18 +74,22 @@ export default class App extends Component<Props, State> {
 
     return (
       <>
-        <div id="play" />
         <audio
           ref={this.audioRef}
           id="audioElement"
           src="http://localhost:3001"
         />
-        {source && context && isPlaying
-          ? <Analyser
-              context={context}
-              source={source}
-            />
-          : null
+        {wantsToPlay
+          ? <>
+              {source && context && isPlaying
+                ? <Analyser
+                    context={context}
+                    source={source}
+                  />
+                : <Loading />
+              }
+            </>
+          : <div id="play" />
         }
       </>
     );
