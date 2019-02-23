@@ -20,15 +20,24 @@ export default class Visualizer extends Component<Props> {
   canvasRef: React.RefObject<HTMLCanvasElement> = React.createRef();
 
   componentDidMount() {
+    window.addEventListener('resize', this.onResize);
+    this.onResize();
+  }
+
+  componentDidUpdate() {
+    this.drawWaveform(this.props.data);
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.onResize);
+  }
+
+  onResize = () => {
     const canvas = this.canvasRef.current!;
     canvas.style.width = '100%';
     canvas.style.height = '100%';
     canvas.width = canvas.offsetWidth;
     canvas.height = canvas.offsetHeight;
-  }
-
-  componentDidUpdate() {
-    this.drawWaveform(this.props.data);
   }
 
   drawWaveform(data: Uint8Array) {
