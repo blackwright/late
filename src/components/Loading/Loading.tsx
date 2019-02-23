@@ -7,6 +7,6 @@ const Loading: React.FunctionComponent = () => (
     <span className="loading-dot" />
     <span className="loading-dot" />
   </div>
-)
+);
 
 export default Loading;

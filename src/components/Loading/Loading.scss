@@ -21,7 +21,9 @@
 }
 
 @keyframes lethargic-bounce {
-  0%, 75%, 100% {
+  0%,
+  75%,
+  100% {
     transform: initial;
   }
 

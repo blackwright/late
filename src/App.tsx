@@ -17,7 +17,6 @@ type AudioEventListeners = Array<{
 }>;
 
 export default class App extends Component<Props, State> {
-
   state: State = {
     wantsToPlay: false,
     isPlaying: false,
@@ -37,17 +36,20 @@ export default class App extends Component<Props, State> {
     const context = new (window.AudioContext || (window as any).webkitAudioContext)();
     const source = context.createMediaElementSource(audioElement);
 
-    this.setState({
-      context,
-      source
-    }, () => {
-      this.addAudioEventListeners([
-        { event: 'playing', listener: this.onPlay },
-        { event: 'pause', listener: this.onPause },
-        { event: 'error', listener: this.onError }
-      ]);
-      window.addEventListener('click', this.onClick);
-    });
+    this.setState(
+      {
+        context,
+        source
+      },
+      () => {
+        this.addAudioEventListeners([
+          { event: 'playing', listener: this.onPlay },
+          { event: 'pause', listener: this.onPause },
+          { event: 'error', listener: this.onError }
+        ]);
+        window.addEventListener('click', this.onClick);
+      }
+    );
   }
 
   componentWillUnmount() {
@@ -84,35 +86,25 @@ export default class App extends Component<Props, State> {
       this.audioElement!.removeEventListener(eventListener.event, eventListener.listener);
     }
     this.audioEventListeners = [];
-  }
+  };
 
   render() {
-    const {
-      wantsToPlay,
-      isPlaying,
-      context,
-      source
-    } = this.state;
+    const { wantsToPlay, isPlaying, context, source } = this.state;
 
     return (
       <>
-        <audio
-          ref={this.audioRef}
-          id="audioElement"
-          src="http://localhost:3001"
-        />
-        {wantsToPlay
-          ? <>
-              {source && context && isPlaying
-                ? <Analyser
-                    context={context}
-                    source={source}
-                  />
-                : <Loading />
-              }
-            </>
-          : <div id="play" />
-        }
+        <audio ref={this.audioRef} id="audioElement" src="http://localhost:3001" />
+        {wantsToPlay ? (
+          <>
+            {source && context && isPlaying ? (
+              <Analyser context={context} source={source} />
+            ) : (
+              <Loading />
+            )}
+          </>
+        ) : (
+          <div id="play" />
+        )}
       </>
     );
   }

@@ -11,10 +11,9 @@ const LINE_X_OFFSET = 0;
 const LINE_Y_OFFSET = -14;
 
 export default class Visualizer extends Component<Props> {
-
-  static defaultProps: Props = {
-    data: new Uint8Array(),
-    colors: ['#E300FF', '#FFF', '#22FFAC']
+  public static defaultProps: Props = {
+    colors: ['#E300FF', '#FFF', '#22FFAC'],
+    data: new Uint8Array()
   };
 
   canvasRef: React.RefObject<HTMLCanvasElement> = React.createRef();
@@ -38,7 +37,7 @@ export default class Visualizer extends Component<Props> {
     canvas.style.height = '100%';
     canvas.width = canvas.offsetWidth;
     canvas.height = canvas.offsetHeight;
-  }
+  };
 
   drawWaveform(data: Uint8Array) {
     const { colors } = this.props;
@@ -54,7 +53,7 @@ export default class Visualizer extends Component<Props> {
 
     const startingXOffset = -100;
     const slicePadding = 5;
-    const sliceWidth = width * 1.0 / data.length + slicePadding;
+    const sliceWidth = (width * 1.0) / data.length + slicePadding;
 
     colors.forEach((color, i) => {
       context.strokeStyle = color;
@@ -63,8 +62,8 @@ export default class Visualizer extends Component<Props> {
       let x = LINE_X_OFFSET * i + startingXOffset;
       context.moveTo(x, height / 2);
 
-      data.forEach((dataElement) => {
-        const y = dataElement / 255.0 * height;
+      data.forEach(dataElement => {
+        const y = (dataElement / 255.0) * height;
         context.lineTo(x, y + LINE_Y_OFFSET * i);
         x += sliceWidth;
       });
@@ -75,8 +74,6 @@ export default class Visualizer extends Component<Props> {
   }
 
   render() {
-    return (
-      <canvas ref={this.canvasRef} className="visualizer" />
-    );
+    return <canvas ref={this.canvasRef} className="visualizer" />;
   }
 }

@@ -11,7 +11,6 @@ type State = {
 };
 
 export default class Analyser extends Component<Props, State> {
-
   state = { data: new Uint8Array(0) };
 
   analyser = this.props.context.createAnalyser();
@@ -42,7 +41,7 @@ export default class Analyser extends Component<Props, State> {
     this.analyser.getByteTimeDomainData(this.dataArray);
     this.setState({ data: this.dataArray });
     this.requestAnimationId = window.requestAnimationFrame(this.tick);
-  }
+  };
 
   render() {
     const { data } = this.state;
