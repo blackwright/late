@@ -22,40 +22,40 @@ export default class App extends Component<Props, State> {
   audioRef: React.RefObject<HTMLAudioElement> = React.createRef();
 
   componentDidMount() {
-    this.setState({ audioElement: this.audioRef.current }, () => {
-      const audioElement = this.state.audioElement!;
+    const audioElement = this.audioRef.current!;
+    audioElement.crossOrigin = 'anonymous';
+
+    const context = new (window.AudioContext || (window as any).webkitAudioContext)();
+    const source = context.createMediaElementSource(audioElement);
+
+    this.setState({
+      audioElement,
+      context,
+      source
+    }, () => {
       audioElement.addEventListener('play', this.onPlay);
       audioElement.addEventListener('pause', this.onPause);
+      window.addEventListener('click', this.onClick);
     });
   }
 
   componentWillUnmount() {
-    if (this.state.audioElement == null) {
-      return;
-    }
-
-    const { audioElement } = this.state;
+    const audioElement = this.state.audioElement!;
     audioElement.removeEventListener('play', this.onPlay);
     audioElement.removeEventListener('pause', this.onPause);
+    window.removeEventListener('click', this.onClick);
   }
 
-  setSource = (source: MediaElementAudioSourceNode) => this.setState({ source });
+  onClick = () => {
+    const audioElement = this.state.audioElement!;
+    if (audioElement.paused) {
+      audioElement.play();
+    } else {
+      audioElement.pause();
+    }
+  };
 
-  onPlay = () => {
-    this.setState((prevState: State) => {
-      const prevContext = prevState.context;
-      const prevSource = prevState.source;
-
-      const context = prevContext || new (window.AudioContext || (window as any).webkitAudioContext)();
-      const source = prevSource || context.createMediaElementSource(prevState.audioElement!);
-
-      return {
-        isPlaying: true,
-        context,
-        source
-      };
-    });
-  }
+  onPlay = () => this.setState({ isPlaying: true });
 
   onPause = () => this.setState({ isPlaying: false });
 
@@ -68,16 +68,12 @@ export default class App extends Component<Props, State> {
 
     return (
       <>
+        <div id="play" />
         <audio
           ref={this.audioRef}
           id="audioElement"
-          controls
-        >
-          <source
-            src="/media/lackluster-so_youre_still_waiting.mp3"
-            type="audio/mp3"
-          />
-        </audio>
+          src="http://localhost:3001"
+        />
         {source && context && isPlaying
           ? <Analyser
               context={context}
