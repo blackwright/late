@@ -5,17 +5,20 @@ import Analyser from './components/Analyser/Analyser';
 type Props = {};
 
 type State = {
-  audioElement: HTMLAudioElement | null;
   wantsToPlay: boolean;
   isPlaying: boolean;
   context?: AudioContext;
   source?: MediaElementAudioSourceNode;
 };
 
+type AudioEventListeners = Array<{
+  event: string;
+  listener: () => void;
+}>;
+
 export default class App extends Component<Props, State> {
 
   state: State = {
-    audioElement: null,
     wantsToPlay: false,
     isPlaying: false,
     context: undefined,
@@ -23,34 +26,37 @@ export default class App extends Component<Props, State> {
   };
 
   audioRef: React.RefObject<HTMLAudioElement> = React.createRef();
+  audioElement?: HTMLAudioElement;
+  audioEventListeners: AudioEventListeners = [];
 
   componentDidMount() {
     const audioElement = this.audioRef.current!;
     audioElement.crossOrigin = 'anonymous';
+    this.audioElement = audioElement;
 
     const context = new (window.AudioContext || (window as any).webkitAudioContext)();
     const source = context.createMediaElementSource(audioElement);
 
     this.setState({
-      audioElement,
       context,
       source
     }, () => {
-      audioElement.addEventListener('play', this.onPlay);
-      audioElement.addEventListener('pause', this.onPause);
+      this.addAudioEventListeners([
+        { event: 'playing', listener: this.onPlay },
+        { event: 'pause', listener: this.onPause },
+        { event: 'error', listener: this.onError }
+      ]);
       window.addEventListener('click', this.onClick);
     });
   }
 
   componentWillUnmount() {
-    const audioElement = this.state.audioElement!;
-    audioElement.removeEventListener('play', this.onPlay);
-    audioElement.removeEventListener('pause', this.onPause);
+    this.removeAudioEventListeners();
     window.removeEventListener('click', this.onClick);
   }
 
   onClick = () => {
-    const audioElement = this.state.audioElement!;
+    const audioElement = this.audioElement!;
     if (audioElement.paused) {
       this.setState({ wantsToPlay: true });
       audioElement.play();
@@ -63,6 +69,22 @@ export default class App extends Component<Props, State> {
   onPlay = () => this.setState({ isPlaying: true });
 
   onPause = () => this.setState({ isPlaying: false });
+
+  onError = console.error;
+
+  addAudioEventListeners = (eventListeners: AudioEventListeners) => {
+    for (const eventListener of eventListeners) {
+      this.audioEventListeners.push(eventListener);
+      this.audioElement!.addEventListener(eventListener.event, eventListener.listener);
+    }
+  };
+
+  removeAudioEventListeners = () => {
+    for (const eventListener of this.audioEventListeners) {
+      this.audioElement!.removeEventListener(eventListener.event, eventListener.listener);
+    }
+    this.audioEventListeners = [];
+  }
 
   render() {
     const {
