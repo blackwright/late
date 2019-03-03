@@ -1,0 +1,45 @@
+$color: #bbb;
+
+.visualizer-drummer {
+  background-color: #ccc;
+  position: relative;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+
+  .drummer-container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transform: translate(-50%, -50%);
+
+    .beat {
+      width: 50%;
+      height: 50%;
+      border-radius: 50%;
+      border: 1px dotted $color;
+      transition: all 0.1s ease-in-out;
+      animation: drummer-pulse 1s linear infinite;
+
+      &.hit {
+        width: 150%;
+        height: 100%;
+      }
+    }
+  }
+}
+
+@keyframes drummer-pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba($color, 0.1), 0 0 0 2em rgba($color, 0.1), 0 0 0 5em rgba($color, 0.1),
+      0 0 0 8em rgba($color, 0.1);
+  }
+
+  100% {
+    box-shadow: 0 0 0 2em rgba($color, 0.1), 0 0 0 5em rgba($color, 0.1), 0 0 0 8em rgba($color, 0.1),
+      0 0 0 11em rgba($color, 0);
+  }
+}
