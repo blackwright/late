@@ -1,20 +1,17 @@
-import React, { Component } from 'react';
+import React from 'react';
+import * as Visualization from '../Visualization';
 import './Waveform.scss';
-
-type Props = {
-  data: Uint8Array;
-};
 
 const LINE_WIDTH = 7;
 const LINE_X_OFFSET = 0;
 const LINE_Y_OFFSET = -14;
 
-export default class Waveform extends Component<Props> {
+export default class Waveform extends Visualization.Component {
   state = {
     colors: ['#E300FF', '#FFF', '#22FFAC']
   };
 
-  public static defaultProps: Props = {
+  public static defaultProps: Visualization.Props = {
     data: new Uint8Array()
   };
 
@@ -76,6 +73,6 @@ export default class Waveform extends Component<Props> {
   }
 
   render() {
-    return <canvas ref={this.canvasRef} className="visualizer-waveform" />;
+    return <canvas ref={this.canvasRef} className="visualization waveform" />;
   }
 }

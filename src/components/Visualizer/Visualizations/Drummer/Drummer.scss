@@ -1,11 +1,8 @@
 $color: #bbb;
 
-.visualizer-drummer {
+.drummer {
   background-color: #ccc;
   position: relative;
-  height: 100%;
-  width: 100%;
-  overflow: hidden;
 
   .drummer-container {
     position: absolute;
@@ -21,7 +18,7 @@ $color: #bbb;
       height: 50%;
       border-radius: 50%;
       border: 1px dotted $color;
-      transition: all 0.1s ease-in-out;
+      transition: all 0.2s ease-in-out;
       animation: drummer-pulse 1s linear infinite;
 
       &.hit {

@@ -1,13 +1,12 @@
 import React from 'react';
 import classNames from 'classnames';
+import * as Visualization from '../Visualization';
 import './Drummer.scss';
-
-type Props = { data: Uint8Array };
 
 const NUM_DRUMMERS = 8;
 const MIN_HIT_COUNT = 40;
 
-class Drummer extends React.Component<Props> {
+class Drummer extends Visualization.Component {
   state = { maxSize: 0 };
 
   componentDidMount() {
@@ -67,7 +66,7 @@ class Drummer extends React.Component<Props> {
       );
     });
 
-    return <div className="visualizer-drummer">{drummers}</div>;
+    return <div className="visualization drummer">{drummers}</div>;
   }
 }
 
