@@ -5,7 +5,8 @@ export type Props = {
   data: Uint8Array;
 };
 
-export class Component extends React.Component<Props> {
+// all visualization components should extend this class
+export abstract class Component extends React.Component<Props> {
   public static defaultProps: Props = {
     data: new Uint8Array()
   };

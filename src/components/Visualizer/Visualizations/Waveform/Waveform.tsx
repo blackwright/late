@@ -11,10 +11,6 @@ export default class Waveform extends Visualization.Component {
     colors: ['#E300FF', '#FFF', '#22FFAC']
   };
 
-  public static defaultProps: Visualization.Props = {
-    data: new Uint8Array()
-  };
-
   canvasRef: React.RefObject<HTMLCanvasElement> = React.createRef();
 
   componentDidMount() {
