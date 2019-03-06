@@ -56,14 +56,14 @@ export default class App extends Component<Props, State> {
   onClick = () => {
     if (this.audioElement == null) {
       this.initialize();
+    }
+
+    if (this.audioElement!.paused) {
+      this.setState({ wantsToPlay: true });
+      this.audioElement!.play();
     } else {
-      if (this.audioElement.paused) {
-        this.setState({ wantsToPlay: true });
-        this.audioElement.play();
-      } else {
-        this.setState({ wantsToPlay: false });
-        this.audioElement.pause();
-      }
+      this.setState({ wantsToPlay: false });
+      this.audioElement!.pause();
     }
   };
 
@@ -93,11 +93,13 @@ export default class App extends Component<Props, State> {
     return (
       <>
         <audio ref={this.audioRef} id="audioElement" src="http://localhost:3001" crossOrigin="anonymous" />
-        {wantsToPlay ? (
-          <>{source && context && isPlaying ? <Analyser context={context} source={source} /> : <Loading />}</>
-        ) : (
-          <div id="play" />
+        {source && context && (
+          <>
+            <Analyser context={context} source={source} />
+            {wantsToPlay && <Loading show={!isPlaying} />}
+          </>
         )}
+        {!wantsToPlay && <div id="play" />}
       </>
     );
   }
