@@ -21,7 +21,8 @@
     "server": "node server/index.js",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "start": "node_modules/.bin/concurrently --kill-others \"npm run server\" \"npm run client\""
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -40,6 +41,7 @@
     "@types/react-dom": "^16.8.0",
     "@types/react-transition-group": "^2.0.16",
     "@types/webaudioapi": "^0.0.27",
+    "concurrently": "^4.1.0",
     "prettier": "^1.16.4"
   }
 }
