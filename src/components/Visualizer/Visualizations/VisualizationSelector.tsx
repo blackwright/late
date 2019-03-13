@@ -15,7 +15,7 @@ type SelectorState = {
   transition?: string;
 };
 
-export class VisualizationSelector extends React.Component<SelectorProps, SelectorState> {
+export default class VisualizationSelector extends React.Component<SelectorProps, SelectorState> {
   state = {
     index: 0,
     transition: 'next'

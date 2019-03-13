@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { VisualizationSelector } from './Visualizations/Selector';
+import VisualizationSelector from './Visualizations/VisualizationSelector';
 import * as Visualization from './Visualizations/Visualization';
 
 type State = {
