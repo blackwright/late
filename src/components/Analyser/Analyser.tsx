@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import Visualizer from '../Visualizer/Visualizer';
+import VisualizationSelector from '../Visualizer/VisualizationSelector';
 
 type Props = {
   context: AudioContext;
@@ -46,6 +46,6 @@ export default class Analyser extends Component<Props, State> {
   render() {
     const { data } = this.state;
 
-    return <Visualizer data={data} />;
+    return <VisualizationSelector data={data} />;
   }
 }
