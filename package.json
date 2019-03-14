@@ -13,6 +13,7 @@
     "react-dom": "^16.8.1",
     "react-scripts": "2.1.5",
     "react-transition-group": "^2.6.0",
+    "three": "^0.102.1",
     "typescript": "^3.3.3",
     "ytdl-core": "^0.29.1"
   },
