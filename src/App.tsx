@@ -27,14 +27,18 @@ export default class App extends Component<Props, State> {
   audioRef: React.RefObject<HTMLAudioElement> = React.createRef();
   audioElement?: HTMLAudioElement;
   audioEventListeners: AudioEventListeners = [];
+  lastMouseDownTimestamp?: number;
 
   componentDidMount() {
-    window.addEventListener('click', this.onClick);
+    window.addEventListener('mousedown', this.onMouseDown);
+    window.addEventListener('mouseup', this.onMouseUp);
   }
 
   componentWillUnmount() {
     this.removeAudioEventListeners();
-    window.removeEventListener('click', this.onClick);
+
+    window.removeEventListener('mousedown', this.onMouseDown);
+    window.removeEventListener('mouseup', this.onMouseUp);
   }
 
   initialize = () => {
@@ -51,6 +55,18 @@ export default class App extends Component<Props, State> {
     ]);
 
     this.setState({ context, source });
+  };
+
+  onMouseDown = (event: MouseEvent) => {
+    if (event.which === 1) {
+      this.lastMouseDownTimestamp = Date.now();
+    }
+  };
+
+  onMouseUp = () => {
+    if (this.lastMouseDownTimestamp && Date.now() - this.lastMouseDownTimestamp < 250) {
+      this.onClick();
+    }
   };
 
   onClick = () => {
