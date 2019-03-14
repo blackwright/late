@@ -11,23 +11,21 @@ app.use(cors());
 const URL = 'https://www.youtube.com/watch?v=hHW1oY26kxQ';
 
 const options = { quality: [91, 92, 93, 94, 95] };
-const stream = ytdl(URL, options);
 
 app.use('/', (req, res) => {
   res.setHeader('Content-type', 'audio/mpeg');
 
+  const stream = ytdl(URL, options);
+
   ffmpeg(stream)
     .noVideo()
     .format('mp3')
-    .on('end', () => console.log('end of stream'))
-    .on('error', err => {
-      console.error('Ending response:', err);
+    .on('end', () => {
+      console.log('Stream has ended.');
       res.end();
     })
-    .pipe(
-      res,
-      { end: true }
-    );
+    .on('error', err => res.end())
+    .stream(res, { end: true });
 });
 
 app.listen(3001);
