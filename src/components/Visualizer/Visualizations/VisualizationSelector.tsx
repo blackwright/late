@@ -45,7 +45,7 @@ export default class VisualizationSelector extends React.Component<SelectorProps
 
     return (
       <TransitionGroup component={null} childFactory={dynamicChildFactory(classNames)}>
-        <CSSTransition key={visualizationIndex} timeout={1000} classNames={classNames} mountOnEnter unmountOnExit>
+        <CSSTransition key={visualizationIndex} timeout={500} classNames={classNames} mountOnEnter unmountOnExit>
           <VisualizationComponent data={data} />
         </CSSTransition>
       </TransitionGroup>
