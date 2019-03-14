@@ -24,10 +24,11 @@ export default class App extends Component<Props, State> {
     source: undefined
   };
 
-  audioRef: React.RefObject<HTMLAudioElement> = React.createRef();
+  private audioRef: React.RefObject<HTMLAudioElement> = React.createRef();
+  private audioEventListeners: AudioEventListeners = [];
+  private lastMouseDownTimestamp?: number;
+
   audioElement?: HTMLAudioElement;
-  audioEventListeners: AudioEventListeners = [];
-  lastMouseDownTimestamp?: number;
 
   componentDidMount() {
     window.addEventListener('mousedown', this.onMouseDown);
@@ -108,7 +109,13 @@ export default class App extends Component<Props, State> {
 
     return (
       <>
-        <audio ref={this.audioRef} id="audioElement" src="http://localhost:3001" crossOrigin="anonymous" />
+        <audio
+          ref={this.audioRef}
+          id="audioElement"
+          src="http://localhost:3001"
+          preload={'auto'}
+          crossOrigin="anonymous"
+        />
         {source && context && (
           <>
             <Analyser context={context} source={source} />
