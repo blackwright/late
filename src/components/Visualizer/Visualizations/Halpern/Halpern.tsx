@@ -1,44 +1,24 @@
 import React from 'react';
 import * as Visualization from '../Visualization';
-import { camera, controls } from './entities/camera';
-import scene from './entities/scene';
-import renderer from './entities/renderer';
+import sceneManager from './three/sceneManager';
 
 class Halpern extends React.Component<Visualization.WrappedProps> {
   rendererContainer?: HTMLDivElement;
   currentAnimationFrameId?: number;
+  onUnmount?: () => void;
 
   private rendererRef: React.RefObject<HTMLDivElement> = React.createRef();
 
   componentDidMount() {
-    window.addEventListener('resize', this.onResize);
-
     this.rendererContainer = this.rendererRef.current!;
-    this.rendererContainer.appendChild(renderer.domElement);
-
-    this.onResize();
-    this.animate();
+    const { animate, stop } = sceneManager(this.rendererContainer);
+    this.onUnmount = stop;
+    animate();
   }
 
   componentWillUnmount() {
-    window.removeEventListener('resize', this.onResize);
-    this.currentAnimationFrameId != null && window.cancelAnimationFrame(this.currentAnimationFrameId);
-    this.rendererContainer!.removeChild(renderer.domElement);
+    this.onUnmount && this.onUnmount();
   }
-
-  onResize = () => {
-    camera.aspect = window.innerWidth / window.innerHeight;
-    camera.updateProjectionMatrix();
-
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.render(scene, camera);
-  };
-
-  animate = () => {
-    controls.update();
-    renderer.render(scene, camera);
-    this.currentAnimationFrameId = window.requestAnimationFrame(this.animate);
-  };
 
   render() {
     return <div className="visualization halpern" ref={this.rendererRef} style={this.props.style} />;

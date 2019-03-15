@@ -10,7 +10,7 @@ import {
 } from 'three';
 import { darkgray, white } from './colors';
 
-function createPolygon(): Mesh {
+export function createPolygon(): Mesh {
   const geometry = new SphereGeometry(40, 40, 40);
   geometry.computeVertexNormals();
   const material = new MeshBasicMaterial({
@@ -20,9 +20,7 @@ function createPolygon(): Mesh {
   return new Mesh(geometry, material);
 }
 
-export const polygon = createPolygon();
-
-function createPoints(polygon: Mesh): Points {
+export function createPoints(polygon: Mesh): Points {
   const { vertices } = polygon.geometry as SphereGeometry;
   const positions = new Float32Array(vertices.length * 3);
 
@@ -34,7 +32,7 @@ function createPoints(polygon: Mesh): Points {
   geometry.addAttribute('position', new BufferAttribute(positions, 3));
 
   const material = new PointsMaterial({
-    size: 1,
+    size: 0.5,
     color: white,
     transparent: true
   });
@@ -42,13 +40,9 @@ function createPoints(polygon: Mesh): Points {
   return new Points(geometry, material);
 }
 
-export const points = createPoints(polygon);
-
-function createSphere({ polygon, points }: { polygon: Mesh; points: Points }): Object3D {
+export function createSphere({ polygon, points }: { polygon: Mesh; points: Points }): Object3D {
   const sphere = new Object3D();
   sphere.add(polygon);
   sphere.add(points);
   return sphere;
 }
-
-export const sphere = createSphere({ polygon, points });
