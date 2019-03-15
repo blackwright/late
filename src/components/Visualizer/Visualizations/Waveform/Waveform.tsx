@@ -6,12 +6,12 @@ const LINE_WIDTH = 7;
 const LINE_X_OFFSET = 0;
 const LINE_Y_OFFSET = -14;
 
-export default class Waveform extends Visualization.Component {
+class Waveform extends React.Component<Visualization.WrappedProps> {
   state = {
     colors: ['#E300FF', '#FFF', '#22FFAC']
   };
 
-  canvasRef: React.RefObject<HTMLCanvasElement> = React.createRef();
+  private canvasRef: React.RefObject<HTMLCanvasElement> = React.createRef();
 
   componentDidMount() {
     window.addEventListener('resize', this.onResize);
@@ -69,6 +69,8 @@ export default class Waveform extends Visualization.Component {
   }
 
   render() {
-    return <canvas ref={this.canvasRef} className="visualization waveform" />;
+    return <canvas ref={this.canvasRef} className="visualization waveform" style={this.props.style} />;
   }
 }
+
+export default Visualization.wrap(Waveform);

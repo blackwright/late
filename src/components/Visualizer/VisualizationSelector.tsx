@@ -3,6 +3,8 @@ import { TransitionGroup, CSSTransition } from 'react-transition-group';
 import * as Visualization from './Visualizations/Visualization';
 import Visualizations from './Visualizations/index';
 
+export const TRANSITION_ANIMATION_LENGTH = 500;
+
 type DynamicChildProps = Visualization.Props & { classNames: string };
 
 const dynamicChildFactory = (classNames?: string) => (child: React.ReactElement<DynamicChildProps>) =>
@@ -78,20 +80,20 @@ export default class VisualizationSelector extends React.Component<Props, State>
     const classNameRoot = transitionClassName ? `visualization-${transitionClassName}` : undefined;
 
     const visualizationIndex = Math.abs(currentIndex % Visualizations.length);
-    const VisualizationComponent = Visualizations[visualizationIndex];
+    const VisualizationComponent: React.ComponentType<Visualization.Props> = Visualizations[visualizationIndex];
 
     return (
       <TransitionGroup component={null} childFactory={dynamicChildFactory(classNameRoot)}>
         <CSSTransition
           key={visualizationIndex}
-          timeout={500}
+          timeout={TRANSITION_ANIMATION_LENGTH}
           classNames={classNameRoot || ''}
           onEnter={this.startTransition}
           onEntered={this.endTransition}
           mountOnEnter
           unmountOnExit
         >
-          <VisualizationComponent data={data} />
+          <VisualizationComponent data={data} timeout={TRANSITION_ANIMATION_LENGTH} />
         </CSSTransition>
       </TransitionGroup>
     );

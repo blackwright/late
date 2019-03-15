@@ -6,7 +6,7 @@ import './Drummer.scss';
 const NUM_DRUMMERS = 8;
 const MIN_HIT_COUNT = 40;
 
-class Drummer extends Visualization.Component {
+class Drummer extends React.Component<Visualization.WrappedProps> {
   state = { maxSize: 0 };
 
   componentDidMount() {
@@ -66,8 +66,12 @@ class Drummer extends Visualization.Component {
       );
     });
 
-    return <div className="visualization drummer">{drummers}</div>;
+    return (
+      <div className="visualization drummer" style={this.props.style}>
+        {drummers}
+      </div>
+    );
   }
 }
 
-export default Drummer;
+export default Visualization.wrap(Drummer);
