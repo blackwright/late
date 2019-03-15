@@ -10,8 +10,8 @@ class Drummer extends React.Component<Visualization.WrappedProps> {
   state = { maxSize: 0 };
 
   componentDidMount() {
-    this.onResize();
     window.addEventListener('resize', this.onResize);
+    this.onResize();
   }
 
   componentWillUnmount() {

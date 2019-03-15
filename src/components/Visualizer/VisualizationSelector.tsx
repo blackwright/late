@@ -88,8 +88,8 @@ export default class VisualizationSelector extends React.Component<Props, State>
           key={visualizationIndex}
           timeout={TRANSITION_ANIMATION_LENGTH}
           classNames={classNameRoot || ''}
-          onEnter={this.startTransition}
-          onEntered={this.endTransition}
+          onExit={this.startTransition}
+          onExited={this.endTransition}
           mountOnEnter
           unmountOnExit
         >

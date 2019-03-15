@@ -28,8 +28,6 @@ class Waveform extends React.Component<Visualization.WrappedProps> {
 
   onResize = () => {
     const canvas = this.canvasRef.current!;
-    canvas.style.width = '100%';
-    canvas.style.height = '100%';
     canvas.width = canvas.offsetWidth;
     canvas.height = canvas.offsetHeight;
   };

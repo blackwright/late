@@ -17,15 +17,28 @@ export type WrappedProps = {
 // all visualization components should be wrapped with this HOC
 export function wrap(WrappedComponent: React.ComponentType<WrappedProps>) {
   return class extends React.Component<Props> {
+    // bypass initial render because components that trigger
+    // reflow in componentDidMount interrupt CSS transitions
+    state = { delayedAfterReflow: false };
+
     static defaultProps: Props = {
       data: new Uint8Array(),
       timeout: TRANSITION_ANIMATION_LENGTH
     };
 
+    componentDidMount() {
+      window.setTimeout(() => {
+        this.setState({ delayedAfterReflow: true });
+      }, 0);
+    }
+
     render() {
       const { data, timeout } = this.props;
+      const { delayedAfterReflow } = this.state;
 
-      return <WrappedComponent data={data} style={{ transition: `transform ${timeout}ms linear` }} />;
+      return (
+        delayedAfterReflow && <WrappedComponent data={data} style={{ transition: `transform ${timeout}ms linear` }} />
+      );
     }
   };
 }

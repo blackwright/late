@@ -2,7 +2,9 @@ $color: #bbb;
 
 .drummer {
   background-color: #ccc;
-  position: relative;
+  position: absolute;
+  top: 0;
+  left: 0;
 
   .drummer-container {
     position: absolute;
