@@ -1,17 +1,13 @@
-import { Color, Scene, SphereGeometry } from 'three';
-import { createLight } from './entities/light';
-import { createPolygon, createPoints, createSphere } from './entities/actors';
+import { Scene, SphereGeometry } from 'three';
+import { createPolygon, createPoints } from './entities/polys';
 import { createCamera, createControls } from './entities/camera';
 import { createRenderer } from './entities/renderer';
 
 export default function sceneManager(rendererContainer: HTMLDivElement) {
   let currentAnimationFrameId: number;
 
-  const pointLight = createLight(new Color('#fff'));
-
   const polygon = createPolygon();
   const points = createPoints(polygon);
-  const sphere = createSphere({ polygon, points });
 
   const camera = createCamera();
   const controls = createControls(camera);
@@ -20,8 +16,8 @@ export default function sceneManager(rendererContainer: HTMLDivElement) {
   rendererContainer.appendChild(renderer.domElement);
 
   const scene = new Scene();
-  scene.add(sphere);
-  scene.add(pointLight);
+  scene.add(polygon);
+  scene.add(points);
 
   window.addEventListener('resize', onResize);
 
@@ -45,14 +41,13 @@ export default function sceneManager(rendererContainer: HTMLDivElement) {
     renderer.render(scene, camera);
   }
 
-  function getVertices() {
-    return (polygon.geometry as SphereGeometry).vertices;
+  function getSphereGeometry() {
+    return polygon.geometry as SphereGeometry;
   }
 
   return {
     animate,
     stop,
-    sphere,
-    getVertices
+    getSphereGeometry
   };
 }

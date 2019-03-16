@@ -1,5 +1,4 @@
-import { WebGLRenderer } from 'three';
-import { gray } from './colors';
+import { WebGLRenderer, Color } from 'three';
 
 export function createRenderer() {
   const { innerWidth, innerHeight, devicePixelRatio } = window;
@@ -7,7 +6,7 @@ export function createRenderer() {
   const renderer = new WebGLRenderer();
   renderer.setSize(innerWidth, innerHeight);
   renderer.setPixelRatio(devicePixelRatio);
-  renderer.setClearColor(gray);
+  renderer.setClearColor(new Color('#061E3E'));
 
   return renderer;
 }

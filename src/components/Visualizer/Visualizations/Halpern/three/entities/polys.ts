@@ -1,27 +1,34 @@
 import {
   SphereGeometry,
-  MeshBasicMaterial,
   Mesh,
   BufferGeometry,
   BufferAttribute,
   PointsMaterial,
-  Object3D,
-  Points
+  Points,
+  MeshBasicMaterial,
+  Color
 } from 'three';
-import { darkgray, white } from './colors';
 
 export function createPolygon(): Mesh {
-  const geometry = new SphereGeometry(40, 40, 40);
+  const geometry = new SphereGeometry(40, 50, 50);
   geometry.computeVertexNormals();
   const material = new MeshBasicMaterial({
-    color: darkgray,
-    wireframe: true
+    wireframe: true,
+    color: new Color('#851E3E')
   });
   return new Mesh(geometry, material);
 }
 
 export function createPoints(polygon: Mesh): Points {
-  const { vertices } = polygon.geometry as SphereGeometry;
+  const sphereGeometry = polygon.geometry as SphereGeometry;
+
+  const pointGeometry = new SphereGeometry(
+    sphereGeometry.parameters.radius,
+    sphereGeometry.parameters.widthSegments / 2,
+    sphereGeometry.parameters.heightSegments / 2
+  );
+
+  const { vertices } = pointGeometry;
   const positions = new Float32Array(vertices.length * 3);
 
   vertices.forEach((vertex, i) => {
@@ -32,17 +39,9 @@ export function createPoints(polygon: Mesh): Points {
   geometry.addAttribute('position', new BufferAttribute(positions, 3));
 
   const material = new PointsMaterial({
-    size: 0.5,
-    color: white,
-    transparent: true
+    size: 0.3,
+    color: new Color('#fff')
   });
 
   return new Points(geometry, material);
-}
-
-export function createSphere({ polygon, points }: { polygon: Mesh; points: Points }): Object3D {
-  const sphere = new Object3D();
-  sphere.add(polygon);
-  sphere.add(points);
-  return sphere;
 }
