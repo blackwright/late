@@ -1,4 +1,4 @@
-import { Color, Scene } from 'three';
+import { Color, Scene, SphereGeometry } from 'three';
 import { createLight } from './entities/light';
 import { createPolygon, createPoints, createSphere } from './entities/actors';
 import { createCamera, createControls } from './entities/camera';
@@ -12,6 +12,7 @@ export default function sceneManager(rendererContainer: HTMLDivElement) {
   const polygon = createPolygon();
   const points = createPoints(polygon);
   const sphere = createSphere({ polygon, points });
+
   const camera = createCamera();
   const controls = createControls(camera);
   const renderer = createRenderer();
@@ -44,9 +45,14 @@ export default function sceneManager(rendererContainer: HTMLDivElement) {
     renderer.render(scene, camera);
   }
 
+  function getVertices() {
+    return (polygon.geometry as SphereGeometry).vertices;
+  }
+
   return {
     animate,
     stop,
-    sphere
+    sphere,
+    getVertices
   };
 }
