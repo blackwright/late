@@ -3,34 +3,18 @@
   height: 100%;
 }
 
-// .visualization-prev-enter {
-//   transform: translate3d(-100%, 0, 0);
-
-//   &.visualization-prev-enter-active {
-//     transform: translate3d(0%, 0, 0);
-//   }
-// }
-
 .visualization-prev-exit {
   transform: translate3d(0%, 0, 0);
 
   &.visualization-prev-exit-active {
-    transform: translate3d(100%, 0, 0);
+    transform: translate3d(-100%, 0, 0);
   }
 }
-
-// .visualization-next-enter {
-//   transform: translate3d(100%, 0, 0);
-
-//   &.visualization-next-enter-active {
-//     transform: translate3d(0%, 0, 0);
-//   }
-// }
 
 .visualization-next-exit {
   transform: translate3d(0%, 0, 0);
 
   &.visualization-next-exit-active {
-    transform: translate3d(-100%, 0, 0);
+    transform: translate3d(100%, 0, 0);
   }
 }
