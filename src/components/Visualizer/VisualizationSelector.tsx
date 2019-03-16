@@ -2,6 +2,7 @@ import React from 'react';
 import { TransitionGroup, CSSTransition } from 'react-transition-group';
 import * as Visualization from './Visualizations/Visualization';
 import Visualizations from './Visualizations/index';
+import { modulo } from '../../utils';
 
 export const TRANSITION_ANIMATION_LENGTH = 500;
 
@@ -79,7 +80,7 @@ export default class VisualizationSelector extends React.Component<Props, State>
     const transitionClassName = prevIndex != null && prevIndex < currentIndex ? 'next' : 'prev';
     const classNameRoot = transitionClassName ? `visualization-${transitionClassName}` : undefined;
 
-    const visualizationIndex = Math.abs(currentIndex % Visualizations.length);
+    const visualizationIndex = modulo(currentIndex, Visualizations.length);
     const VisualizationComponent: React.ComponentType<Visualization.Props> = Visualizations[visualizationIndex];
 
     return (
