@@ -7,7 +7,8 @@ import {
   BufferGeometry,
   BufferAttribute,
   Color,
-  TextureLoader
+  TextureLoader,
+  Object3D
 } from 'three';
 
 export function createPolygon(): Mesh {
@@ -44,8 +45,7 @@ export function createPoints(polygon: Mesh): Points {
   const sprite = new TextureLoader().load('assets/textures/point.png');
 
   const material = new PointsMaterial({
-    size: 5,
-    sizeAttenuation: false,
+    size: 0.4,
     map: sprite,
     alphaTest: 0.5,
     color: new Color('#FFF'),
@@ -53,4 +53,11 @@ export function createPoints(polygon: Mesh): Points {
   });
 
   return new Points(geometry, material);
+}
+
+export function createHalpernSphere({ polygon, points }: { polygon: Mesh; points: Points }): Object3D {
+  const sphere = new Object3D();
+  sphere.add(polygon);
+  sphere.add(points);
+  return sphere;
 }
