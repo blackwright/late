@@ -3,8 +3,10 @@ import { Vector3, SphereGeometry } from 'three';
 import * as Visualization from '../Visualization';
 import sceneManager from './three/sceneManager';
 import cloneDeep from 'lodash.clonedeep';
+import './Halpern.scss';
 
-const VERTEX_SEGMENT_WEIGHT_COEFFICIENT = 0.02;
+const VERTEX_SEGMENT_WEIGHT_COEFFICIENT = 0.05;
+const BASELINE_VERTEX_SCALAR_FACTOR = 1.1;
 
 class Halpern extends React.Component<Visualization.WrappedProps> {
   rendererContainer?: HTMLDivElement;
@@ -61,7 +63,10 @@ class Halpern extends React.Component<Visualization.WrappedProps> {
 
       // multiplyScalar mutates so we must restore starting position
       vertex.copy(this.originalVertices![i]);
-      vertex.multiplyScalar(1 + (data[dataIndex] / 255) * vertexSegmentWeight * VERTEX_SEGMENT_WEIGHT_COEFFICIENT);
+      const dataVariation = Math.abs(data[dataIndex] - 128) / 255;
+      vertex.multiplyScalar(
+        dataVariation * vertexSegmentWeight * VERTEX_SEGMENT_WEIGHT_COEFFICIENT + BASELINE_VERTEX_SCALAR_FACTOR
+      );
     });
 
     // inform three.js that vertices should be repositioned,
@@ -75,7 +80,5 @@ class Halpern extends React.Component<Visualization.WrappedProps> {
 }
 
 export default Visualization.wrap(Halpern);
-
-// TODO: rotate x until camera controls are touched
 
 // TODO: replace renderer bkg color with transparency, use CSS bkg
