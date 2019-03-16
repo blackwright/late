@@ -8,7 +8,6 @@ export default function sceneManager(rendererContainer: HTMLDivElement) {
 
   const polygon = createPolygon();
   const points = createPoints(polygon);
-
   const camera = createCamera();
   const controls = createControls(camera);
   const renderer = createRenderer();

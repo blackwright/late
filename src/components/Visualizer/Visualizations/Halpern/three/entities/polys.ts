@@ -1,21 +1,24 @@
 import {
-  SphereGeometry,
   Mesh,
+  Points,
+  PointsMaterial,
+  MeshBasicMaterial,
+  SphereGeometry,
   BufferGeometry,
   BufferAttribute,
-  PointsMaterial,
-  Points,
-  MeshBasicMaterial,
-  Color
+  Color,
+  TextureLoader
 } from 'three';
 
 export function createPolygon(): Mesh {
   const geometry = new SphereGeometry(40, 50, 50);
   geometry.computeVertexNormals();
+
   const material = new MeshBasicMaterial({
     wireframe: true,
     color: new Color('#851E3E')
   });
+
   return new Mesh(geometry, material);
 }
 
@@ -38,9 +41,15 @@ export function createPoints(polygon: Mesh): Points {
   const geometry = new BufferGeometry();
   geometry.addAttribute('position', new BufferAttribute(positions, 3));
 
+  const sprite = new TextureLoader().load('assets/textures/point.png');
+
   const material = new PointsMaterial({
-    size: 0.3,
-    color: new Color('#fff')
+    size: 5,
+    sizeAttenuation: false,
+    map: sprite,
+    alphaTest: 0.5,
+    color: new Color('#FFF'),
+    transparent: true
   });
 
   return new Points(geometry, material);
