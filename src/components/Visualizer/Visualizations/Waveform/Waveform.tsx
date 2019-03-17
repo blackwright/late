@@ -22,7 +22,7 @@ const Waveform: React.FunctionComponent<Visualization.WrappedProps> = ({ data, s
         key={id}
         timeout={{
           enter: 150,
-          exit: 300
+          exit: 200
         }}
         classNames="fade"
         unmountOnExit

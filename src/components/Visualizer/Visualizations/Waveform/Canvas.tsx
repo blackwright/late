@@ -30,7 +30,7 @@ export default class Canvas extends React.Component<Props> {
 
     const colors = getRandomColorTriple();
 
-    const sliceWidth = (canvas.width * 1.0) / data.length;
+    const sliceWidth = canvas.width / data.length;
 
     colors.forEach((color, i) => {
       canvasContext.strokeStyle = color;
