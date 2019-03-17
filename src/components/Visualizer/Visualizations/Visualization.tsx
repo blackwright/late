@@ -3,8 +3,11 @@ import { TRANSITION_ANIMATION_LENGTH } from '../VisualizationSelector';
 import './Visualization.scss';
 
 export type Props = {
+  // array of frequency data with values 0-255
   data: Uint8Array;
+  // length of CSS transitions
   timeout: number;
+  isTransitioning: boolean;
 };
 
 export type WrappedProps = {
@@ -12,6 +15,7 @@ export type WrappedProps = {
   style: {
     transition: string;
   };
+  isTransitioning: boolean;
 };
 
 // all visualization components should be wrapped with this HOC
@@ -23,7 +27,8 @@ export function wrap(WrappedComponent: React.ComponentType<WrappedProps>) {
 
     static defaultProps: Props = {
       data: new Uint8Array(),
-      timeout: TRANSITION_ANIMATION_LENGTH
+      timeout: TRANSITION_ANIMATION_LENGTH,
+      isTransitioning: false
     };
 
     componentDidMount() {
@@ -33,11 +38,17 @@ export function wrap(WrappedComponent: React.ComponentType<WrappedProps>) {
     }
 
     render() {
-      const { data, timeout } = this.props;
+      const { data, timeout, isTransitioning } = this.props;
       const { delayedAfterReflow } = this.state;
 
       return (
-        delayedAfterReflow && <WrappedComponent data={data} style={{ transition: `transform ${timeout}ms linear` }} />
+        delayedAfterReflow && (
+          <WrappedComponent
+            data={data}
+            style={{ transition: `transform ${timeout}ms linear` }}
+            isTransitioning={isTransitioning}
+          />
+        )
       );
     }
   };

@@ -1,6 +1,6 @@
 import React from 'react';
 import * as Visualization from '../Visualization';
-import { getColors } from './colors';
+import { getRandomColorTriple } from '../../../../utils/colors';
 
 const LINE_WIDTH = 7;
 const LINE_X_OFFSET = 0;
@@ -28,7 +28,7 @@ export default class Canvas extends React.Component<Props> {
 
     const { data } = this.props;
 
-    const colors = getColors();
+    const colors = getRandomColorTriple();
 
     const sliceWidth = (canvas.width * 1.0) / data.length;
 

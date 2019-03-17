@@ -75,7 +75,7 @@ export default class VisualizationSelector extends React.Component<Props, State>
 
   render() {
     const { data } = this.props;
-    const { prevIndex, currentIndex } = this.state;
+    const { prevIndex, currentIndex, isTransitioning } = this.state;
 
     const transitionClassName = prevIndex != null && prevIndex < currentIndex ? 'next' : 'prev';
     const classNameRoot = transitionClassName ? `visualization-${transitionClassName}` : undefined;
@@ -94,7 +94,7 @@ export default class VisualizationSelector extends React.Component<Props, State>
           mountOnEnter
           unmountOnExit
         >
-          <VisualizationComponent data={data} timeout={TRANSITION_ANIMATION_LENGTH} />
+          <VisualizationComponent data={data} timeout={TRANSITION_ANIMATION_LENGTH} isTransitioning={isTransitioning} />
         </CSSTransition>
       </TransitionGroup>
     );
