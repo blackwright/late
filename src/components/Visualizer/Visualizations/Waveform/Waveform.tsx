@@ -1,73 +1,57 @@
 import React from 'react';
+import { TransitionGroup, CSSTransition } from 'react-transition-group';
+import Canvas from './Canvas';
 import * as Visualization from '../Visualization';
 import './Waveform.scss';
 
-const LINE_WIDTH = 7;
-const LINE_X_OFFSET = 0;
-const LINE_Y_OFFSET = -14;
+const MAX_SIMULTANEOUS_WAVEFORMS = 5;
+let id = 0;
 
 class Waveform extends React.Component<Visualization.WrappedProps> {
-  state = {
-    colors: ['#E300FF', '#FFF', '#22FFAC']
-  };
+  // state: State = {
+  //   waveforms: []
+  // };
 
-  private canvasRef: React.RefObject<HTMLCanvasElement> = React.createRef();
+  // static getDerivedStateFromProps(props: Visualization.WrappedProps, state: State) {
+  //   const { data } = props;
+  //   const { waveforms } = state;
 
-  componentDidMount() {
-    window.addEventListener('resize', this.onResize);
-    this.onResize();
-  }
+  //   const nextWaveform = {
+  //     id,
+  //     data
+  //   };
 
-  componentDidUpdate() {
-    this.drawWaveform(this.props.data);
-  }
+  //   id += 1;
+  //   console.log('id', id);
 
-  componentWillUnmount() {
-    window.removeEventListener('resize', this.onResize);
-  }
+  //   const nextWaveforms = waveforms.concat(nextWaveform);
 
-  onResize = () => {
-    const canvas = this.canvasRef.current!;
-    canvas.width = canvas.offsetWidth;
-    canvas.height = canvas.offsetHeight;
-  };
-
-  drawWaveform(data: Uint8Array) {
-    const { colors } = this.state;
-
-    const canvas = this.canvasRef.current!;
-    const { width, height } = canvas;
-
-    const context = canvas.getContext('2d') as CanvasRenderingContext2D;
-
-    context.lineWidth = LINE_WIDTH;
-    context.lineCap = 'round';
-    context.clearRect(0, 0, width, height);
-
-    const startingXOffset = -100;
-    const slicePadding = 5;
-    const sliceWidth = (width * 1.0) / data.length + slicePadding;
-
-    colors.forEach((color, i) => {
-      context.strokeStyle = color;
-      context.beginPath();
-
-      let x = LINE_X_OFFSET * i + startingXOffset;
-      context.moveTo(x, height / 2);
-
-      data.forEach(dataElement => {
-        const y = (dataElement / 255.0) * height;
-        context.lineTo(x, y + LINE_Y_OFFSET * i);
-        x += sliceWidth;
-      });
-
-      context.lineTo(x, height / 2);
-      context.stroke();
-    });
-  }
+  //   return {
+  //     waveforms: nextWaveforms.length > MAX_SIMULTANEOUS_WAVEFORMS ? nextWaveforms.slice(1) : nextWaveforms
+  //   };
+  // }
 
   render() {
-    return <canvas ref={this.canvasRef} className="visualization waveform" style={this.props.style} />;
+    const { data, style } = this.props;
+
+    id += 1;
+
+    return (
+      <TransitionGroup className="visualization waveform" style={style}>
+        <CSSTransition
+          key={id}
+          timeout={{
+            enter: 150,
+            exit: 300
+          }}
+          classNames="fade"
+          unmountOnExit
+        >
+          <Canvas key={id} data={data} />
+        </CSSTransition>
+        ))}
+      </TransitionGroup>
+    );
   }
 }
 
