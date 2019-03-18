@@ -1,8 +1,7 @@
-import { Scene, SphereGeometry, Vector3, Quaternion, Euler } from 'three';
-import { createPolygon, createPoints, createSun, createHalpernSphere } from './entities/polys';
+import { Scene, SphereGeometry, Vector3, Quaternion, Euler, BufferGeometry } from 'three';
+import { createPolygon, createPoints } from './entities/polys';
 import { createRenderer } from './entities/renderer';
 import { createCamera } from './entities/camera';
-import { createLight } from './entities/light';
 
 const DELAY_BEFORE_ROTATING_X = 1500;
 const CAMERA_MAX_DISTANCE = 90;
@@ -20,16 +19,11 @@ export default function sceneManager(rendererContainer: HTMLDivElement) {
   };
 
   const polygon = createPolygon();
-  const points = createPoints(polygon);
-  const sun = createSun(polygon);
-  const halpernSphere = createHalpernSphere({ polygon, points, sun });
+  const halpernSphere = createPoints(polygon);
 
   const camera = createCamera();
   camera.position.set(0, CAMERA_MAX_DISTANCE, 0);
   camera.lookAt(new Vector3(0, 0, 0));
-
-  const light = createLight();
-  light.position.set(0, CAMERA_MAX_DISTANCE, 0);
 
   const renderer = createRenderer();
 
@@ -37,7 +31,6 @@ export default function sceneManager(rendererContainer: HTMLDivElement) {
 
   const scene = new Scene();
   scene.add(halpernSphere);
-  scene.add(light);
 
   addRotationControls();
   addZoomControls();
@@ -73,6 +66,10 @@ export default function sceneManager(rendererContainer: HTMLDivElement) {
 
   function getSphereGeometry() {
     return polygon.geometry as SphereGeometry;
+  }
+
+  function getHalpernGeometry() {
+    return halpernSphere.geometry as BufferGeometry;
   }
 
   function addRotationControls() {
@@ -111,7 +108,8 @@ export default function sceneManager(rendererContainer: HTMLDivElement) {
   return {
     animate,
     stop,
-    getSphereGeometry
+    getSphereGeometry,
+    getHalpernGeometry
   };
 }
 
