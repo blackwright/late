@@ -32,8 +32,8 @@ export default function sceneManager(rendererContainer: HTMLDivElement) {
   const scene = new Scene();
   scene.add(halpernSphere);
 
-  addRotationControls();
-  addZoomControls();
+  const removeRotationControls = addRotationControls();
+  const removeZoomControls = addZoomControls();
 
   window.addEventListener('resize', onResize);
 
@@ -54,6 +54,11 @@ export default function sceneManager(rendererContainer: HTMLDivElement) {
     window.cancelAnimationFrame(currentAnimationFrameId);
     window.removeEventListener('resize', onResize);
     rendererContainer.removeChild(renderer.domElement);
+
+    removeRotationControls();
+    removeZoomControls();
+
+    scene.remove(halpernSphere);
   }
 
   function onResize() {
@@ -73,9 +78,19 @@ export default function sceneManager(rendererContainer: HTMLDivElement) {
   }
 
   function addRotationControls() {
-    renderer.domElement.addEventListener('mousedown', () => (isMouseDragging = true));
-    renderer.domElement.addEventListener('mouseup', () => (isMouseDragging = false));
-    renderer.domElement.addEventListener('mousemove', (event: MouseEvent) => {
+    renderer.domElement.addEventListener('mousedown', onMouseDown);
+    renderer.domElement.addEventListener('mouseup', onMouseUp);
+    renderer.domElement.addEventListener('mousemove', onMouseMove);
+
+    function onMouseDown() {
+      isMouseDragging = true;
+    }
+
+    function onMouseUp() {
+      isMouseDragging = false;
+    }
+
+    function onMouseMove(event: MouseEvent) {
       const moveDelta = {
         x: event.offsetX - mousePosition.x,
         y: event.offsetY - mousePosition.y
@@ -92,17 +107,29 @@ export default function sceneManager(rendererContainer: HTMLDivElement) {
 
       mousePosition.x = event.offsetX;
       mousePosition.y = event.offsetY;
-    });
+    }
+
+    return function removeRotationControls() {
+      renderer.domElement.removeEventListener('mousedown', onMouseDown);
+      renderer.domElement.removeEventListener('mouseup', onMouseUp);
+      renderer.domElement.removeEventListener('mousemove', onMouseMove);
+    };
   }
 
   function addZoomControls() {
-    renderer.domElement.addEventListener('wheel', (event: WheelEvent) => {
+    renderer.domElement.addEventListener('wheel', onMouseWheel);
+
+    function onMouseWheel(event: WheelEvent) {
       if (event.deltaY > 0) {
         camera.position.y = Math.min(camera.position.y + 2, CAMERA_MAX_DISTANCE);
       } else {
         camera.position.y = Math.max(camera.position.y - 2, CAMERA_MIN_DISTANCE);
       }
-    });
+    }
+
+    return function removeZoomControls() {
+      renderer.domElement.removeEventListener('wheel', onMouseWheel);
+    };
   }
 
   return {
