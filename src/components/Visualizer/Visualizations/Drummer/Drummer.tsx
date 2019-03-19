@@ -4,7 +4,7 @@ import * as Visualization from '../Visualization';
 import './Drummer.scss';
 import { getRandomColor } from '../../../../utils/colors';
 
-const NUM_DRUMMERS = 20;
+const NUM_DRUMMERS = 13;
 const MIN_HIT_COUNT = 40;
 const MIN_FREQUENCY_VARIATION = 10;
 const COLOR_CHANGE_THRESHOLD = 0.5;
