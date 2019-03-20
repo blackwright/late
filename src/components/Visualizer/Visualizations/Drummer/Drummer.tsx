@@ -105,4 +105,4 @@ class Drummer extends React.Component<Visualization.WrappedProps> {
   }
 }
 
-export default Visualization.wrap(Drummer);
+export default Visualization.wrap(Drummer, { smoothing: 200 });

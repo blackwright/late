@@ -94,4 +94,4 @@ class Waveform extends React.Component<Visualization.WrappedProps> {
   }
 }
 
-export default Visualization.wrap(Waveform);
+export default Visualization.wrap(Waveform, { smoothing: 100 });

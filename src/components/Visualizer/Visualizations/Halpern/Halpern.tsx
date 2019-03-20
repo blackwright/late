@@ -78,4 +78,4 @@ class Halpern extends React.Component<Visualization.WrappedProps> {
   }
 }
 
-export default Visualization.wrap(Halpern);
+export default Visualization.wrap(Halpern, { smoothing: 50 });
