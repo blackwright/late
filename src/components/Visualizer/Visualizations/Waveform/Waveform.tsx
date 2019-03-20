@@ -22,6 +22,8 @@ class Waveform extends React.Component<Visualization.WrappedProps> {
     this.canvas.height = window.innerHeight;
 
     this.ctx = this.canvas.getContext('2d') as CanvasRenderingContext2D;
+    this.ctx.fillStyle = '#050505';
+    this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
     this.intervalId = window.setInterval(this.fadeOut, 7);
   }
@@ -78,7 +80,7 @@ class Waveform extends React.Component<Visualization.WrappedProps> {
   fadeOut = () => {
     const ctx = this.ctx!;
     const canvas = this.canvas!;
-    ctx.fillStyle = 'rgba(4, 4, 4, 0.1)';
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
   };
 
