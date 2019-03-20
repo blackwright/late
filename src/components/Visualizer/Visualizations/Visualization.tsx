@@ -1,5 +1,6 @@
 import React from 'react';
 import { TRANSITION_ANIMATION_LENGTH } from '../VisualizationSelector';
+import { smooth } from '../../../utils';
 import './Visualization.scss';
 
 export type Props = {
@@ -18,8 +19,12 @@ export type WrappedProps = {
   isTransitioning: boolean;
 };
 
+export type Options = {
+  smoothing?: number;
+};
+
 // all visualization components should be wrapped with this HOC
-export function wrap(WrappedComponent: React.ComponentType<WrappedProps>) {
+export function wrap(WrappedComponent: React.ComponentType<WrappedProps>, options: Options = {}) {
   return class extends React.Component<Props> {
     // bypass initial render because components that trigger
     // reflow in componentDidMount interrupt CSS transitions
@@ -41,10 +46,12 @@ export function wrap(WrappedComponent: React.ComponentType<WrappedProps>) {
       const { data, timeout, isTransitioning } = this.props;
       const { delayedAfterReflow } = this.state;
 
+      const renderedData = options.smoothing ? smooth(data, options.smoothing) : data;
+
       return (
         delayedAfterReflow && (
           <WrappedComponent
-            data={data}
+            data={renderedData}
             style={{ transition: `transform ${timeout}ms linear` }}
             isTransitioning={isTransitioning}
           />
