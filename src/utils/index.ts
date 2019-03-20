@@ -14,9 +14,16 @@ export function avg(numbers: Uint8Array | number[]) {
 
 export function smooth(data: Uint8Array, range: number): Uint8Array {
   return data.map((dataElement, i) => {
-    const diff = i - range;
-    const startingIndex = diff < 0 ? 0 : diff;
-    const endingIndex = i + range + 1;
-    return Number(avg(data.slice(startingIndex, endingIndex)).toFixed(2));
+    const dataToAverage = [];
+
+    let rangeIndex = i - range;
+
+    while (rangeIndex < i + range) {
+      const dataAtRangeIndex = data[rangeIndex] || 128;
+      dataToAverage.push(dataAtRangeIndex);
+      rangeIndex += 1;
+    }
+
+    return avg(dataToAverage);
   });
 }
