@@ -7,7 +7,7 @@ import { getRandomColor } from '../../../../utils/colors';
 const NUM_DRUMMERS = 13;
 const MIN_HIT_COUNT = 40;
 const MIN_FREQUENCY_VARIATION = 10;
-const COLOR_CHANGE_THRESHOLD = 0.5;
+const COLOR_CHANGE_THRESHOLD = 0.3;
 const MIN_DELAY_BETWEEN_COLOR_CHANGE = 200;
 
 class Drummer extends React.Component<Visualization.WrappedProps> {
