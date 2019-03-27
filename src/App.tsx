@@ -2,6 +2,9 @@ import React, { Component } from 'react';
 import Loading from './components/Loading/Loading';
 import Analyser from './components/Analyser/Analyser';
 
+const AUDIO_SERVER_URL =
+  process.env.REACT_APP_AUDIO_SERVER_URL || 'http://localhost:3001';
+
 type Props = {};
 
 type State = {
@@ -46,7 +49,8 @@ export default class App extends Component<Props, State> {
     const audioElement = this.audioRef.current!;
     this.audioElement = audioElement;
 
-    const context = new (window.AudioContext || (window as any).webkitAudioContext)();
+    const context = new (window.AudioContext ||
+      (window as any).webkitAudioContext)();
     const source = context.createMediaElementSource(audioElement);
 
     this.addAudioEventListeners([
@@ -65,7 +69,10 @@ export default class App extends Component<Props, State> {
   };
 
   onMouseUp = () => {
-    if (this.lastMouseDownTimestamp && Date.now() - this.lastMouseDownTimestamp < 250) {
+    if (
+      this.lastMouseDownTimestamp &&
+      Date.now() - this.lastMouseDownTimestamp < 250
+    ) {
       this.onClick();
     }
   };
@@ -93,13 +100,19 @@ export default class App extends Component<Props, State> {
   addAudioEventListeners = (eventListeners: AudioEventListeners) => {
     for (const eventListener of eventListeners) {
       this.audioEventListeners.push(eventListener);
-      this.audioElement!.addEventListener(eventListener.event, eventListener.listener);
+      this.audioElement!.addEventListener(
+        eventListener.event,
+        eventListener.listener
+      );
     }
   };
 
   removeAudioEventListeners = () => {
     for (const eventListener of this.audioEventListeners) {
-      this.audioElement!.removeEventListener(eventListener.event, eventListener.listener);
+      this.audioElement!.removeEventListener(
+        eventListener.event,
+        eventListener.listener
+      );
     }
     this.audioEventListeners = [];
   };
@@ -112,7 +125,7 @@ export default class App extends Component<Props, State> {
         <audio
           ref={this.audioRef}
           id="audioElement"
-          src="http://localhost:3001"
+          src={AUDIO_SERVER_URL}
           preload={'auto'}
           crossOrigin="anonymous"
         />

@@ -2,6 +2,7 @@
   "name": "ltly",
   "version": "0.1.0",
   "private": true,
+  "homepage": "https://blackwright.github.io/ltly",
   "dependencies": {
     "@ffmpeg-installer/ffmpeg": "^1.0.17",
     "classnames": "^2.2.6",
@@ -22,6 +23,8 @@
     "client": "react-scripts start",
     "server": "node server/index.js",
     "build": "react-scripts build",
+    "predeploy": "react-scripts build",
+    "deploy": "gh-pages -d build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "start": "node_modules/.bin/concurrently --kill-others \"npm run server\" \"npm run client\""
@@ -45,6 +48,7 @@
     "@types/react-transition-group": "^2.0.16",
     "@types/webaudioapi": "^0.0.27",
     "concurrently": "^4.1.0",
+    "gh-pages": "^2.0.1",
     "prettier": "^1.16.4"
   }
 }
