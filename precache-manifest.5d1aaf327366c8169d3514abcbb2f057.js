@@ -16,7 +16,7 @@ self.__precacheManifest = [
     "url": "/ltly/static/css/main.99035eb4.chunk.css"
   },
   {
-    "revision": "84a785101a61bc3fada079e639d52026",
+    "revision": "d1bafdad7c7bd68f0386fa4a52f27c18",
     "url": "/ltly/index.html"
   }
 ];
