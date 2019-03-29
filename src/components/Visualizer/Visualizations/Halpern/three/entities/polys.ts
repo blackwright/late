@@ -11,7 +11,7 @@ import {
 import { pointColor } from './colors';
 
 export function createPolygon(): Mesh {
-  const geometry = new SphereGeometry(40, 150, 150);
+  const geometry = new SphereGeometry(40, 100, 100);
   geometry.computeVertexNormals();
 
   const material = new MeshLambertMaterial({

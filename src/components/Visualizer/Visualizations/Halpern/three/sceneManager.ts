@@ -13,12 +13,13 @@ import { createCamera } from './entities/camera';
 const DELAY_BEFORE_ROTATING_X = 1500;
 const CAMERA_MAX_DISTANCE = 200;
 const CAMERA_MIN_DISTANCE = 0;
+const CAMERA_DRIFT = 0.05;
 
 export default function sceneManager(rendererContainer: HTMLDivElement) {
   let currentAnimationFrameId: number;
   let sceneInitializedTimestamp = Date.now();
+  let t = 0;
   let isMouseDragging = false;
-  let isCameraChanged = false;
 
   const mousePosition = {
     x: 0,
@@ -45,13 +46,21 @@ export default function sceneManager(rendererContainer: HTMLDivElement) {
   window.addEventListener('resize', onResize);
 
   function animate() {
-    if (!isCameraChanged) {
-      halpernSphere.rotateY(-0.001);
+    halpernSphere.rotateY(-0.002);
 
-      if (Date.now() - sceneInitializedTimestamp > DELAY_BEFORE_ROTATING_X) {
-        halpernSphere.rotateX(0.001);
-      }
+    if (Date.now() - sceneInitializedTimestamp > DELAY_BEFORE_ROTATING_X) {
+      halpernSphere.rotateX(0.002);
     }
+
+    t += 0.005;
+
+    if (t >= Math.PI * 2) {
+      t = 0;
+    }
+
+    camera.translateY(Math.cos(t) * CAMERA_DRIFT);
+    camera.translateX(Math.cos(t) * CAMERA_DRIFT);
+    camera.translateZ(Math.cos(t) * CAMERA_DRIFT * 5);
 
     renderer.render(scene, camera);
     currentAnimationFrameId = window.requestAnimationFrame(animate);
@@ -117,7 +126,6 @@ export default function sceneManager(rendererContainer: HTMLDivElement) {
           rotationDeltaQuaternion,
           halpernSphere.quaternion
         );
-        isCameraChanged = true;
       }
 
       mousePosition.x = event.offsetX;
