@@ -5,7 +5,7 @@ import sceneManager from './three/sceneManager';
 import cloneDeep from 'lodash.clonedeep';
 import './Halpern.scss';
 
-const VERTEX_SEGMENT_WEIGHT_COEFFICIENT = 0.003;
+const VERTEX_SEGMENT_WEIGHT_COEFFICIENT = 0.01;
 const BASELINE_VERTEX_SCALAR_FACTOR = 1;
 
 class Halpern extends React.Component<Visualization.WrappedProps> {
@@ -20,7 +20,12 @@ class Halpern extends React.Component<Visualization.WrappedProps> {
 
   componentDidMount() {
     this.rendererContainer = this.rendererRef.current!;
-    const { animate, stop, getSphereGeometry, getHalpernGeometry } = sceneManager(this.rendererContainer);
+    const {
+      animate,
+      stop,
+      getSphereGeometry,
+      getHalpernGeometry
+    } = sceneManager(this.rendererContainer);
     this.onUnmount = stop;
     this.getSphereGeometry = getSphereGeometry;
     this.getHalpernGeometry = getHalpernGeometry;
@@ -37,30 +42,43 @@ class Halpern extends React.Component<Visualization.WrappedProps> {
   }
 
   updateVertices = (data: Uint8Array) => {
-    if (this.getSphereGeometry == null || this.getHalpernGeometry == null || this.originalVertices == null) {
+    if (
+      this.getSphereGeometry == null ||
+      this.getHalpernGeometry == null ||
+      this.originalVertices == null
+    ) {
       return;
     }
 
     const geometry = this.getSphereGeometry();
-    const dataSegments = Math.floor(data.length / geometry.parameters.widthSegments);
+    const dataSegments = Math.floor(
+      data.length / geometry.parameters.widthSegments
+    );
 
     // split vertices up into segments belonging to slices of x cross sections,
     // first and last vertices are at top and bottom of sphere
-    const vertexSegmentLength = (geometry.vertices.length - 2) / (geometry.parameters.widthSegments - 1);
+    const vertexSegmentLength =
+      (geometry.vertices.length - 2) / (geometry.parameters.widthSegments - 1);
 
     geometry.vertices.forEach((vertex, i) => {
       // find which segment the current index belongs to
       const vertexSegmentIndex = Math.ceil(i / vertexSegmentLength);
 
       const dataIndex = vertexSegmentIndex * dataSegments;
-      const vertexSegmentWeight = Math.min(vertexSegmentIndex, vertexSegmentLength - vertexSegmentIndex);
+      const vertexSegmentWeight = Math.min(
+        vertexSegmentIndex,
+        vertexSegmentLength - vertexSegmentIndex
+      );
 
       // multiplyScalar mutates so we must restore starting position
       vertex.copy(this.originalVertices![i]);
       const dataVariation = Math.abs(data[dataIndex] - 128) / 255;
 
       const multiplyScalarValue =
-        dataVariation * vertexSegmentWeight * VERTEX_SEGMENT_WEIGHT_COEFFICIENT + BASELINE_VERTEX_SCALAR_FACTOR;
+        dataVariation *
+          vertexSegmentWeight *
+          VERTEX_SEGMENT_WEIGHT_COEFFICIENT +
+        BASELINE_VERTEX_SCALAR_FACTOR;
 
       vertex.multiplyScalar(multiplyScalarValue);
     });
@@ -74,7 +92,13 @@ class Halpern extends React.Component<Visualization.WrappedProps> {
   };
 
   render() {
-    return <div className="visualization halpern" ref={this.rendererRef} style={this.props.style} />;
+    return (
+      <div
+        className="visualization halpern"
+        ref={this.rendererRef}
+        style={this.props.style}
+      />
+    );
   }
 }
 

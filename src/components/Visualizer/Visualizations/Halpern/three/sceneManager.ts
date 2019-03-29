@@ -1,10 +1,17 @@
-import { Scene, SphereGeometry, Vector3, Quaternion, Euler, BufferGeometry } from 'three';
+import {
+  Scene,
+  SphereGeometry,
+  Vector3,
+  Quaternion,
+  Euler,
+  BufferGeometry
+} from 'three';
 import { createPolygon, createPoints } from './entities/polys';
 import { createRenderer } from './entities/renderer';
 import { createCamera } from './entities/camera';
 
 const DELAY_BEFORE_ROTATING_X = 1500;
-const CAMERA_MAX_DISTANCE = 90;
+const CAMERA_MAX_DISTANCE = 200;
 const CAMERA_MIN_DISTANCE = 0;
 
 export default function sceneManager(rendererContainer: HTMLDivElement) {
@@ -42,7 +49,7 @@ export default function sceneManager(rendererContainer: HTMLDivElement) {
       halpernSphere.rotateY(-0.001);
 
       if (Date.now() - sceneInitializedTimestamp > DELAY_BEFORE_ROTATING_X) {
-        halpernSphere.rotateX(0.0005);
+        halpernSphere.rotateX(0.001);
       }
     }
 
@@ -98,10 +105,18 @@ export default function sceneManager(rendererContainer: HTMLDivElement) {
 
       if (isMouseDragging) {
         const rotationDeltaQuaternion = new Quaternion().setFromEuler(
-          new Euler(toRadians(moveDelta.y * 0.25), toRadians(moveDelta.x * 0.25), 0, 'XYZ')
+          new Euler(
+            toRadians(moveDelta.y * 0.25),
+            toRadians(moveDelta.x * 0.25),
+            0,
+            'XYZ'
+          )
         );
 
-        halpernSphere.quaternion.multiplyQuaternions(rotationDeltaQuaternion, halpernSphere.quaternion);
+        halpernSphere.quaternion.multiplyQuaternions(
+          rotationDeltaQuaternion,
+          halpernSphere.quaternion
+        );
         isCameraChanged = true;
       }
 
@@ -121,9 +136,15 @@ export default function sceneManager(rendererContainer: HTMLDivElement) {
 
     function onMouseWheel(event: WheelEvent) {
       if (event.deltaY > 0) {
-        camera.position.y = Math.min(camera.position.y + 2, CAMERA_MAX_DISTANCE);
+        camera.position.y = Math.min(
+          camera.position.y + 2,
+          CAMERA_MAX_DISTANCE
+        );
       } else {
-        camera.position.y = Math.max(camera.position.y - 2, CAMERA_MIN_DISTANCE);
+        camera.position.y = Math.max(
+          camera.position.y - 2,
+          CAMERA_MIN_DISTANCE
+        );
       }
     }
 

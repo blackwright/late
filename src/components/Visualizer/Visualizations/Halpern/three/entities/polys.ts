@@ -11,7 +11,7 @@ import {
 import { pointColor } from './colors';
 
 export function createPolygon(): Mesh {
-  const geometry = new SphereGeometry(40, 100, 100);
+  const geometry = new SphereGeometry(40, 150, 150);
   geometry.computeVertexNormals();
 
   const material = new MeshLambertMaterial({
@@ -41,7 +41,7 @@ export function createPoints(polygon: Mesh): Points {
   geometry.addAttribute('position', new BufferAttribute(positions, 3));
 
   const material = new PointsMaterial({
-    size: 0.6,
+    size: 0.2,
     map: new TextureLoader().load('assets/images/point.png'),
     alphaTest: 0.5,
     color: pointColor,
