@@ -8,8 +8,9 @@ export const TRANSITION_ANIMATION_LENGTH = 500;
 
 type DynamicChildProps = Visualization.Props & { classNames: string };
 
-const dynamicChildFactory = (classNames?: string) => (child: React.ReactElement<DynamicChildProps>) =>
-  React.cloneElement(child, { classNames });
+const dynamicChildFactory = (classNames?: string) => (
+  child: React.ReactElement<DynamicChildProps>
+) => React.cloneElement(child, { classNames });
 
 type Props = {
   data: Uint8Array;
@@ -21,7 +22,10 @@ type State = {
   isTransitioning: boolean;
 };
 
-export default class VisualizationSelector extends React.Component<Props, State> {
+export default class VisualizationSelector extends React.Component<
+  Props,
+  State
+> {
   state = {
     prevIndex: null,
     currentIndex: 0,
@@ -77,14 +81,21 @@ export default class VisualizationSelector extends React.Component<Props, State>
     const { data } = this.props;
     const { prevIndex, currentIndex, isTransitioning } = this.state;
 
-    const transitionClassName = prevIndex != null && prevIndex < currentIndex ? 'next' : 'prev';
-    const classNameRoot = transitionClassName ? `visualization-${transitionClassName}` : undefined;
+    const transitionClassName =
+      prevIndex != null && prevIndex < currentIndex ? 'next' : 'prev';
+    const classNameRoot = transitionClassName
+      ? `visualization-${transitionClassName}`
+      : undefined;
 
     const visualizationIndex = modulo(currentIndex, Visualizations.length);
-    const VisualizationComponent: React.ComponentType<Visualization.Props> = Visualizations[visualizationIndex];
+    const VisualizationComponent: React.ComponentType<Visualization.Props> =
+      Visualizations[visualizationIndex];
 
     return (
-      <TransitionGroup component={null} childFactory={dynamicChildFactory(classNameRoot)}>
+      <TransitionGroup
+        component={null}
+        childFactory={dynamicChildFactory(classNameRoot)}
+      >
         <CSSTransition
           key={visualizationIndex}
           timeout={TRANSITION_ANIMATION_LENGTH}
@@ -94,7 +105,11 @@ export default class VisualizationSelector extends React.Component<Props, State>
           mountOnEnter
           unmountOnExit
         >
-          <VisualizationComponent data={data} timeout={TRANSITION_ANIMATION_LENGTH} isTransitioning={isTransitioning} />
+          <VisualizationComponent
+            data={data}
+            timeout={TRANSITION_ANIMATION_LENGTH}
+            isTransitioning={isTransitioning}
+          />
         </CSSTransition>
       </TransitionGroup>
     );

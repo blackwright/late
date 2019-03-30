@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import Loading from './components/Loading/Loading';
 import Analyser from './components/Analyser/Analyser';
+import Controls from './components/Controls/Controls';
 
 const AUDIO_SERVER_URL =
   process.env.REACT_APP_ENVIRONMENT === 'production'
@@ -31,20 +31,11 @@ export default class App extends Component<Props, State> {
 
   private audioRef: React.RefObject<HTMLAudioElement> = React.createRef();
   private audioEventListeners: AudioEventListeners = [];
-  private lastMouseDownTimestamp?: number;
 
   audioElement?: HTMLAudioElement;
 
-  componentDidMount() {
-    window.addEventListener('mousedown', this.onMouseDown);
-    window.addEventListener('mouseup', this.onMouseUp);
-  }
-
   componentWillUnmount() {
     this.removeAudioEventListeners();
-
-    window.removeEventListener('mousedown', this.onMouseDown);
-    window.removeEventListener('mouseup', this.onMouseUp);
   }
 
   initialize = () => {
@@ -56,30 +47,15 @@ export default class App extends Component<Props, State> {
     const source = context.createMediaElementSource(audioElement);
 
     this.addAudioEventListeners([
-      { event: 'playing', listener: this.onPlay },
-      { event: 'pause', listener: this.onPause },
-      { event: 'error', listener: this.onError }
+      { event: 'playing', listener: this.onAudioPlay },
+      { event: 'pause', listener: this.onAudioPause },
+      { event: 'error', listener: this.onAudioError }
     ]);
 
     this.setState({ context, source });
   };
 
-  onMouseDown = (event: MouseEvent) => {
-    if (event.which === 1) {
-      this.lastMouseDownTimestamp = Date.now();
-    }
-  };
-
-  onMouseUp = () => {
-    if (
-      this.lastMouseDownTimestamp &&
-      Date.now() - this.lastMouseDownTimestamp < 250
-    ) {
-      this.onClick();
-    }
-  };
-
-  onClick = () => {
+  onTogglePlay = () => {
     if (this.audioElement == null) {
       this.initialize();
     }
@@ -93,11 +69,11 @@ export default class App extends Component<Props, State> {
     }
   };
 
-  onPlay = () => this.setState({ isPlaying: true });
+  onAudioPlay = () => this.setState({ isPlaying: true });
 
-  onPause = () => this.setState({ isPlaying: false });
+  onAudioPause = () => this.setState({ isPlaying: false });
 
-  onError = console.error;
+  onAudioError = console.error;
 
   addAudioEventListeners = (eventListeners: AudioEventListeners) => {
     for (const eventListener of eventListeners) {
@@ -131,13 +107,12 @@ export default class App extends Component<Props, State> {
           preload={'auto'}
           crossOrigin="anonymous"
         />
-        {source && context && (
-          <>
-            <Analyser context={context} source={source} />
-            {wantsToPlay && <Loading show={!isPlaying} />}
-          </>
-        )}
-        {!wantsToPlay && <div id="play" />}
+        {source && context && <Analyser context={context} source={source} />}
+        <Controls
+          wantsToPlay={wantsToPlay}
+          isPlaying={isPlaying}
+          onTogglePlay={this.onTogglePlay}
+        />
       </>
     );
   }
