@@ -3,7 +3,9 @@ import Loading from './components/Loading/Loading';
 import Analyser from './components/Analyser/Analyser';
 
 const AUDIO_SERVER_URL =
-  process.env.REACT_APP_AUDIO_SERVER_URL || 'http://localhost:3001';
+  process.env.REACT_APP_ENVIRONMENT === 'production'
+    ? process.env.REACT_APP_AUDIO_SERVER_URL
+    : 'http://localhost:3001';
 
 type Props = {};
 
