@@ -41,7 +41,7 @@ export function createPoints(polygon: Mesh): Points {
   geometry.addAttribute('position', new BufferAttribute(positions, 3));
 
   const material = new PointsMaterial({
-    size: 0.05,
+    size: 0.1,
     map: new TextureLoader().load('assets/images/point.png'),
     alphaTest: 0.5,
     color: pointColor,

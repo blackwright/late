@@ -5,6 +5,7 @@ import sceneManager from './three/sceneManager';
 import cloneDeep from 'lodash.clonedeep';
 import './Halpern.scss';
 
+const RIPPLE_SPEED = 12;
 const FOCUSED_DATA_INDEX = 512;
 const VERTEX_SEGMENT_WEIGHT_COEFFICIENT = 0.1;
 const BASELINE_VERTEX_SCALAR_FACTOR = 1;
@@ -52,9 +53,9 @@ class Halpern extends React.Component<Visualization.WrappedProps> {
       return;
     }
 
-    this.focusedData.splice(0, 10);
+    this.focusedData.splice(0, RIPPLE_SPEED);
     this.focusedData = this.focusedData.concat(
-      new Array(10).fill(data[FOCUSED_DATA_INDEX])
+      new Array(RIPPLE_SPEED).fill(data[FOCUSED_DATA_INDEX])
     );
 
     const geometry = this.getSphereGeometry();

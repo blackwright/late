@@ -4,7 +4,8 @@ import {
   Vector3,
   Quaternion,
   Euler,
-  BufferGeometry
+  BufferGeometry,
+  PointsMaterial
 } from 'three';
 import { createPolygon, createPoints } from './entities/polys';
 import { createRenderer } from './entities/renderer';
@@ -74,6 +75,8 @@ export default function sceneManager(rendererContainer: HTMLDivElement) {
     removeRotationControls();
     removeZoomControls();
 
+    halpernSphere.geometry.dispose();
+    (halpernSphere.material as PointsMaterial).dispose();
     scene.remove(halpernSphere);
   }
 
