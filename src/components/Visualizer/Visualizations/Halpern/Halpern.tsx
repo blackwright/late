@@ -5,17 +5,18 @@ import sceneManager from './three/sceneManager';
 import cloneDeep from 'lodash.clonedeep';
 import './Halpern.scss';
 
-const VERTEX_SEGMENT_WEIGHT_COEFFICIENT = 0.01;
+const FOCUSED_DATA_INDEX = 512;
+const VERTEX_SEGMENT_WEIGHT_COEFFICIENT = 0.1;
 const BASELINE_VERTEX_SCALAR_FACTOR = 1;
 
 class Halpern extends React.Component<Visualization.WrappedProps> {
-  rendererContainer?: HTMLDivElement;
-  currentAnimationFrameId?: number;
-  originalVertices?: Vector3[];
-  getSphereGeometry?: () => SphereGeometry;
-  getHalpernGeometry?: () => BufferGeometry;
-  onUnmount?: () => void;
+  private rendererContainer?: HTMLDivElement;
+  private originalVertices?: Vector3[];
+  private getSphereGeometry?: () => SphereGeometry;
+  private getHalpernGeometry?: () => BufferGeometry;
+  private onUnmount?: () => void;
 
+  private focusedData: number[] = [];
   private rendererRef: React.RefObject<HTMLDivElement> = React.createRef();
 
   componentDidMount() {
@@ -30,6 +31,7 @@ class Halpern extends React.Component<Visualization.WrappedProps> {
     this.getSphereGeometry = getSphereGeometry;
     this.getHalpernGeometry = getHalpernGeometry;
     this.originalVertices = cloneDeep(getSphereGeometry().vertices);
+    this.focusedData = new Array(this.props.data.length).fill(128);
     animate();
   }
 
@@ -49,6 +51,11 @@ class Halpern extends React.Component<Visualization.WrappedProps> {
     ) {
       return;
     }
+
+    this.focusedData.splice(0, 10);
+    this.focusedData = this.focusedData.concat(
+      new Array(10).fill(data[FOCUSED_DATA_INDEX])
+    );
 
     const geometry = this.getSphereGeometry();
     const dataSegments = Math.floor(
@@ -72,7 +79,7 @@ class Halpern extends React.Component<Visualization.WrappedProps> {
 
       // multiplyScalar mutates so we must restore starting position
       vertex.copy(this.originalVertices![i]);
-      const dataVariation = Math.abs(data[dataIndex] - 128) / 255;
+      const dataVariation = Math.abs(this.focusedData[dataIndex] - 128) / 255;
 
       const multiplyScalarValue =
         dataVariation *
@@ -102,4 +109,4 @@ class Halpern extends React.Component<Visualization.WrappedProps> {
   }
 }
 
-export default Visualization.wrap(Halpern, { smoothing: 50 });
+export default Visualization.wrap(Halpern, { smoothing: 128 });

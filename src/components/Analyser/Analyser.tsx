@@ -11,7 +11,7 @@ type State = {
 };
 
 export default class Analyser extends Component<Props, State> {
-  state = { data: new Uint8Array(0) };
+  state = { data: new Uint8Array() };
 
   analyser = this.props.context.createAnalyser();
   dataArray = new Uint8Array(this.analyser.frequencyBinCount);
@@ -31,7 +31,8 @@ export default class Analyser extends Component<Props, State> {
   componentWillUnmount() {
     const { source } = this.props;
 
-    this.currentAnimationFrameId != null && window.cancelAnimationFrame(this.currentAnimationFrameId);
+    this.currentAnimationFrameId != null &&
+      window.cancelAnimationFrame(this.currentAnimationFrameId);
     this.analyser != null && this.analyser.disconnect();
     source && source.disconnect();
   }
