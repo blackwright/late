@@ -14,10 +14,11 @@ type Props = ReturnType<typeof mapDispatchToProps> & {
 
 type State = {
   showOverlay: boolean;
+  isArrowHovered: boolean;
 };
 
 class Controls extends Component<Props, State> {
-  state: State = { showOverlay: false };
+  state: State = { showOverlay: false, isArrowHovered: false };
 
   private lastTouchStartTimestamp?: number;
   private hideOverlayTimeoutId?: number;
@@ -66,7 +67,9 @@ class Controls extends Component<Props, State> {
 
     this.setState({ showOverlay: true }, () => {
       this.hideOverlayTimeoutId = window.setTimeout(() => {
-        this.setState({ showOverlay: false });
+        if (!this.state.isArrowHovered) {
+          this.setState({ showOverlay: false });
+        }
       }, 2000);
     });
   };
@@ -100,6 +103,10 @@ class Controls extends Component<Props, State> {
     }
   };
 
+  onToggleArrowHover = (isHovered: boolean) => {
+    this.setState({ isArrowHovered: isHovered });
+  };
+
   render() {
     const { wantsToPlay, isPlaying } = this.props;
     const { showOverlay } = this.state;
@@ -122,6 +129,8 @@ class Controls extends Component<Props, State> {
               className="arrow-container"
               onClick={this.onPrev}
               onMouseUp={this.doNothing}
+              onMouseEnter={() => this.onToggleArrowHover(true)}
+              onMouseLeave={() => this.onToggleArrowHover(false)}
             >
               <div id="prev" className="arrow" />
             </div>
@@ -129,6 +138,8 @@ class Controls extends Component<Props, State> {
               className="arrow-container"
               onClick={this.onNext}
               onMouseUp={this.doNothing}
+              onMouseEnter={() => this.onToggleArrowHover(true)}
+              onMouseLeave={() => this.onToggleArrowHover(false)}
             >
               <div id="next" className="arrow" />
             </div>
