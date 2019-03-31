@@ -13,9 +13,7 @@ export type Props = {
 
 export type WrappedProps = {
   data: Uint8Array;
-  style: {
-    transition: string;
-  };
+  style: { transition: string };
   isTransitioning: boolean;
 };
 
@@ -24,7 +22,10 @@ export type Options = {
 };
 
 // all visualization components should be wrapped with this HOC
-export function wrap(WrappedComponent: React.ComponentType<WrappedProps>, options: Options = {}) {
+export function wrap(
+  WrappedComponent: React.ComponentType<WrappedProps>,
+  options: Options = {}
+) {
   return class extends React.Component<Props> {
     // bypass initial render because components that trigger
     // reflow in componentDidMount interrupt CSS transitions
@@ -46,7 +47,9 @@ export function wrap(WrappedComponent: React.ComponentType<WrappedProps>, option
       const { data, timeout, isTransitioning } = this.props;
       const { delayedAfterReflow } = this.state;
 
-      const renderedData = options.smoothing ? smooth(data, options.smoothing) : data;
+      const renderedData = options.smoothing
+        ? smooth(data, options.smoothing)
+        : data;
 
       return (
         delayedAfterReflow && (

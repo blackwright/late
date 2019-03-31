@@ -1,9 +1,12 @@
 import React, { Component } from 'react';
+import { Dispatch } from 'redux';
+import { connect } from 'react-redux';
 import classNames from 'classnames';
 import Loading from '../Loading/Loading';
+import * as Actions from '../../store/actions';
 import './Controls.scss';
 
-type Props = {
+type Props = ReturnType<typeof mapDispatchToProps> & {
   wantsToPlay: boolean;
   isPlaying: boolean;
   onTogglePlay: () => void;
@@ -13,12 +16,19 @@ type State = {
   showOverlay: boolean;
 };
 
-export default class Controls extends Component<Props, State> {
+class Controls extends Component<Props, State> {
   state: State = { showOverlay: false };
 
   private lastTouchStartTimestamp?: number;
   private hideOverlayTimeoutId?: number;
-  private removeEventListeners?: () => void;
+
+  componentDidMount() {
+    document.addEventListener('keydown', this.onKeyDown);
+  }
+
+  componentWillUnmount() {
+    document.removeEventListener('keydown', this.onKeyDown);
+  }
 
   onMouseDown = (event: React.MouseEvent) => {
     if (event.nativeEvent.which === 1) {
@@ -63,14 +73,31 @@ export default class Controls extends Component<Props, State> {
 
   onPrev = (event: React.MouseEvent<HTMLDivElement>) => {
     event.stopPropagation();
+    this.props.goToPrevVisualization();
   };
 
   onNext = (event: React.MouseEvent<HTMLDivElement>) => {
     event.stopPropagation();
+    this.props.goToNextVisualization();
   };
 
   doNothing = (event: React.MouseEvent<HTMLDivElement>) => {
     event.stopPropagation();
+  };
+
+  onKeyDown = (event: KeyboardEvent) => {
+    switch (event.which) {
+      case 37:
+      case 38: {
+        this.props.goToPrevVisualization();
+        break;
+      }
+      case 39:
+      case 40: {
+        this.props.goToNextVisualization();
+        break;
+      }
+    }
   };
 
   render() {
@@ -111,3 +138,13 @@ export default class Controls extends Component<Props, State> {
     );
   }
 }
+
+const mapDispatchToProps = (dispatch: Dispatch) => ({
+  goToNextVisualization: () => dispatch(Actions.goToNextVisualization()),
+  goToPrevVisualization: () => dispatch(Actions.goToPrevVisualization())
+});
+
+export default connect(
+  null,
+  mapDispatchToProps
+)(Controls);

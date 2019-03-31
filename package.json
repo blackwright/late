@@ -13,8 +13,10 @@
     "node-sass": "^4.11.0",
     "react": "^16.8.1",
     "react-dom": "^16.8.1",
+    "react-redux": "^6.0.1",
     "react-scripts": "2.1.5",
     "react-transition-group": "^2.6.0",
+    "redux": "^4.0.1",
     "three": "^0.102.1",
     "typescript": "^3.3.3",
     "ytdl-core": "^0.29.1"
@@ -45,6 +47,7 @@
     "@types/node": "^11.9.0",
     "@types/react": "^16.8.2",
     "@types/react-dom": "^16.8.0",
+    "@types/react-redux": "^7.0.6",
     "@types/react-transition-group": "^2.0.16",
     "@types/webaudioapi": "^0.0.27",
     "concurrently": "^4.1.0",

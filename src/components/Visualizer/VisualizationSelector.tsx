@@ -1,10 +1,18 @@
 import React from 'react';
+import { Dispatch } from 'redux';
+import { connect } from 'react-redux';
 import { TransitionGroup, CSSTransition } from 'react-transition-group';
 import * as Visualization from './Visualizations/Visualization';
-import Visualizations from './Visualizations/index';
+import Visualizations from './Visualizations';
 import { modulo } from '../../utils';
+import * as Actions from '../../../src/store/actions';
+import { StoreState } from '../../../src/store/types';
 
 export const TRANSITION_ANIMATION_LENGTH = 500;
+
+type Props = {
+  data: Uint8Array;
+};
 
 type DynamicChildProps = Visualization.Props & { classNames: string };
 
@@ -12,106 +20,68 @@ const dynamicChildFactory = (classNames?: string) => (
   child: React.ReactElement<DynamicChildProps>
 ) => React.cloneElement(child, { classNames });
 
-type Props = {
-  data: Uint8Array;
-};
+const mapStateToProps = (state: StoreState) => ({
+  currentIndex: state.currentVisualizationIndex,
+  prevIndex: state.prevVisualizationIndex,
+  isTransitioning: state.isTransitioning
+});
 
-type State = {
-  prevIndex: number | null;
-  currentIndex: number;
-  isTransitioning: boolean;
-};
+const mapDispatchToProps = (dispatch: Dispatch) => ({
+  startTransition: () => dispatch(Actions.beginVisualizationTransition()),
+  endTransition: () => dispatch(Actions.endVisualizationTransition())
+});
 
-export default class VisualizationSelector extends React.Component<
-  Props,
-  State
-> {
-  state = {
-    prevIndex: null,
-    currentIndex: 0,
-    isTransitioning: false
-  };
+const VisualizationSelector: React.FunctionComponent<
+  Props &
+    ReturnType<typeof mapStateToProps> &
+    ReturnType<typeof mapDispatchToProps>
+> = ({
+  data,
+  startTransition,
+  endTransition,
+  isTransitioning,
+  prevIndex,
+  currentIndex
+}) => {
+  const transitionClassName =
+    prevIndex != null && prevIndex < currentIndex ? 'next' : 'prev';
 
-  componentDidMount() {
-    document.addEventListener('keydown', this.onKeyDown);
-  }
+  const classNameRoot = transitionClassName
+    ? `visualization-${transitionClassName}`
+    : undefined;
 
-  componentWillUnmount() {
-    document.removeEventListener('keydown', this.onKeyDown);
-  }
+  const visualizationIndex = modulo(currentIndex, Visualizations.length);
 
-  onKeyDown = (event: KeyboardEvent) => {
-    switch (event.which) {
-      case 37:
-      case 38: {
-        this.goToPrevVisualization();
-        break;
-      }
-      case 39:
-      case 40: {
-        this.goToNextVisualization();
-        break;
-      }
-    }
-  };
+  const VisualizationComponent: React.ComponentType<Visualization.Props> =
+    Visualizations[visualizationIndex];
 
-  goToPrevVisualization = () => {
-    if (!this.state.isTransitioning) {
-      this.setState(prevState => ({
-        prevIndex: prevState.currentIndex,
-        currentIndex: prevState.currentIndex - 1
-      }));
-    }
-  };
-
-  goToNextVisualization = () => {
-    if (!this.state.isTransitioning) {
-      this.setState(prevState => ({
-        prevIndex: prevState.currentIndex,
-        currentIndex: prevState.currentIndex + 1
-      }));
-    }
-  };
-
-  startTransition = () => this.setState({ isTransitioning: true });
-
-  endTransition = () => this.setState({ isTransitioning: false });
-
-  render() {
-    const { data } = this.props;
-    const { prevIndex, currentIndex, isTransitioning } = this.state;
-
-    const transitionClassName =
-      prevIndex != null && prevIndex < currentIndex ? 'next' : 'prev';
-    const classNameRoot = transitionClassName
-      ? `visualization-${transitionClassName}`
-      : undefined;
-
-    const visualizationIndex = modulo(currentIndex, Visualizations.length);
-    const VisualizationComponent: React.ComponentType<Visualization.Props> =
-      Visualizations[visualizationIndex];
-
-    return (
-      <TransitionGroup
-        component={null}
-        childFactory={dynamicChildFactory(classNameRoot)}
+  return (
+    <TransitionGroup
+      component={null}
+      childFactory={dynamicChildFactory(classNameRoot)}
+    >
+      <CSSTransition
+        key={visualizationIndex}
+        timeout={TRANSITION_ANIMATION_LENGTH}
+        classNames={classNameRoot || ''}
+        onExit={startTransition}
+        onExited={endTransition}
+        mountOnEnter
+        unmountOnExit
       >
-        <CSSTransition
-          key={visualizationIndex}
+        <VisualizationComponent
+          data={data}
+          isTransitioning={isTransitioning}
           timeout={TRANSITION_ANIMATION_LENGTH}
-          classNames={classNameRoot || ''}
-          onExit={this.startTransition}
-          onExited={this.endTransition}
-          mountOnEnter
-          unmountOnExit
-        >
-          <VisualizationComponent
-            data={data}
-            timeout={TRANSITION_ANIMATION_LENGTH}
-            isTransitioning={isTransitioning}
-          />
-        </CSSTransition>
-      </TransitionGroup>
-    );
-  }
-}
+        />
+      </CSSTransition>
+    </TransitionGroup>
+  );
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+  null,
+  { pure: false }
+)(VisualizationSelector);
