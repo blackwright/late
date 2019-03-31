@@ -3,7 +3,7 @@ import Analyser from './components/Analyser/Analyser';
 import Controls from './components/Controls/Controls';
 
 const AUDIO_SERVER_URL =
-  process.env.REACT_APP_ENVIRONMENT === 'production'
+  process.env.NODE_ENV === 'production'
     ? process.env.REACT_APP_AUDIO_SERVER_URL
     : 'http://localhost:3001';
 
