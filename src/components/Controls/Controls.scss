@@ -40,26 +40,21 @@
   }
 
   .arrow-container {
-    padding: 2rem;
     cursor: pointer;
+    padding: 3rem;
 
-    &:hover .arrow {
-      box-shadow: 3px -3px 0 3px white inset;
+    .arrow polyline {
+      mix-blend-mode: difference;
+      transition: all 250ms ease-in-out;
     }
 
-    .arrow {
-      padding: 2rem;
-      box-shadow: 1px -1px 0 1px white inset;
-      border-width: 0 0 2rem 2rem;
-      transition: box-shadow 0.2s;
+    &:hover .arrow polyline,
+    &:focus .arrow polyline {
+      stroke-width: 5;
+    }
 
-      &#prev {
-        transform: rotate(45deg);
-      }
-
-      &#next {
-        transform: rotate(225deg);
-      }
+    &:active .arrow polyline {
+      stroke-width: 8;
     }
   }
 }

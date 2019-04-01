@@ -132,7 +132,22 @@ class Controls extends Component<Props, State> {
               onMouseEnter={() => this.onToggleArrowHover(true)}
               onMouseLeave={() => this.onToggleArrowHover(false)}
             >
-              <div id="prev" className="arrow" />
+              <svg
+                className="arrow"
+                width="60px"
+                height="80px"
+                viewBox="0 0 50 80"
+              >
+                <polyline
+                  fill="none"
+                  stroke="#FFF"
+                  stroke-width="3"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  points="
+              45.63,75.8 0.375,38.087 45.63,0.375 "
+                />
+              </svg>
             </div>
             <div
               className="arrow-container"
@@ -141,7 +156,22 @@ class Controls extends Component<Props, State> {
               onMouseEnter={() => this.onToggleArrowHover(true)}
               onMouseLeave={() => this.onToggleArrowHover(false)}
             >
-              <div id="next" className="arrow" />
+              <svg
+                className="arrow"
+                width="60px"
+                height="80px"
+                viewBox="0 0 50 80"
+              >
+                <polyline
+                  fill="none"
+                  stroke="#FFF"
+                  stroke-width="3"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  points="
+                0.375,0.375 45.63,38.087 0.375,75.8 "
+                />
+              </svg>
             </div>
           </div>
         </div>
