@@ -35,7 +35,6 @@ export default function sceneManager(rendererContainer: HTMLDivElement) {
   camera.lookAt(new Vector3(0, 0, 0));
 
   const renderer = createRenderer();
-
   rendererContainer.appendChild(renderer.domElement);
 
   const scene = new Scene();
@@ -44,7 +43,7 @@ export default function sceneManager(rendererContainer: HTMLDivElement) {
   const removeRotationControls = addRotationControls();
   const removeZoomControls = addZoomControls();
 
-  window.addEventListener('resize', onResize);
+  window.addEventListener('resize', onResize, false);
 
   function animate() {
     halpernSphere.rotateY(-0.002);

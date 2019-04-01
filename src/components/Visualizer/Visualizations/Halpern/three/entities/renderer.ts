@@ -4,6 +4,7 @@ export function createRenderer() {
   const { innerWidth, innerHeight } = window;
 
   const renderer = new WebGLRenderer({ alpha: true });
+  renderer.setPixelRatio(window.devicePixelRatio);
   renderer.setSize(innerWidth, innerHeight);
   renderer.setClearColor(0x000000, 0);
 

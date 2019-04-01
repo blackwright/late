@@ -1,7 +1,8 @@
 import React from 'react';
 import { TRANSITION_ANIMATION_LENGTH } from '../VisualizationSelector';
-import { smooth } from '../../../utils';
 import './Visualization.scss';
+import { Options } from './index';
+import { smooth } from '../../../utils';
 
 export type Props = {
   // array of frequency data with values 0-255
@@ -9,6 +10,7 @@ export type Props = {
   // length of CSS transitions
   timeout: number;
   isTransitioning: boolean;
+  options?: Options;
 };
 
 export type WrappedProps = {
@@ -17,15 +19,10 @@ export type WrappedProps = {
   isTransitioning: boolean;
 };
 
-export type Options = {
-  smoothing?: number;
-};
-
 // all visualization components should be wrapped with this HOC
 export function wrap(
-  WrappedComponent: React.ComponentType<WrappedProps>,
-  options: Options = {}
-) {
+  WrappedComponent: React.ComponentType<WrappedProps>
+): React.ComponentType<Props> {
   return class extends React.Component<Props> {
     // bypass initial render because components that trigger
     // reflow in componentDidMount interrupt CSS transitions
@@ -34,7 +31,8 @@ export function wrap(
     static defaultProps: Props = {
       data: new Uint8Array(),
       timeout: TRANSITION_ANIMATION_LENGTH,
-      isTransitioning: false
+      isTransitioning: false,
+      options: {}
     };
 
     componentDidMount() {
@@ -44,21 +42,25 @@ export function wrap(
     }
 
     render() {
-      const { data, timeout, isTransitioning } = this.props;
       const { delayedAfterReflow } = this.state;
+
+      if (!delayedAfterReflow) {
+        return null;
+      }
+
+      const { data, timeout, isTransitioning, options = {} } = this.props;
+      const transitionStyle = { transition: `transform ${timeout}ms linear` };
 
       const renderedData = options.smoothing
         ? smooth(data, options.smoothing)
         : data;
 
       return (
-        delayedAfterReflow && (
-          <WrappedComponent
-            data={renderedData}
-            style={{ transition: `transform ${timeout}ms linear` }}
-            isTransitioning={isTransitioning}
-          />
-        )
+        <WrappedComponent
+          data={renderedData}
+          style={transitionStyle}
+          isTransitioning={isTransitioning}
+        />
       );
     }
   };

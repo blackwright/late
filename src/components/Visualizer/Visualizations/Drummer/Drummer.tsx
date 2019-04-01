@@ -1,6 +1,6 @@
 import React from 'react';
 import classNames from 'classnames';
-import * as Visualization from '../Visualization';
+import * as VisualizationHOC from '../VisualizationHOC';
 import './Drummer.scss';
 import { getRandomColor } from '../../../../utils/colors';
 
@@ -10,7 +10,7 @@ const MIN_FREQUENCY_VARIATION = 10;
 const COLOR_CHANGE_THRESHOLD = 0.3;
 const MIN_DELAY_BETWEEN_COLOR_CHANGE = 200;
 
-class Drummer extends React.Component<Visualization.WrappedProps> {
+class Drummer extends React.Component<VisualizationHOC.WrappedProps> {
   state = { size: 0 };
 
   color = getRandomColor();
@@ -48,7 +48,10 @@ class Drummer extends React.Component<Visualization.WrappedProps> {
       let freqKey = 0;
       while (freqKey < NUM_DRUMMERS) {
         const ceiling = numPerSlice * (freqKey + 1);
-        if (Math.abs(freqData - 128) > MIN_FREQUENCY_VARIATION && freqData <= ceiling) {
+        if (
+          Math.abs(freqData - 128) > MIN_FREQUENCY_VARIATION &&
+          freqData <= ceiling
+        ) {
           freqMap[freqKey] += 1;
           break;
         }
@@ -91,7 +94,9 @@ class Drummer extends React.Component<Visualization.WrappedProps> {
             opacity: ((NUM_DRUMMERS - i) / NUM_DRUMMERS) * 0.5 * 0.25
           }}
         >
-          <div className={classNames('beat', { hit: hitCount > MIN_HIT_COUNT })} />
+          <div
+            className={classNames('beat', { hit: hitCount > MIN_HIT_COUNT })}
+          />
         </div>
       );
     });
@@ -105,4 +110,4 @@ class Drummer extends React.Component<Visualization.WrappedProps> {
   }
 }
 
-export default Visualization.wrap(Drummer, { smoothing: 200 });
+export default VisualizationHOC.wrap(Drummer);

@@ -1,5 +1,5 @@
 import React from 'react';
-import * as Visualization from '../Visualization';
+import * as VisualizationHOC from '../VisualizationHOC';
 import { getRandomColorTriple } from '../../../../utils/colors';
 import './Waveform.scss';
 
@@ -7,7 +7,7 @@ const LINE_WIDTH = 10;
 const LINE_X_OFFSET = 0;
 const LINE_Y_OFFSET = 5;
 
-class Waveform extends React.Component<Visualization.WrappedProps> {
+class Waveform extends React.Component<VisualizationHOC.WrappedProps> {
   private ref: React.RefObject<HTMLCanvasElement> = React.createRef();
   private canvas?: HTMLCanvasElement;
   private ctx?: CanvasRenderingContext2D;
@@ -67,7 +67,9 @@ class Waveform extends React.Component<Visualization.WrappedProps> {
       ctx.moveTo(x, canvas.height / 2);
 
       data.forEach(dataElement => {
-        const y = (dataElement / 255.0) * canvas.height - (LINE_Y_OFFSET * colors.length) / 2;
+        const y =
+          (dataElement / 255.0) * canvas.height -
+          (LINE_Y_OFFSET * colors.length) / 2;
         ctx.lineTo(x, y + i * ((LINE_Y_OFFSET * colors.length) / 2));
         x += sliceWidth;
       });
@@ -96,4 +98,4 @@ class Waveform extends React.Component<Visualization.WrappedProps> {
   }
 }
 
-export default Visualization.wrap(Waveform, { smoothing: 100 });
+export default VisualizationHOC.wrap(Waveform);

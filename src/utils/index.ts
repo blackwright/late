@@ -27,3 +27,9 @@ export function smooth(data: Uint8Array, range: number): Uint8Array {
     return avg(dataToAverage);
   });
 }
+
+export function isMobileDevice(): boolean {
+  return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+    navigator.userAgent
+  );
+}

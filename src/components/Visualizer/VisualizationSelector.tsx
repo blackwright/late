@@ -2,8 +2,11 @@ import React from 'react';
 import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
 import { TransitionGroup, CSSTransition } from 'react-transition-group';
-import * as Visualization from './Visualizations/Visualization';
-import Visualizations from './Visualizations';
+import * as VisualizationHOC from './Visualizations/VisualizationHOC';
+import visualizations, {
+  isMobileDevice,
+  MobileDisabled
+} from './Visualizations';
 import { modulo } from '../../utils';
 import * as Actions from '../../../src/store/actions';
 import { StoreState } from '../../../src/store/types';
@@ -14,7 +17,7 @@ type Props = {
   data: Uint8Array;
 };
 
-type DynamicChildProps = Visualization.Props & { classNames: string };
+type DynamicChildProps = VisualizationHOC.Props & { classNames: string };
 
 const dynamicChildFactory = (classNames?: string) => (
   child: React.ReactElement<DynamicChildProps>
@@ -50,10 +53,15 @@ const VisualizationSelector: React.FunctionComponent<
     ? `visualization-${transitionClassName}`
     : undefined;
 
-  const visualizationIndex = modulo(currentIndex, Visualizations.length);
+  const index = modulo(currentIndex, visualizations.length);
+  const intendedVisualization = visualizations[index];
 
-  const VisualizationComponent: React.ComponentType<Visualization.Props> =
-    Visualizations[visualizationIndex];
+  const selectedVisualization =
+    intendedVisualization.options &&
+    intendedVisualization.options.mobileDisabled &&
+    isMobileDevice
+      ? MobileDisabled
+      : intendedVisualization;
 
   return (
     <TransitionGroup
@@ -61,7 +69,7 @@ const VisualizationSelector: React.FunctionComponent<
       childFactory={dynamicChildFactory(classNameRoot)}
     >
       <CSSTransition
-        key={visualizationIndex}
+        key={index}
         timeout={TRANSITION_ANIMATION_LENGTH}
         classNames={classNameRoot || ''}
         onExit={startTransition}
@@ -69,10 +77,11 @@ const VisualizationSelector: React.FunctionComponent<
         mountOnEnter
         unmountOnExit
       >
-        <VisualizationComponent
+        <selectedVisualization.component
           data={data}
           isTransitioning={isTransitioning}
           timeout={TRANSITION_ANIMATION_LENGTH}
+          options={selectedVisualization.options}
         />
       </CSSTransition>
     </TransitionGroup>

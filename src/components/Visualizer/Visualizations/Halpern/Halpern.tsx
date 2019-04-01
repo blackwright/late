@@ -1,6 +1,11 @@
 import React from 'react';
-import { Vector3, SphereGeometry, BufferGeometry } from 'three';
-import * as Visualization from '../Visualization';
+import {
+  Vector3,
+  SphereGeometry,
+  BufferGeometry,
+  BufferAttribute
+} from 'three';
+import * as VisualizationHOC from '../VisualizationHOC';
 import sceneManager from './three/sceneManager';
 import cloneDeep from 'lodash.clonedeep';
 import './Halpern.scss';
@@ -10,7 +15,7 @@ const FOCUSED_DATA_INDEX = 512;
 const VERTEX_SEGMENT_WEIGHT_COEFFICIENT = 0.1;
 const BASELINE_VERTEX_SCALAR_FACTOR = 1;
 
-class Halpern extends React.Component<Visualization.WrappedProps> {
+class Halpern extends React.Component<VisualizationHOC.WrappedProps> {
   private rendererContainer?: HTMLDivElement;
   private originalVertices?: Vector3[];
   private getSphereGeometry?: () => SphereGeometry;
@@ -96,7 +101,7 @@ class Halpern extends React.Component<Visualization.WrappedProps> {
 
     // inform three.js that vertices should be repositioned,
     // final render is handled in sceneManager animate loop
-    geometry.verticesNeedUpdate = true;
+    (pointGeometry.attributes.position as BufferAttribute).needsUpdate = true;
   };
 
   render() {
@@ -110,4 +115,4 @@ class Halpern extends React.Component<Visualization.WrappedProps> {
   }
 }
 
-export default Visualization.wrap(Halpern, { smoothing: 128 });
+export default VisualizationHOC.wrap(Halpern);
