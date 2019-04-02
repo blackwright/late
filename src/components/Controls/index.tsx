@@ -124,6 +124,7 @@ class Controls extends Component<Props, State> {
           onMouseMove={this.onMouseMove}
           className={classNames({ show: showOverlay })}
         >
+          <h1 id="title">LTLY</h1>
           <div className="navigation">
             <div
               className="arrow-container"
