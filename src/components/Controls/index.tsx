@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
-import Loading from '../Loading/Loading';
+import Loading from '../Loading';
 import * as Actions from '../../store/actions';
 import './Controls.scss';
 
@@ -141,9 +141,9 @@ class Controls extends Component<Props, State> {
                 <polyline
                   fill="none"
                   stroke="#FFF"
-                  stroke-width="3"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
+                  strokeWidth="3"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
                   points="
               45.63,75.8 0.375,38.087 45.63,0.375 "
                 />
@@ -165,9 +165,9 @@ class Controls extends Component<Props, State> {
                 <polyline
                   fill="none"
                   stroke="#FFF"
-                  stroke-width="3"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
+                  strokeWidth="3"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
                   points="
                 0.375,0.375 45.63,38.087 0.375,75.8 "
                 />

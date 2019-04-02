@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import Analyser from './components/Analyser/Analyser';
-import Controls from './components/Controls/Controls';
+import Analyser from './components/Analyser';
+import Controls from './components/Controls';
 
 const AUDIO_SERVER_URL =
   process.env.NODE_ENV === 'production'

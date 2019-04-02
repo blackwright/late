@@ -12,7 +12,6 @@ import { pointColor } from './colors';
 
 export function createPolygon(): Mesh {
   const geometry = new SphereGeometry(40, 100, 100);
-  geometry.computeVertexNormals();
 
   const material = new MeshLambertMaterial({
     wireframe: true
@@ -39,6 +38,7 @@ export function createPoints(polygon: Mesh): Points {
 
   const geometry = new BufferGeometry();
   geometry.addAttribute('position', new BufferAttribute(positions, 3));
+  (geometry.attributes.position as BufferAttribute).dynamic = true;
 
   const material = new PointsMaterial({
     size: 0.25,

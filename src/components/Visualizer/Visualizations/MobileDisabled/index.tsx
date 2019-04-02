@@ -1,5 +1,5 @@
 import React from 'react';
-import * as VisualizationHOC from './VisualizationHOC';
+import * as VisualizationHOC from '../VisualizationHOC';
 import './MobileDisabled.scss';
 
 const MobileDisabled: React.FunctionComponent<

@@ -1,6 +1,6 @@
-import Waveform from './Waveform/Waveform';
-import Drummer from './Drummer/Drummer';
-import Halpern from './Halpern/Halpern';
+import Waveform from './Waveform';
+import Drummer from './Drummer';
+import Halpern from './Halpern';
 import MobileDisabledComponent from './MobileDisabled';
 import { Props } from './VisualizationHOC';
 import { isMobileDevice as isMobileDeviceCheck } from '../../../utils';
