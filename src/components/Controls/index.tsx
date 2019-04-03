@@ -6,7 +6,7 @@ import Loading from '../Loading';
 import * as Actions from '../../store/actions';
 import './Controls.scss';
 
-const CONTROLS_FADE_OUT_DELAY = 1000;
+const CONTROLS_FADE_OUT_DELAY = 1500;
 const TOUCH_WAS_CLICK_THRESHOLD = 250;
 
 type Props = ReturnType<typeof mapDispatchToProps> & {
@@ -80,12 +80,13 @@ class Controls extends Component<Props, State> {
   onPrev = (event: React.MouseEvent | React.TouchEvent) => {
     event.stopPropagation();
     this.props.goToPrevVisualization();
+    this.showOverlay();
   };
 
   onNext = (event: React.MouseEvent | React.TouchEvent) => {
-    console.log('onNext');
     event.stopPropagation();
     this.props.goToNextVisualization();
+    this.showOverlay();
   };
 
   doNothing = (event: React.MouseEvent) => {
