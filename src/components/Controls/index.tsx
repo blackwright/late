@@ -6,10 +6,13 @@ import Loading from '../Loading';
 import * as Actions from '../../store/actions';
 import './Controls.scss';
 
+const CONTROLS_FADE_OUT_DELAY = 1000;
+const TOUCH_WAS_CLICK_THRESHOLD = 250;
+
 type Props = ReturnType<typeof mapDispatchToProps> & {
   wantsToPlay: boolean;
   isPlaying: boolean;
-  onTogglePlay: () => void;
+  togglePlay: () => void;
 };
 
 type State = {
@@ -41,13 +44,13 @@ class Controls extends Component<Props, State> {
     if (
       event.nativeEvent.which === 1 &&
       this.lastTouchStartTimestamp &&
-      Date.now() - this.lastTouchStartTimestamp < 250
+      Date.now() - this.lastTouchStartTimestamp < TOUCH_WAS_CLICK_THRESHOLD
     ) {
-      this.props.onTogglePlay();
+      this.props.togglePlay();
     }
   };
 
-  onTouchStart = (event: React.TouchEvent) => {
+  recordTouchTimestamp = (event: React.TouchEvent) => {
     event.preventDefault();
     this.lastTouchStartTimestamp = Date.now();
   };
@@ -56,13 +59,13 @@ class Controls extends Component<Props, State> {
     event.preventDefault();
     if (
       this.lastTouchStartTimestamp &&
-      Date.now() - this.lastTouchStartTimestamp < 250
+      Date.now() - this.lastTouchStartTimestamp < TOUCH_WAS_CLICK_THRESHOLD
     ) {
-      this.props.onTogglePlay();
+      this.showOverlay();
     }
   };
 
-  onMouseMove = () => {
+  showOverlay = () => {
     window.clearTimeout(this.hideOverlayTimeoutId);
 
     this.setState({ showOverlay: true }, () => {
@@ -70,21 +73,22 @@ class Controls extends Component<Props, State> {
         if (!this.state.isArrowHovered) {
           this.setState({ showOverlay: false });
         }
-      }, 2000);
+      }, CONTROLS_FADE_OUT_DELAY);
     });
   };
 
-  onPrev = (event: React.MouseEvent<HTMLDivElement>) => {
+  onPrev = (event: React.MouseEvent | React.TouchEvent) => {
     event.stopPropagation();
     this.props.goToPrevVisualization();
   };
 
-  onNext = (event: React.MouseEvent<HTMLDivElement>) => {
+  onNext = (event: React.MouseEvent | React.TouchEvent) => {
+    console.log('onNext');
     event.stopPropagation();
     this.props.goToNextVisualization();
   };
 
-  doNothing = (event: React.MouseEvent<HTMLDivElement>) => {
+  doNothing = (event: React.MouseEvent) => {
     event.stopPropagation();
   };
 
@@ -108,27 +112,37 @@ class Controls extends Component<Props, State> {
   };
 
   render() {
-    const { wantsToPlay, isPlaying } = this.props;
+    const { wantsToPlay, isPlaying, togglePlay } = this.props;
     const { showOverlay } = this.state;
 
     return (
       <>
-        {!wantsToPlay && <div id="play" />}
         {wantsToPlay && !isPlaying && <Loading />}
         <div
           id="overlay"
           onMouseDown={this.onMouseDown}
           onMouseUp={this.onMouseUp}
-          onTouchStart={this.onTouchStart}
+          onTouchStart={this.recordTouchTimestamp}
           onTouchEnd={this.onTouchEnd}
-          onMouseMove={this.onMouseMove}
+          onMouseMove={this.showOverlay}
           className={classNames({ show: showOverlay })}
         >
           <h1 id="title">LTLY</h1>
+          {
+            <div
+              onClick={togglePlay}
+              onTouchStart={togglePlay}
+              className={classNames({
+                play: !wantsToPlay && !isPlaying,
+                pause: wantsToPlay && isPlaying
+              })}
+            />
+          }
           <div className="navigation">
             <div
               className="arrow-container"
               onClick={this.onPrev}
+              onTouchStart={this.onPrev}
               onMouseUp={this.doNothing}
               onMouseEnter={() => this.onToggleArrowHover(true)}
               onMouseLeave={() => this.onToggleArrowHover(false)}
@@ -153,6 +167,7 @@ class Controls extends Component<Props, State> {
             <div
               className="arrow-container"
               onClick={this.onNext}
+              onTouchStart={this.onNext}
               onMouseUp={this.doNothing}
               onMouseEnter={() => this.onToggleArrowHover(true)}
               onMouseLeave={() => this.onToggleArrowHover(false)}

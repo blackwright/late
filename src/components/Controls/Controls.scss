@@ -1,15 +1,3 @@
-#play {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 0;
-  height: 0;
-  border-style: solid;
-  border-width: 3rem 0 3rem 5rem;
-  border-color: transparent transparent transparent white;
-}
-
 #overlay {
   position: absolute;
   top: 0;
@@ -21,6 +9,38 @@
   justify-content: center;
   align-items: center;
   transition: opacity 250ms linear;
+  touch-action: none;
+
+  &.show {
+    opacity: 1;
+
+    .navigation {
+      padding: 0 2rem;
+    }
+  }
+
+  .play,
+  .pause {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 0;
+    height: 5rem;
+    z-index: 1;
+  }
+
+  .play {
+    border-style: solid;
+    border-width: 2.5rem 0 2.5rem 4rem;
+    border-color: transparent transparent transparent white;
+  }
+
+  .pause {
+    border-style: double;
+    border-width: 0 0 0 4rem;
+    border-color: white;
+  }
 
   #title {
     position: absolute;
@@ -35,14 +55,6 @@
     user-select: none;
   }
 
-  &.show {
-    opacity: 1;
-
-    .navigation {
-      padding: 0 1rem;
-    }
-  }
-
   .navigation {
     position: relative;
     display: flex;
@@ -53,12 +65,18 @@
   }
 
   .arrow-container {
+    padding: 1rem;
     cursor: pointer;
-    padding: 3rem;
+    touch-action: none;
+
+    @media screen and (max-width: 400px) {
+      transform: scale(0.625);
+    }
 
     .arrow polyline {
-      mix-blend-mode: difference;
       transition: all 250ms ease-in-out;
+      width: 100%;
+      height: 100%;
     }
 
     &:hover .arrow polyline,

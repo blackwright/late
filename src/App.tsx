@@ -55,7 +55,7 @@ export default class App extends Component<Props, State> {
     this.setState({ context, source });
   };
 
-  onTogglePlay = () => {
+  togglePlay = () => {
     if (this.audioElement == null) {
       this.initialize();
     }
@@ -111,7 +111,7 @@ export default class App extends Component<Props, State> {
         <Controls
           wantsToPlay={wantsToPlay}
           isPlaying={isPlaying}
-          onTogglePlay={this.onTogglePlay}
+          togglePlay={this.togglePlay}
         />
       </>
     );

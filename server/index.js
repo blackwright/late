@@ -8,14 +8,17 @@ const app = express();
 
 app.use(cors());
 
-const URL = 'https://www.youtube.com/watch?v=hHW1oY26kxQ';
+const URLs = [
+  'https://www.youtube.com/watch?v=hHW1oY26kxQ',
+  'https://www.youtube.com/watch?v=tNkZsRW7h2c'
+];
 
 const options = { quality: [91, 92, 93, 94, 95] };
 
 app.use('/', (req, res) => {
   res.setHeader('Content-type', 'audio/mpeg');
 
-  const stream = ytdl(URL, options);
+  const stream = ytdl(URLs[0], options);
 
   ffmpeg(stream)
     .noVideo()
