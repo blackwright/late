@@ -21,12 +21,12 @@ const visualizations: SelectableVisualization[] = [
   { component: Waveform },
   {
     component: Drummer,
-    options: { smoothing: 200 }
+    options: { smoothing: 64 }
   },
   {
     component: Halpern,
     options: {
-      smoothing: 128,
+      smoothing: 64,
       mobileDisabled: true
     }
   }

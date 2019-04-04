@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import VisualizationSelector from '../Visualizer/VisualizationSelector';
 
+const DATA_FFT_SIZE = 256;
+
 type Props = {
   context: AudioContext;
   source: MediaElementAudioSourceNode;
@@ -14,13 +16,14 @@ export default class Analyser extends Component<Props, State> {
   state = { data: new Uint8Array() };
 
   analyser = this.props.context.createAnalyser();
-  dataArray = new Uint8Array(this.analyser.frequencyBinCount);
+  dataArray = new Uint8Array();
   currentAnimationFrameId?: number;
 
   componentDidMount() {
     const { context, source } = this.props;
 
-    this.analyser.fftSize = 1024;
+    this.analyser.fftSize = DATA_FFT_SIZE;
+    this.dataArray = new Uint8Array(DATA_FFT_SIZE);
     this.analyser.smoothingTimeConstant = 1;
 
     source.connect(this.analyser);

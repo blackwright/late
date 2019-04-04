@@ -28,6 +28,7 @@ class Controls extends Component<Props, State> {
 
   componentDidMount() {
     document.addEventListener('keydown', this.onKeyDown);
+    this.showOverlay();
   }
 
   componentWillUnmount() {
@@ -131,7 +132,6 @@ class Controls extends Component<Props, State> {
           <h1 id="title">LTLY</h1>
           {
             <div
-              onClick={togglePlay}
               onTouchStart={togglePlay}
               className={classNames({
                 play: !wantsToPlay && !isPlaying,

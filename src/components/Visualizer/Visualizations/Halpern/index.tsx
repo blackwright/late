@@ -4,14 +4,14 @@ import * as VisualizationHOC from '../VisualizationHOC';
 import sceneManager from './three/sceneManager';
 import './Halpern.scss';
 
-const RIPPLE_SPEED = 12;
-const FOCUSED_DATA_INDEX = 512;
+const RIPPLE_SPEED = 2;
 const VERTEX_SEGMENT_WEIGHT_COEFFICIENT = 0.1;
 const BASELINE_VERTEX_SCALAR_FACTOR = 1;
 
 class Halpern extends React.Component<VisualizationHOC.WrappedProps> {
   private rendererContainer?: HTMLDivElement;
   private originalVertices?: ArrayLike<number>;
+  private focusedDataIndex?: number;
   private sphereDataSegments?: number;
   private vertexSegmentLength?: number;
   private getHalpernGeometry?: () => BufferGeometry;
@@ -22,6 +22,7 @@ class Halpern extends React.Component<VisualizationHOC.WrappedProps> {
 
   componentDidMount() {
     this.rendererContainer = this.rendererRef.current!;
+
     const {
       animate,
       stop,
@@ -29,10 +30,12 @@ class Halpern extends React.Component<VisualizationHOC.WrappedProps> {
       getHalpernGeometry
     } = sceneManager(this.rendererContainer);
 
+    const { data } = this.props;
+
     this.onUnmount = stop;
 
     this.sphereDataSegments = Math.floor(
-      1024 / getSphereGeometry().parameters.widthSegments
+      data.length / getSphereGeometry().parameters.widthSegments
     );
 
     // split vertices up into segments belonging to slices of x cross sections,
@@ -46,7 +49,9 @@ class Halpern extends React.Component<VisualizationHOC.WrappedProps> {
     this.originalVertices = (getHalpernGeometry().attributes.position
       .array as Float32Array).slice(0);
 
-    this.focusedData = new Array(this.props.data.length).fill(128);
+    this.focusedData = new Array(data.length).fill(128);
+
+    this.focusedDataIndex = Math.floor(data.length / 2);
 
     animate();
   }
@@ -66,7 +71,7 @@ class Halpern extends React.Component<VisualizationHOC.WrappedProps> {
 
     this.focusedData.splice(0, RIPPLE_SPEED);
     this.focusedData = this.focusedData.concat(
-      new Array(RIPPLE_SPEED).fill(data[FOCUSED_DATA_INDEX])
+      new Array(RIPPLE_SPEED).fill(data[this.focusedDataIndex!])
     );
 
     const halpernBufferPositions = this.getHalpernGeometry().getAttribute(
