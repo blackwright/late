@@ -24,9 +24,9 @@
   "scripts": {
     "client": "react-scripts start",
     "server": "node server/index.js",
-    "build": "react-scripts build",
+    "build": "node increment-build && react-scripts build",
     "predeploy": "react-scripts build",
-    "deploy": "gh-pages -d build",
+    "deploy": "node increment-build && gh-pages -d build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "start": "node_modules/.bin/concurrently --kill-others \"npm run server\" \"npm run client\""

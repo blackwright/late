@@ -19,6 +19,13 @@
     }
   }
 
+  #version {
+    position: absolute;
+    bottom: 2rem;
+    right: 2rem;
+    color: white;
+  }
+
   .play,
   .pause {
     position: absolute;
@@ -47,7 +54,7 @@
     font-weight: 600;
     font-size: 1.5rem;
     top: 3rem;
-    left: 50%;
+    left: calc(50% + 1rem);
     transform: translateX(-50%);
     color: #eee;
     text-transform: uppercase;

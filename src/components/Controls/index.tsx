@@ -4,12 +4,14 @@ import { connect } from 'react-redux';
 import classNames from 'classnames';
 import Loading from '../Loading';
 import * as Actions from '../../store/actions';
+import * as versionInfo from '../../metadata/build-version.json';
 import './Controls.scss';
 
 const CONTROLS_FADE_OUT_DELAY = 1500;
 const TOUCH_WAS_CLICK_THRESHOLD = 250;
 
 type Props = ReturnType<typeof mapDispatchToProps> & {
+  context?: AudioContext;
   wantsToPlay: boolean;
   isPlaying: boolean;
   togglePlay: () => void;
@@ -35,6 +37,13 @@ class Controls extends Component<Props, State> {
     document.removeEventListener('keydown', this.onKeyDown);
   }
 
+  togglePlay = () => {
+    const { context, togglePlay } = this.props;
+
+    context && context.resume();
+    togglePlay();
+  };
+
   onMouseDown = (event: React.MouseEvent) => {
     if (event.nativeEvent.which === 1) {
       this.lastTouchStartTimestamp = Date.now();
@@ -47,7 +56,7 @@ class Controls extends Component<Props, State> {
       this.lastTouchStartTimestamp &&
       Date.now() - this.lastTouchStartTimestamp < TOUCH_WAS_CLICK_THRESHOLD
     ) {
-      this.props.togglePlay();
+      this.togglePlay();
     }
   };
 
@@ -114,7 +123,7 @@ class Controls extends Component<Props, State> {
   };
 
   render() {
-    const { wantsToPlay, isPlaying, togglePlay } = this.props;
+    const { wantsToPlay, isPlaying } = this.props;
     const { showOverlay } = this.state;
 
     return (
@@ -130,9 +139,10 @@ class Controls extends Component<Props, State> {
           className={classNames({ show: showOverlay })}
         >
           <h1 id="title">LTLY</h1>
+          <div id="version">build {versionInfo.version}</div>
           {
             <div
-              onTouchStart={togglePlay}
+              onTouchEnd={this.togglePlay}
               className={classNames({
                 play: !wantsToPlay && !isPlaying,
                 pause: wantsToPlay && isPlaying
