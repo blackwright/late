@@ -25,10 +25,7 @@ const visualizations: SelectableVisualization[] = [
   },
   {
     component: Halpern,
-    options: {
-      smoothing: 64,
-      mobileDisabled: true
-    }
+    options: { smoothing: 64 }
   }
 ];
 
