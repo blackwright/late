@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useRef, useLayoutEffect } from 'react';
 import classNames from 'classnames';
 import * as VisualizationHOC from '../VisualizationHOC';
 import './Drummer.scss';
@@ -8,110 +8,109 @@ import { DATA_SIZE } from '../../../../config';
 const NUM_DRUMMERS = 13;
 const MIN_HIT_COUNT = 0.04;
 const MIN_FREQUENCY_VARIATION = 10;
-const COLOR_CHANGE_THRESHOLD = 40;
+const COLOR_CHANGE_THRESHOLD = 70;
 const MIN_DELAY_BETWEEN_COLOR_CHANGE = 200;
 
 const minHitCount = MIN_HIT_COUNT * DATA_SIZE;
 const colorChangeThreshold = COLOR_CHANGE_THRESHOLD / DATA_SIZE;
 
-class Drummer extends React.Component<VisualizationHOC.WrappedProps> {
-  state = { size: 0 };
+const Drummer: React.FunctionComponent<VisualizationHOC.WrappedProps> = ({
+  data,
+  isTransitioning,
+  style
+}) => {
+  const [size, setSize] = useState(0);
 
-  color = getRandomColor();
-  lastColorChangeTimestamp = Date.now();
+  const colorRef = useRef({
+    value: getRandomColor(),
+    lastChangedTimestamp: Date.now()
+  });
 
-  componentDidMount() {
-    window.addEventListener('resize', this.onResize);
-    this.onResize();
+  useLayoutEffect(() => {
+    const onResize = () => {
+      const { innerWidth, innerHeight } = window;
+      const maxSideLength = Math.max(innerWidth, innerHeight);
+      setSize(maxSideLength * 2);
+    };
+
+    onResize();
+
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
+  }, []);
+
+  const color = colorRef.current;
+
+  const freqMap: { [key: string]: number } = {};
+  const numPerSlice = 256 / NUM_DRUMMERS;
+
+  let freqKey = 0;
+  while (freqKey < NUM_DRUMMERS) {
+    freqMap[freqKey] = 0;
+    freqKey += 1;
   }
 
-  componentWillUnmount() {
-    window.removeEventListener('resize', this.onResize);
-  }
-
-  onResize = () => {
-    const { innerWidth, innerHeight } = window;
-    const maxSideLength = Math.max(innerWidth, innerHeight);
-    this.setState({ size: maxSideLength * 2 });
-  };
-
-  render() {
-    const { data, isTransitioning } = this.props;
-    const { size } = this.state;
-
-    const freqMap: { [key: string]: number } = {};
-    const numPerSlice = 256 / NUM_DRUMMERS;
-
+  data.forEach(freqData => {
     let freqKey = 0;
     while (freqKey < NUM_DRUMMERS) {
-      freqMap[freqKey] = 0;
+      const ceiling = numPerSlice * (freqKey + 1);
+      if (
+        Math.abs(freqData - 128) > MIN_FREQUENCY_VARIATION &&
+        freqData <= ceiling
+      ) {
+        freqMap[freqKey] += 1;
+        break;
+      }
       freqKey += 1;
     }
+  });
 
-    data.forEach(freqData => {
-      let freqKey = 0;
-      while (freqKey < NUM_DRUMMERS) {
-        const ceiling = numPerSlice * (freqKey + 1);
-        if (
-          Math.abs(freqData - 128) > MIN_FREQUENCY_VARIATION &&
-          freqData <= ceiling
-        ) {
-          freqMap[freqKey] += 1;
-          break;
-        }
-        freqKey += 1;
-      }
-    });
+  // determine if we should change the background color by
+  // comparing total drummer hits against a minimum threshold
+  const totalHits = Object.values(freqMap).reduce((acc, hitCount) => {
+    return hitCount > MIN_HIT_COUNT ? acc + 1 : acc;
+  }, 0);
 
-    // determine if we should change the background color by
-    // comparing total drummer hits against a minimum threshold
-    const totalHits = Object.values(freqMap).reduce((acc, hitCount) => {
-      return hitCount > MIN_HIT_COUNT ? acc + 1 : acc;
-    }, 0);
+  // space out background color changes so they're not jarring
+  const now = Date.now();
+  if (
+    !isTransitioning &&
+    totalHits / NUM_DRUMMERS > colorChangeThreshold &&
+    now - color.lastChangedTimestamp > MIN_DELAY_BETWEEN_COLOR_CHANGE
+  ) {
+    let newColor;
+    do {
+      newColor = getRandomColor();
+    } while (color.value === newColor);
 
-    // space out background color changes so they're not jarring
-    const now = Date.now();
-    if (
-      !isTransitioning &&
-      totalHits / NUM_DRUMMERS > colorChangeThreshold &&
-      now - this.lastColorChangeTimestamp > MIN_DELAY_BETWEEN_COLOR_CHANGE
-    ) {
-      let newColor;
-      do {
-        newColor = getRandomColor();
-      } while (this.color === newColor);
+    color.value = newColor;
+    color.lastChangedTimestamp = now;
+  }
 
-      this.color = newColor;
-      this.lastColorChangeTimestamp = now;
-    }
-
-    const drummers = Object.entries(freqMap).map(([freqKey, hitCount], i) => {
-      const drummerContainerSize = ((1 + +freqKey) * size) / NUM_DRUMMERS;
-
-      return (
-        <div
-          key={freqKey}
-          className="drummer-container"
-          style={{
-            width: `${drummerContainerSize}px`,
-            height: `${drummerContainerSize}px`,
-            opacity: ((NUM_DRUMMERS - i) / NUM_DRUMMERS) * 0.5 * 0.25
-          }}
-        >
-          <div
-            className={classNames('beat', { hit: hitCount > minHitCount })}
-          />
-        </div>
-      );
-    });
+  const drummers = Object.entries(freqMap).map(([freqKey, hitCount], i) => {
+    const drummerContainerSize = ((1 + +freqKey) * size) / NUM_DRUMMERS;
 
     return (
-      <div className="visualization drummer" style={this.props.style}>
-        {drummers}
-        <div className="overlay" style={{ backgroundColor: this.color }} />
+      <div
+        key={freqKey}
+        className="drummer-container"
+        style={{
+          width: `${drummerContainerSize}px`,
+          height: `${drummerContainerSize}px`,
+          opacity: ((NUM_DRUMMERS - i) / NUM_DRUMMERS) * 0.5 * 0.25
+        }}
+      >
+        <div className={classNames('beat', { hit: hitCount > minHitCount })} />
       </div>
     );
-  }
-}
+  });
+
+  return (
+    <div className="visualization drummer" style={style}>
+      {drummers}
+      <div className="overlay" style={{ backgroundColor: color.value }} />
+    </div>
+  );
+};
 
 export default VisualizationHOC.wrap(Drummer);

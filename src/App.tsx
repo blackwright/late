@@ -1,7 +1,8 @@
-import React, { Component } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import Analyser from './components/Analyser';
 import Controls from './components/Controls';
 import NoWebAudioApi from './components/NoWebAudioApi';
+import { useStateRef } from './utils/hooks';
 
 const AUDIO_SERVER_URL =
   process.env.NODE_ENV === 'production'
@@ -10,136 +11,94 @@ const AUDIO_SERVER_URL =
 
 type Props = {};
 
-type State = {
-  wantsToPlay: boolean;
-  isPlaying: boolean;
-  context?: AudioContext;
-  source?: MediaElementAudioSourceNode;
-  isContextUnavailable: boolean;
-};
+const App: React.FunctionComponent<Props> = props => {
+  const [wantsToPlay, setWantsToPlay] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [context, setContext, contextRef] = useStateRef<
+    AudioContext | undefined
+  >(undefined);
+  const [source, setSource] = useState<MediaElementAudioSourceNode>();
+  const [isContextUnavailable, setIsContextUnavailable] = useState(false);
 
-type AudioEventListeners = Array<{
-  event: string;
-  listener: () => void;
-}>;
+  const audioRef = useRef<HTMLAudioElement>(null);
 
-export default class App extends Component<Props, State> {
-  state: State = {
-    wantsToPlay: false,
-    isPlaying: false,
-    context: undefined,
-    source: undefined,
-    isContextUnavailable: false
-  };
-
-  private audioRef: React.RefObject<HTMLAudioElement> = React.createRef();
-  private audioEventListeners: AudioEventListeners = [];
-
-  audioElement?: HTMLAudioElement;
-
-  componentDidMount() {
-    this.audioElement = this.audioRef.current!;
-
+  // disable if AudioContext is unavailable
+  useEffect(() => {
     try {
       new window.AudioContext();
     } catch (err) {
-      this.setState({ isContextUnavailable: true });
+      setIsContextUnavailable(true);
     }
-  }
+  }, []);
 
-  componentWillUnmount() {
-    this.removeAudioEventListeners();
-  }
+  // attach audio event listeners
+  useEffect(() => {
+    const audioElement = audioRef.current!;
 
-  initializeAudioContext = () => {
-    const audioElement = this.audioRef.current!;
-    this.audioElement = audioElement;
+    const onAudioPlay = () => setIsPlaying(true);
+    const onAudioPause = () => setIsPlaying(false);
+    const onAudioError = console.error;
 
-    const context = new (window.AudioContext ||
-      (window as any).webkitAudioContext)();
+    audioElement.addEventListener('playing', onAudioPlay);
+    audioElement.addEventListener('pause', onAudioPause);
+    audioElement.addEventListener('error', onAudioError);
+
+    return () => {
+      audioElement.removeEventListener('playing', onAudioPlay);
+      audioElement.removeEventListener('pause', onAudioPause);
+      audioElement.removeEventListener('error', onAudioError);
+    };
+  }, []);
+
+  const initializeAudioContext = useCallback(() => {
+    const audioElement = audioRef.current!;
+    const context = new window.AudioContext();
     const source = context.createMediaElementSource(audioElement);
 
-    this.addAudioEventListeners([
-      { event: 'playing', listener: this.onAudioPlay },
-      { event: 'pause', listener: this.onAudioPause },
-      { event: 'error', listener: this.onAudioError }
-    ]);
+    setContext(context);
+    setSource(source);
+  }, [audioRef.current]);
 
-    this.setState({ context, source });
-  };
+  const togglePlay = useCallback(() => {
+    const audioElement = audioRef.current!;
 
-  togglePlay = () => {
-    if (this.audioElement!.paused) {
-      this.setState({ wantsToPlay: true });
-      this.audioElement!.play();
+    if (audioElement.paused) {
+      setWantsToPlay(true);
+      audioElement.play();
 
-      if (!this.state.context) {
-        this.initializeAudioContext();
+      if (!contextRef.current) {
+        initializeAudioContext();
       }
     } else {
-      this.setState({ wantsToPlay: false });
-      this.audioElement!.pause();
+      setWantsToPlay(false);
+      audioElement.pause();
     }
-  };
+  }, [audioRef.current]);
 
-  onAudioPlay = () => this.setState({ isPlaying: true });
-
-  onAudioPause = () => this.setState({ isPlaying: false });
-
-  onAudioError = console.error;
-
-  addAudioEventListeners = (eventListeners: AudioEventListeners) => {
-    for (const eventListener of eventListeners) {
-      this.audioEventListeners.push(eventListener);
-      this.audioElement!.addEventListener(
-        eventListener.event,
-        eventListener.listener
-      );
-    }
-  };
-
-  removeAudioEventListeners = () => {
-    for (const eventListener of this.audioEventListeners) {
-      this.audioElement!.removeEventListener(
-        eventListener.event,
-        eventListener.listener
-      );
-    }
-    this.audioEventListeners = [];
-  };
-
-  render() {
-    const {
-      wantsToPlay,
-      isPlaying,
-      context,
-      source,
-      isContextUnavailable
-    } = this.state;
-
-    if (isContextUnavailable) {
-      return <NoWebAudioApi />;
-    }
-
-    return (
-      <>
-        <audio
-          ref={this.audioRef}
-          id="audioElement"
-          src={AUDIO_SERVER_URL}
-          preload={'auto'}
-          crossOrigin="anonymous"
-        />
-
-        {context && source && <Analyser context={context} source={source} />}
-
-        <Controls
-          context={context}
-          wantsToPlay={wantsToPlay}
-          isPlaying={isPlaying}
-          togglePlay={this.togglePlay}
-        />
-      </>
-    );
+  if (isContextUnavailable) {
+    return <NoWebAudioApi />;
   }
-}
+
+  return (
+    <>
+      <audio
+        ref={audioRef}
+        id="audioElement"
+        src={AUDIO_SERVER_URL}
+        preload={'auto'}
+        crossOrigin="anonymous"
+      />
+
+      {context && source && <Analyser context={context} source={source} />}
+
+      <Controls
+        context={context}
+        wantsToPlay={wantsToPlay}
+        isPlaying={isPlaying}
+        togglePlay={togglePlay}
+      />
+    </>
+  );
+};
+
+export default App;

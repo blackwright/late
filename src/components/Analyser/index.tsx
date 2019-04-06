@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { useState, useLayoutEffect, useRef } from 'react';
 import VisualizationSelector from '../Visualizer/VisualizationSelector';
 import { FFT_SIZE } from '../../config';
 
@@ -7,47 +7,37 @@ type Props = {
   source: MediaElementAudioSourceNode;
 };
 
-type State = {
-  data: Uint8Array;
+const Analyser: React.FunctionComponent<Props> = ({ context, source }) => {
+  const [data, setData] = useState(new Uint8Array());
+
+  const animationFrameIdRef = useRef<number>();
+
+  useLayoutEffect(() => {
+    const analyser = context.createAnalyser();
+    analyser.fftSize = FFT_SIZE;
+    analyser.smoothingTimeConstant = 0;
+
+    source.connect(analyser);
+    analyser.connect(context.destination);
+
+    const tick = () => {
+      const dataContainer = new Uint8Array(FFT_SIZE);
+      analyser.getByteTimeDomainData(dataContainer);
+      setData(dataContainer);
+      animationFrameIdRef.current = window.requestAnimationFrame(tick);
+    };
+
+    animationFrameIdRef.current = window.requestAnimationFrame(tick);
+
+    return () => {
+      animationFrameIdRef.current != null &&
+        window.cancelAnimationFrame(animationFrameIdRef.current);
+      analyser && analyser.disconnect();
+      source && source.disconnect();
+    };
+  }, []);
+
+  return <VisualizationSelector data={data} />;
 };
 
-export default class Analyser extends Component<Props, State> {
-  state = { data: new Uint8Array() };
-
-  analyser = this.props.context.createAnalyser();
-  dataArray = new Uint8Array();
-  currentAnimationFrameId?: number;
-
-  componentDidMount() {
-    const { context, source } = this.props;
-
-    this.analyser.fftSize = FFT_SIZE;
-    this.dataArray = new Uint8Array(FFT_SIZE);
-    this.analyser.smoothingTimeConstant = 0;
-
-    source.connect(this.analyser);
-    this.analyser.connect(context.destination);
-    this.currentAnimationFrameId = window.requestAnimationFrame(this.tick);
-  }
-
-  componentWillUnmount() {
-    const { source } = this.props;
-
-    this.currentAnimationFrameId != null &&
-      window.cancelAnimationFrame(this.currentAnimationFrameId);
-    this.analyser != null && this.analyser.disconnect();
-    source && source.disconnect();
-  }
-
-  tick = () => {
-    this.analyser.getByteTimeDomainData(this.dataArray);
-    this.setState({ data: this.dataArray });
-    this.currentAnimationFrameId = window.requestAnimationFrame(this.tick);
-  };
-
-  render() {
-    const { data } = this.state;
-
-    return <VisualizationSelector data={data} />;
-  }
-}
+export default Analyser;

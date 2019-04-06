@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useLayoutEffect, useRef } from 'react';
 import * as VisualizationHOC from '../VisualizationHOC';
 import { getRandomColorTriple } from '../../../../utils/colors';
 import './Waveform.scss';
@@ -7,50 +7,53 @@ const LINE_WIDTH = 10;
 const LINE_X_OFFSET = 0;
 const LINE_Y_OFFSET = 5;
 
-class Waveform extends React.Component<VisualizationHOC.WrappedProps> {
-  private ref: React.RefObject<HTMLCanvasElement> = React.createRef();
-  private canvas?: HTMLCanvasElement;
-  private ctx?: CanvasRenderingContext2D;
-  private intervalId?: number;
-  private resizeTimeoutId?: number;
+const Waveform: React.FunctionComponent<VisualizationHOC.WrappedProps> = ({
+  data,
+  style
+}) => {
+  const canvasEl = useRef<HTMLCanvasElement>(null);
 
-  componentDidMount() {
-    window.addEventListener('resize', this.onResize);
+  useLayoutEffect(() => {
+    const canvas = canvasEl.current!;
 
-    this.canvas = this.ref.current!;
-    this.canvas.width = window.innerWidth;
-    this.canvas.height = window.innerHeight;
+    const resizeCanvas = () => {
+      const { innerWidth, innerHeight } = window;
+      canvas.width = innerWidth;
+      canvas.height = innerHeight;
+    };
 
-    this.ctx = this.canvas.getContext('2d') as CanvasRenderingContext2D;
-    this.ctx.fillStyle = '#050505';
-    this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+    resizeCanvas();
 
-    this.intervalId = window.setInterval(this.fadeOut, 7);
-  }
+    window.addEventListener('resize', resizeCanvas);
+    return () => window.removeEventListener('resize', resizeCanvas);
+  }, []);
 
-  componentDidUpdate() {
-    this.paint();
-  }
+  // initial paint to match fade out color from rounding error
+  useLayoutEffect(() => {
+    const canvas = canvasEl.current!;
+    const ctx = canvas.getContext('2d')!;
 
-  componentWillUnmount() {
-    window.clearInterval(this.intervalId);
-    window.removeEventListener('resize', this.onResize);
-  }
+    ctx.fillStyle = '#050505';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+  }, []);
 
-  onResize = () => {
-    window.clearTimeout(this.resizeTimeoutId);
-    const canvas = this.canvas!;
+  useLayoutEffect(() => {
+    const canvas = canvasEl.current!;
+    const ctx = canvas.getContext('2d')!;
 
-    this.resizeTimeoutId = window.setTimeout(() => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-    }, 500);
-  };
+    const fadeOut = () => {
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+    };
 
-  paint = () => {
-    const { data } = this.props;
-    const canvas = this.canvas!;
-    const ctx = this.ctx!;
+    const intervalId = window.setInterval(fadeOut, 7);
+    return () => window.clearInterval(intervalId);
+  }, []);
+
+  // paint on every data update
+  useLayoutEffect(() => {
+    const canvas = canvasEl.current!;
+    const ctx = canvas.getContext('2d')!;
 
     const colors = getRandomColorTriple();
 
@@ -77,25 +80,14 @@ class Waveform extends React.Component<VisualizationHOC.WrappedProps> {
       ctx.lineTo(x, canvas.height / 2);
       ctx.stroke();
     });
-  };
+  }, [data]);
 
-  fadeOut = () => {
-    const ctx = this.ctx!;
-    const canvas = this.canvas!;
-    ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-  };
-
-  render() {
-    const { style } = this.props;
-
-    return (
-      <div className="visualization waveform" style={style}>
-        <div className="backdrop" />
-        <canvas ref={this.ref} />;
-      </div>
-    );
-  }
-}
+  return (
+    <div className="visualization waveform" style={style}>
+      <div className="backdrop" />
+      <canvas ref={canvasEl} />;
+    </div>
+  );
+};
 
 export default VisualizationHOC.wrap(Waveform);

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { TRANSITION_ANIMATION_LENGTH } from '../VisualizationSelector';
 import './Visualization.scss';
 import { Options } from './index';
@@ -19,49 +19,44 @@ export type WrappedProps = {
   isTransitioning: boolean;
 };
 
+const defaultProps: Props = {
+  data: new Uint8Array(),
+  timeout: TRANSITION_ANIMATION_LENGTH,
+  isTransitioning: false,
+  options: {}
+};
+
 // all visualization components should be wrapped with this HOC
 export function wrap(
   WrappedComponent: React.ComponentType<WrappedProps>
 ): React.ComponentType<Props> {
-  return class extends React.Component<Props> {
-    // bypass initial render because components that trigger
-    // reflow in componentDidMount interrupt CSS transitions
-    state = { delayedAfterReflow: false };
+  return function({
+    data,
+    timeout,
+    isTransitioning,
+    options
+  }: Props = defaultProps) {
+    const [isDelayedAfterReflow, setIsDelayedAfterReflow] = useState(false);
 
-    static defaultProps: Props = {
-      data: new Uint8Array(),
-      timeout: TRANSITION_ANIMATION_LENGTH,
-      isTransitioning: false,
-      options: {}
-    };
+    useEffect(() => {
+      window.setTimeout(() => setIsDelayedAfterReflow(true), 0);
+    }, [isDelayedAfterReflow]);
 
-    componentDidMount() {
-      window.setTimeout(() => {
-        this.setState({ delayedAfterReflow: true });
-      }, 0);
+    if (!isDelayedAfterReflow) {
+      return null;
     }
 
-    render() {
-      const { delayedAfterReflow } = this.state;
+    const transitionStyle = { transition: `transform ${timeout}ms linear` };
 
-      if (!delayedAfterReflow) {
-        return null;
-      }
+    const renderedData =
+      options && options.smoothing ? smooth(data, options.smoothing) : data;
 
-      const { data, timeout, isTransitioning, options = {} } = this.props;
-      const transitionStyle = { transition: `transform ${timeout}ms linear` };
-
-      const renderedData = options.smoothing
-        ? smooth(data, options.smoothing)
-        : data;
-
-      return (
-        <WrappedComponent
-          data={renderedData}
-          style={transitionStyle}
-          isTransitioning={isTransitioning}
-        />
-      );
-    }
+    return (
+      <WrappedComponent
+        data={renderedData}
+        style={transitionStyle}
+        isTransitioning={isTransitioning}
+      />
+    );
   };
 }

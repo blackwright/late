@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { BufferGeometry, BufferAttribute } from 'three';
 import * as VisualizationHOC from '../VisualizationHOC';
 import sceneManager from './three/sceneManager';
@@ -8,90 +8,74 @@ const RIPPLE_SPEED = 5;
 const VERTEX_SEGMENT_WEIGHT_COEFFICIENT = 0.1;
 const BASELINE_VERTEX_SCALAR_FACTOR = 1;
 
-class Halpern extends React.Component<VisualizationHOC.WrappedProps> {
-  private rendererContainer?: HTMLDivElement;
-  private originalVertices?: ArrayLike<number>;
-  private focusedDataIndex?: number;
-  private sphereDataSegments?: number;
-  private vertexSegmentLength?: number;
-  private getHalpernGeometry?: () => BufferGeometry;
-  private onUnmount?: () => void;
+const Halpern: React.FunctionComponent<VisualizationHOC.WrappedProps> = ({
+  data,
+  style
+}) => {
+  const rendererRef = useRef<HTMLDivElement>(null);
+  const sphereDataSegmentsRef = useRef<number>();
+  const originalVerticesRef = useRef<ArrayLike<number>>();
+  const focusedDataIndexRef = useRef<number>(Math.floor(data.length / 2));
+  const vertexSegmentLengthRef = useRef<number>();
+  const getHalpernGeometryRef = useRef<() => BufferGeometry>();
+  const focusedDataRef = useRef<number[]>(new Array(data.length).fill(128));
 
-  private focusedData: number[] = [];
-  private rendererRef: React.RefObject<HTMLDivElement> = React.createRef();
-
-  componentDidMount() {
-    this.rendererContainer = this.rendererRef.current!;
-
+  useEffect(() => {
+    const rendererContainer = rendererRef.current!;
     const {
       animate,
       stop,
       getSphereGeometry,
       getHalpernGeometry
-    } = sceneManager(this.rendererContainer);
+    } = sceneManager(rendererContainer);
 
-    const { data } = this.props;
-
-    this.onUnmount = stop;
-
-    this.sphereDataSegments = Math.floor(
+    sphereDataSegmentsRef.current = Math.floor(
       data.length / getSphereGeometry().parameters.widthSegments
     );
 
     // split vertices up into segments belonging to slices of x cross sections,
     // first and last vertices are at top and bottom of sphere
-    this.vertexSegmentLength =
+    vertexSegmentLengthRef.current =
       (getSphereGeometry().vertices.length - 2) /
       (getSphereGeometry().parameters.widthSegments - 1);
 
-    this.getHalpernGeometry = getHalpernGeometry;
+    getHalpernGeometryRef.current = getHalpernGeometry;
 
-    this.originalVertices = (getHalpernGeometry().attributes.position
+    originalVerticesRef.current = (getHalpernGeometry().attributes.position
       .array as Float32Array).slice(0);
 
-    this.focusedData = new Array(data.length).fill(128);
-
-    this.focusedDataIndex = Math.floor(data.length / 2);
-
     animate();
-  }
 
-  componentDidUpdate() {
-    this.updateVertices(this.props.data);
-  }
+    return () => {
+      stop();
+    };
+  }, []);
 
-  componentWillUnmount() {
-    this.onUnmount && this.onUnmount();
-  }
-
-  updateVertices = (data: Uint8Array) => {
-    if (this.getHalpernGeometry == null || this.originalVertices == null) {
-      return;
-    }
-
-    this.focusedData.splice(0, RIPPLE_SPEED);
-    this.focusedData = this.focusedData.concat(
-      new Array(RIPPLE_SPEED).fill(data[this.focusedDataIndex!])
+  useEffect(() => {
+    focusedDataRef.current.splice(0, RIPPLE_SPEED);
+    focusedDataRef.current = focusedDataRef.current.concat(
+      new Array(RIPPLE_SPEED).fill(data[focusedDataIndexRef.current!])
     );
 
-    const halpernBufferPositions = this.getHalpernGeometry().getAttribute(
+    const halpernBufferPositions = getHalpernGeometryRef.current!().getAttribute(
       'position'
     ).array as Float32Array;
 
     let i = 0;
-    while (i < this.originalVertices.length) {
+    while (i < originalVerticesRef.current!.length) {
       // find which segment the current index belongs to
       const vertexSegmentIndex = Math.ceil(
-        Math.floor(i / 3) / this.vertexSegmentLength!
+        Math.floor(i / 3) / vertexSegmentLengthRef.current!
       );
 
-      const dataIndex = vertexSegmentIndex * this.sphereDataSegments!;
+      const dataIndex = vertexSegmentIndex * sphereDataSegmentsRef.current!;
       const vertexSegmentWeight = Math.min(
         vertexSegmentIndex,
-        this.vertexSegmentLength! - vertexSegmentIndex
+        vertexSegmentLengthRef.current! - vertexSegmentIndex
       );
 
-      const dataVariation = Math.abs(this.focusedData[dataIndex] - 128) / 255;
+      const dataVariation =
+        Math.abs(focusedDataRef.current[dataIndex] - 128) / 255;
 
       const scalar =
         dataVariation *
@@ -100,29 +84,25 @@ class Halpern extends React.Component<VisualizationHOC.WrappedProps> {
         BASELINE_VERTEX_SCALAR_FACTOR;
 
       // update X, Y, and Z vector positions in BufferGeometry
-      halpernBufferPositions[i] = this.originalVertices[i] * scalar;
-      halpernBufferPositions[i + 1] = this.originalVertices[i + 1] * scalar;
-      halpernBufferPositions[i + 2] = this.originalVertices[i + 2] * scalar;
+      halpernBufferPositions[i] = originalVerticesRef.current![i] * scalar;
+      halpernBufferPositions[i + 1] =
+        originalVerticesRef.current![i + 1] * scalar;
+      halpernBufferPositions[i + 2] =
+        originalVerticesRef.current![i + 2] * scalar;
 
       i += 3;
     }
 
     // inform three.js that vertices should be repositioned,
     // final render is handled in sceneManager animate loop
-    (this.getHalpernGeometry().getAttribute(
+    (getHalpernGeometryRef.current!().getAttribute(
       'position'
     ) as BufferAttribute).needsUpdate = true;
-  };
+  }, [data]);
 
-  render() {
-    return (
-      <div
-        className="visualization halpern"
-        ref={this.rendererRef}
-        style={this.props.style}
-      />
-    );
-  }
-}
+  return (
+    <div className="visualization halpern" ref={rendererRef} style={style} />
+  );
+};
 
 export default VisualizationHOC.wrap(Halpern);

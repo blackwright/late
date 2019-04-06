@@ -90,7 +90,5 @@ const VisualizationSelector: React.FunctionComponent<
 
 export default connect(
   mapStateToProps,
-  mapDispatchToProps,
-  null,
-  { pure: false }
+  mapDispatchToProps
 )(VisualizationSelector);

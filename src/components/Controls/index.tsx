@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
@@ -17,195 +17,188 @@ type Props = ReturnType<typeof mapDispatchToProps> & {
   togglePlay: () => void;
 };
 
-type State = {
-  showOverlay: boolean;
-  isArrowHovered: boolean;
-};
+const Controls: React.FunctionComponent<Props> = props => {
+  const [isOverlayShown, setIsOverlayShown] = useState(false);
+  const [isArrowHovered, setIsArrowHovered] = useState(false);
 
-class Controls extends Component<Props, State> {
-  state: State = { showOverlay: false, isArrowHovered: false };
+  useEffect(() => {
+    const onKeyDown = (event: KeyboardEvent) => {
+      switch (event.which) {
+        case 37:
+        case 38: {
+          props.goToPrevVisualization();
+          break;
+        }
+        case 39:
+        case 40: {
+          props.goToNextVisualization();
+          break;
+        }
+      }
+    };
 
-  private lastTouchStartTimestamp?: number;
-  private hideOverlayTimeoutId?: number;
+    document.addEventListener('keydown', onKeyDown);
+    return () => document.removeEventListener('keydown', onKeyDown);
+  }, []);
 
-  componentDidMount() {
-    document.addEventListener('keydown', this.onKeyDown);
-    this.showOverlay();
-  }
+  const timeoutRef = useRef<number>();
 
-  componentWillUnmount() {
-    document.removeEventListener('keydown', this.onKeyDown);
-  }
+  const touchTimestampRef = useRef<number>();
 
-  togglePlay = () => {
-    const { context, togglePlay } = this.props;
+  const showOverlay = useCallback(() => {
+    timeoutRef.current != null && window.clearTimeout(timeoutRef.current);
 
-    context && context.resume();
-    togglePlay();
-  };
+    setIsOverlayShown(true);
+    timeoutRef.current = window.setTimeout(() => {
+      if (!isArrowHovered) {
+        setIsOverlayShown(false);
+      }
+    }, CONTROLS_FADE_OUT_DELAY);
+  }, [isArrowHovered]);
 
-  onMouseDown = (event: React.MouseEvent) => {
+  const togglePlay = useCallback(() => {
+    props.context && props.context.resume();
+    props.togglePlay();
+  }, [props.context, props.togglePlay]);
+
+  const recordTouchTimestamp = useCallback((event: React.TouchEvent) => {
+    event.preventDefault();
+    touchTimestampRef.current = Date.now();
+  }, []);
+
+  const onMouseDown = useCallback((event: React.MouseEvent) => {
     if (event.nativeEvent.which === 1) {
-      this.lastTouchStartTimestamp = Date.now();
+      touchTimestampRef.current = Date.now();
     }
-  };
+  }, []);
 
-  onMouseUp = (event: React.MouseEvent) => {
+  const onMouseUp = useCallback((event: React.MouseEvent) => {
     if (
       event.nativeEvent.which === 1 &&
-      this.lastTouchStartTimestamp &&
-      Date.now() - this.lastTouchStartTimestamp < TOUCH_WAS_CLICK_THRESHOLD
+      touchTimestampRef.current &&
+      Date.now() - touchTimestampRef.current < TOUCH_WAS_CLICK_THRESHOLD
     ) {
-      this.togglePlay();
+      togglePlay();
     }
-  };
+  }, []);
 
-  recordTouchTimestamp = (event: React.TouchEvent) => {
-    event.preventDefault();
-    this.lastTouchStartTimestamp = Date.now();
-  };
-
-  onTouchEnd = (event: React.TouchEvent) => {
+  const onTouchEnd = useCallback((event: React.TouchEvent) => {
     event.preventDefault();
     if (
-      this.lastTouchStartTimestamp &&
-      Date.now() - this.lastTouchStartTimestamp < TOUCH_WAS_CLICK_THRESHOLD
+      touchTimestampRef.current &&
+      Date.now() - touchTimestampRef.current < TOUCH_WAS_CLICK_THRESHOLD
     ) {
-      this.showOverlay();
+      showOverlay();
     }
-  };
+  }, []);
 
-  showOverlay = () => {
-    window.clearTimeout(this.hideOverlayTimeoutId);
+  const onPrev = useCallback(
+    (event: React.MouseEvent | React.TouchEvent) => {
+      event.stopPropagation();
+      props.goToPrevVisualization();
+      showOverlay();
+    },
+    [props.goToPrevVisualization]
+  );
 
-    this.setState({ showOverlay: true }, () => {
-      this.hideOverlayTimeoutId = window.setTimeout(() => {
-        if (!this.state.isArrowHovered) {
-          this.setState({ showOverlay: false });
+  const onNext = useCallback(
+    (event: React.MouseEvent | React.TouchEvent) => {
+      event.stopPropagation();
+      props.goToNextVisualization();
+      showOverlay();
+    },
+    [props.goToNextVisualization]
+  );
+
+  const doNothing = useCallback((event: React.MouseEvent) => {
+    event.stopPropagation();
+  }, []);
+
+  const onToggleArrowHover = useCallback((isHovered: boolean) => {
+    setIsArrowHovered(isHovered);
+  }, []);
+
+  const { wantsToPlay, isPlaying } = props;
+
+  return (
+    <>
+      {wantsToPlay && !isPlaying && <Loading />}
+      <div
+        id="overlay"
+        onMouseDown={onMouseDown}
+        onMouseUp={onMouseUp}
+        onTouchStart={recordTouchTimestamp}
+        onTouchEnd={onTouchEnd}
+        onMouseMove={showOverlay}
+        className={classNames({ show: isOverlayShown })}
+      >
+        <h1 id="title">LTLY</h1>
+        <div id="version">build {versionInfo.version}</div>
+        {
+          <div
+            onTouchEnd={togglePlay}
+            className={classNames({
+              play: !wantsToPlay && !isPlaying,
+              pause: wantsToPlay && isPlaying
+            })}
+          />
         }
-      }, CONTROLS_FADE_OUT_DELAY);
-    });
-  };
-
-  onPrev = (event: React.MouseEvent | React.TouchEvent) => {
-    event.stopPropagation();
-    this.props.goToPrevVisualization();
-    this.showOverlay();
-  };
-
-  onNext = (event: React.MouseEvent | React.TouchEvent) => {
-    event.stopPropagation();
-    this.props.goToNextVisualization();
-    this.showOverlay();
-  };
-
-  doNothing = (event: React.MouseEvent) => {
-    event.stopPropagation();
-  };
-
-  onKeyDown = (event: KeyboardEvent) => {
-    switch (event.which) {
-      case 37:
-      case 38: {
-        this.props.goToPrevVisualization();
-        break;
-      }
-      case 39:
-      case 40: {
-        this.props.goToNextVisualization();
-        break;
-      }
-    }
-  };
-
-  onToggleArrowHover = (isHovered: boolean) => {
-    this.setState({ isArrowHovered: isHovered });
-  };
-
-  render() {
-    const { wantsToPlay, isPlaying } = this.props;
-    const { showOverlay } = this.state;
-
-    return (
-      <>
-        {wantsToPlay && !isPlaying && <Loading />}
-        <div
-          id="overlay"
-          onMouseDown={this.onMouseDown}
-          onMouseUp={this.onMouseUp}
-          onTouchStart={this.recordTouchTimestamp}
-          onTouchEnd={this.onTouchEnd}
-          onMouseMove={this.showOverlay}
-          className={classNames({ show: showOverlay })}
-        >
-          <h1 id="title">LTLY</h1>
-          <div id="version">build {versionInfo.version}</div>
-          {
-            <div
-              onTouchEnd={this.togglePlay}
-              className={classNames({
-                play: !wantsToPlay && !isPlaying,
-                pause: wantsToPlay && isPlaying
-              })}
-            />
-          }
-          <div className="navigation">
-            <div
-              className="arrow-container"
-              onClick={this.onPrev}
-              onTouchStart={this.onPrev}
-              onMouseUp={this.doNothing}
-              onMouseEnter={() => this.onToggleArrowHover(true)}
-              onMouseLeave={() => this.onToggleArrowHover(false)}
+        <div className="navigation">
+          <div
+            className="arrow-container"
+            onClick={onPrev}
+            onTouchStart={onPrev}
+            onMouseUp={doNothing}
+            onMouseEnter={() => onToggleArrowHover(true)}
+            onMouseLeave={() => onToggleArrowHover(false)}
+          >
+            <svg
+              className="arrow"
+              width="60px"
+              height="80px"
+              viewBox="0 0 50 80"
             >
-              <svg
-                className="arrow"
-                width="60px"
-                height="80px"
-                viewBox="0 0 50 80"
-              >
-                <polyline
-                  fill="none"
-                  stroke="#FFF"
-                  strokeWidth="3"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  points="
-              45.63,75.8 0.375,38.087 45.63,0.375 "
-                />
-              </svg>
-            </div>
-            <div
-              className="arrow-container"
-              onClick={this.onNext}
-              onTouchStart={this.onNext}
-              onMouseUp={this.doNothing}
-              onMouseEnter={() => this.onToggleArrowHover(true)}
-              onMouseLeave={() => this.onToggleArrowHover(false)}
+              <polyline
+                fill="none"
+                stroke="#FFF"
+                strokeWidth="3"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                points="
+            45.63,75.8 0.375,38.087 45.63,0.375 "
+              />
+            </svg>
+          </div>
+          <div
+            className="arrow-container"
+            onClick={onNext}
+            onTouchStart={onNext}
+            onMouseUp={doNothing}
+            onMouseEnter={() => onToggleArrowHover(true)}
+            onMouseLeave={() => onToggleArrowHover(false)}
+          >
+            <svg
+              className="arrow"
+              width="60px"
+              height="80px"
+              viewBox="0 0 50 80"
             >
-              <svg
-                className="arrow"
-                width="60px"
-                height="80px"
-                viewBox="0 0 50 80"
-              >
-                <polyline
-                  fill="none"
-                  stroke="#FFF"
-                  strokeWidth="3"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  points="
-                0.375,0.375 45.63,38.087 0.375,75.8 "
-                />
-              </svg>
-            </div>
+              <polyline
+                fill="none"
+                stroke="#FFF"
+                strokeWidth="3"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                points="
+              0.375,0.375 45.63,38.087 0.375,75.8 "
+              />
+            </svg>
           </div>
         </div>
-      </>
-    );
-  }
-}
+      </div>
+    </>
+  );
+};
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({
   goToNextVisualization: () => dispatch(Actions.goToNextVisualization()),
