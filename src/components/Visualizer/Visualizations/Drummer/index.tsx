@@ -3,12 +3,16 @@ import classNames from 'classnames';
 import * as VisualizationHOC from '../VisualizationHOC';
 import './Drummer.scss';
 import { getRandomColor } from '../../../../utils/colors';
+import { DATA_SIZE } from '../../../../config';
 
 const NUM_DRUMMERS = 13;
-const MIN_HIT_COUNT = 2;
+const MIN_HIT_COUNT = 0.04;
 const MIN_FREQUENCY_VARIATION = 10;
-const COLOR_CHANGE_THRESHOLD = 0.15;
+const COLOR_CHANGE_THRESHOLD = 40;
 const MIN_DELAY_BETWEEN_COLOR_CHANGE = 200;
+
+const minHitCount = MIN_HIT_COUNT * DATA_SIZE;
+const colorChangeThreshold = COLOR_CHANGE_THRESHOLD / DATA_SIZE;
 
 class Drummer extends React.Component<VisualizationHOC.WrappedProps> {
   state = { size: 0 };
@@ -69,7 +73,7 @@ class Drummer extends React.Component<VisualizationHOC.WrappedProps> {
     const now = Date.now();
     if (
       !isTransitioning &&
-      totalHits / NUM_DRUMMERS > COLOR_CHANGE_THRESHOLD &&
+      totalHits / NUM_DRUMMERS > colorChangeThreshold &&
       now - this.lastColorChangeTimestamp > MIN_DELAY_BETWEEN_COLOR_CHANGE
     ) {
       let newColor;
@@ -95,7 +99,7 @@ class Drummer extends React.Component<VisualizationHOC.WrappedProps> {
           }}
         >
           <div
-            className={classNames('beat', { hit: hitCount > MIN_HIT_COUNT })}
+            className={classNames('beat', { hit: hitCount > minHitCount })}
           />
         </div>
       );

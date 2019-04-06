@@ -130,7 +130,9 @@ export default class App extends Component<Props, State> {
           preload={'auto'}
           crossOrigin="anonymous"
         />
+
         {context && source && <Analyser context={context} source={source} />}
+
         <Controls
           context={context}
           wantsToPlay={wantsToPlay}

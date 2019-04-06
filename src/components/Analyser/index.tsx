@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import VisualizationSelector from '../Visualizer/VisualizationSelector';
-
-const DATA_FFT_SIZE = 256;
+import { FFT_SIZE } from '../../config';
 
 type Props = {
   context: AudioContext;
@@ -22,9 +21,9 @@ export default class Analyser extends Component<Props, State> {
   componentDidMount() {
     const { context, source } = this.props;
 
-    this.analyser.fftSize = DATA_FFT_SIZE;
-    this.dataArray = new Uint8Array(DATA_FFT_SIZE);
-    this.analyser.smoothingTimeConstant = 1;
+    this.analyser.fftSize = FFT_SIZE;
+    this.dataArray = new Uint8Array(FFT_SIZE);
+    this.analyser.smoothingTimeConstant = 0;
 
     source.connect(this.analyser);
     this.analyser.connect(context.destination);
