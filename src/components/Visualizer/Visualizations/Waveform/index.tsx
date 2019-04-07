@@ -33,7 +33,7 @@ const Waveform: React.FunctionComponent<VisualizationHOC.WrappedProps> = ({
     const canvas = canvasEl.current!;
     const ctx = canvas.getContext('2d')!;
 
-    ctx.fillStyle = '#050505';
+    ctx.fillStyle = '#101010';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
   }, []);
 
@@ -42,7 +42,7 @@ const Waveform: React.FunctionComponent<VisualizationHOC.WrappedProps> = ({
     const ctx = canvas.getContext('2d')!;
 
     const fadeOut = () => {
-      ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
     };
 

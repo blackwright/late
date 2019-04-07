@@ -59,6 +59,7 @@ const Controls: React.FunctionComponent<Props> = props => {
   const togglePlay = useCallback(() => {
     props.context && props.context.resume();
     props.togglePlay();
+    showOverlay();
   }, [props.context, props.togglePlay]);
 
   const recordTouchTimestamp = useCallback((event: React.TouchEvent) => {
