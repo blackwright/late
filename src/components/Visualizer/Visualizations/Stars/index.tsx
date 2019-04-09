@@ -23,14 +23,7 @@ const Stars: React.FunctionComponent<VisualizationHOC.WrappedProps> = ({
     return cleanup;
   }, []);
 
-  useEffect(() => {
-    const camera = cameraRef.current!;
-    const stars = starsRef.current!;
-
-    stars.rotateY(0.0005);
-    stars.rotateX(0.0000005);
-    stars.rotateZ(0.0001);
-  }, [data]);
+  useEffect(() => {}, [data]);
 
   return (
     <div className="visualization stars" ref={rendererRef} style={style} />
