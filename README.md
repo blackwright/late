@@ -1,6 +1,6 @@
-# LTLY
+# LATE
 
-[View deployed site here.](https://blackwright.github.io/ltly/)
+[View deployed site here.](https://blackwright.github.io/late/)
 
 Experiments in audio visualizations using the web audio API in conjunction with React, HTML5 canvas, and three.js.
 

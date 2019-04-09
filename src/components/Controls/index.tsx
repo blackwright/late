@@ -133,7 +133,7 @@ const Controls: React.FunctionComponent<Props> = props => {
         onMouseMove={showOverlay}
         className={classNames({ show: isOverlayShown })}
       >
-        <h1 id="title">LTLY</h1>
+        <h1 id="title">LATE</h1>
         <div id="version">build {versionInfo.version}</div>
         {
           <div

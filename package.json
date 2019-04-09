@@ -1,8 +1,8 @@
 {
-  "name": "ltly",
+  "name": "late",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://blackwright.github.io/ltly",
+  "homepage": "https://blackwright.github.io/late",
   "dependencies": {
     "@ffmpeg-installer/ffmpeg": "^1.0.17",
     "classnames": "^2.2.6",
