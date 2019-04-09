@@ -1,6 +1,7 @@
 import Waveform from './Waveform';
 import Drummer from './Drummer';
 import Halpern from './Halpern';
+import Stars from './Stars';
 import MobileDisabledComponent from './MobileDisabled';
 import { Props } from './VisualizationHOC';
 import { isMobileDevice as isMobileDeviceCheck } from '../../../utils';
@@ -18,6 +19,7 @@ type SelectableVisualization = {
 };
 
 const visualizations: SelectableVisualization[] = [
+  { component: Stars },
   { component: Waveform },
   {
     component: Drummer,
