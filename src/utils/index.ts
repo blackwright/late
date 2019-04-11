@@ -33,3 +33,7 @@ export function isMobileDevice(): boolean {
     navigator.userAgent
   );
 }
+
+export function toRadians(angle: number) {
+  return (angle * Math.PI) / 180;
+}

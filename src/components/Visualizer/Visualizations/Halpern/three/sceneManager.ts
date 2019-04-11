@@ -21,7 +21,7 @@ export default function sceneManager(rendererContainer: HTMLDivElement) {
   const scene = new Scene();
   scene.add(halpernSphere);
 
-  window.addEventListener('resize', onResize, false);
+  window.addEventListener('resize', onResize);
 
   function animate() {
     halpernSphere.rotateY(-0.002);
@@ -71,8 +71,4 @@ export default function sceneManager(rendererContainer: HTMLDivElement) {
     animate,
     cleanup
   };
-}
-
-function toRadians(angle: number) {
-  return (angle * Math.PI) / 180;
 }
