@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { BufferGeometry, SphereGeometry, BufferAttribute } from 'three';
+import { BufferGeometry, BufferAttribute } from 'three';
 import * as VisualizationHOC from '../VisualizationHOC';
 import sceneManager from './three/sceneManager';
 import './Halpern.scss';
@@ -22,11 +22,10 @@ const Halpern: React.FunctionComponent<VisualizationHOC.WrappedProps> = ({
 
   useEffect(() => {
     const rendererContainer = rendererRef.current!;
-    const { animate, cleanup, sphere, halpern } = sceneManager(
+    const { animate, cleanup, sphereGeometry, halpern } = sceneManager(
       rendererContainer
     );
 
-    const sphereGeometry = sphere.geometry as SphereGeometry;
     const halpernGeometry = halpern.geometry as BufferGeometry;
 
     sphereDataSegmentsRef.current = Math.floor(

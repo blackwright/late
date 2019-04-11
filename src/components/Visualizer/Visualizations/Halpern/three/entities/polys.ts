@@ -1,28 +1,17 @@
 import {
-  Mesh,
   Points,
-  MeshLambertMaterial,
   PointsMaterial,
   SphereGeometry,
   BufferGeometry,
   BufferAttribute,
   TextureLoader
 } from 'three';
-import { pointColor } from './colors';
 
-export function createPolygon(): Mesh {
-  const geometry = new SphereGeometry(48, 96, 96);
-
-  const material = new MeshLambertMaterial({
-    wireframe: true
-  });
-
-  return new Mesh(geometry, material);
+export function createSphereGeometry(): SphereGeometry {
+  return new SphereGeometry(48, 96, 96);
 }
 
-export function createPoints(polygon: Mesh): Points {
-  const sphereGeometry = polygon.geometry as SphereGeometry;
-
+export function createPoints(sphereGeometry: SphereGeometry): Points {
   const pointGeometry = new SphereGeometry(
     sphereGeometry.parameters.radius,
     sphereGeometry.parameters.widthSegments,
@@ -44,7 +33,7 @@ export function createPoints(polygon: Mesh): Points {
     size: 0.25,
     map: new TextureLoader().load('assets/images/point.png'),
     alphaTest: 0.5,
-    color: pointColor,
+    color: 0x666666,
     transparent: true
   });
 
