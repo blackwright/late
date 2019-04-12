@@ -5,5 +5,5 @@ export function createAmbientLight(color: number) {
 }
 
 export function createDirectionalLight(color: number) {
-  return new DirectionalLight(color, 5);
+  return new DirectionalLight(color, 10);
 }

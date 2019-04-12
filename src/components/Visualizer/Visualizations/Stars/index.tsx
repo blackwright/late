@@ -14,10 +14,13 @@ const Stars: React.FunctionComponent<VisualizationHOC.WrappedProps> = ({
 
   useEffect(() => {
     const rendererContainer = rendererRef.current!;
-    const { animate, cleanup, stars, camera } = sceneManager(rendererContainer);
+    const { clock, animate, cleanup, stars, camera } = sceneManager(
+      rendererContainer
+    );
     starsRef.current = stars;
     cameraRef.current = camera;
 
+    clock.start();
     animate();
 
     return cleanup;

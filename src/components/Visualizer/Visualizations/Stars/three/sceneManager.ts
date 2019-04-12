@@ -4,9 +4,9 @@ import {
   BufferGeometry,
   BufferAttribute,
   Group,
-  DirectionalLightHelper,
   Mesh,
-  ShaderMaterial
+  ShaderMaterial,
+  Clock
 } from 'three';
 import { createRenderer } from './entities/renderer';
 import { createCamera } from './entities/camera';
@@ -16,12 +16,12 @@ import { createAmbientLight, createDirectionalLight } from './entities/light';
 const STAR_COUNT = 20 * 1000;
 const MAX_STAR_ALPHA = 1.0;
 const MIN_STAR_ALPHA = 0.2;
-const STAR_ALPHA_DELTA = 0.005;
+const STAR_ALPHA_DELTA = 0.75;
 
 const CLOUD_COUNT = 65;
 
-const ROTATE_Y = 0.0002;
-const ROTATE_X = 0.000005;
+const ROTATE_Y = 0.025;
+const ROTATE_X = 0.001;
 
 export default function sceneManager(rendererContainer: HTMLDivElement) {
   let animationFrameId: number;
@@ -49,7 +49,7 @@ export default function sceneManager(rendererContainer: HTMLDivElement) {
   scene.add(aLight);
 
   const dLight = createDirectionalLight(0xc70039);
-  dLight.position.set(-1, 0, 1);
+  dLight.position.set(0, 0, 1);
   scene.add(dLight);
 
   window.addEventListener('resize', onResize);
@@ -64,12 +64,18 @@ export default function sceneManager(rendererContainer: HTMLDivElement) {
     alphaDirection[i] = Math.random() < 0.5 ? 1 : -1;
   }
 
-  function animate() {
-    stars.rotateX(ROTATE_X);
-    stars.rotateY(ROTATE_Y);
+  // clock is started in Stars component, when the animation loop
+  // is first triggered
+  const clock = new Clock();
 
-    cloudCover.rotateX(ROTATE_X * 20);
-    cloudCover.rotateY(ROTATE_Y * 2.5);
+  function animate() {
+    const delta = clock.getDelta();
+
+    stars.rotateX(ROTATE_X * delta);
+    stars.rotateY(ROTATE_Y * delta);
+
+    cloudCover.rotateX(ROTATE_X * 2 * delta);
+    cloudCover.rotateY(ROTATE_Y * 2 * delta);
 
     cloudCover.children.forEach(cloud => {
       (cloud as Mesh).lookAt(camera.position);
@@ -79,12 +85,12 @@ export default function sceneManager(rendererContainer: HTMLDivElement) {
     // reach a limit, then switch the direction
     for (let i = 0; i < starAlphas.count; i++) {
       if (alphaDirection[i] > 0) {
-        (starAlphas.array as Float32Array)[i] *= 1 + STAR_ALPHA_DELTA;
+        (starAlphas.array as Float32Array)[i] *= 1 + STAR_ALPHA_DELTA * delta;
         if ((starAlphas.array as Float32Array)[i] > MAX_STAR_ALPHA) {
           alphaDirection[i] = -1;
         }
       } else {
-        (starAlphas.array as Float32Array)[i] *= 1 - STAR_ALPHA_DELTA;
+        (starAlphas.array as Float32Array)[i] *= 1 - STAR_ALPHA_DELTA * delta;
         if ((starAlphas.array as Float32Array)[i] < MIN_STAR_ALPHA) {
           alphaDirection[i] = 1;
         }
@@ -103,9 +109,10 @@ export default function sceneManager(rendererContainer: HTMLDivElement) {
     rendererContainer.removeChild(renderer.domElement);
 
     scene.remove(stars);
-
     stars.geometry.dispose();
     (stars.material as PointsMaterial).dispose();
+
+    scene.remove(cloudCover);
     cloudCover.children.forEach(cloud => {
       (cloud as Mesh).geometry.dispose();
       ((cloud as Mesh).material as ShaderMaterial).dispose();
@@ -121,6 +128,7 @@ export default function sceneManager(rendererContainer: HTMLDivElement) {
   }
 
   return {
+    clock,
     animate,
     cleanup,
     stars,
