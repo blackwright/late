@@ -3,18 +3,22 @@ import {
   PointsMaterial,
   BufferGeometry,
   BufferAttribute,
-  Group
+  Group,
+  DirectionalLightHelper,
+  Mesh,
+  ShaderMaterial
 } from 'three';
 import { createRenderer } from './entities/renderer';
 import { createCamera } from './entities/camera';
 import { createStars, createCloud } from './entities/polys';
+import { createAmbientLight, createDirectionalLight } from './entities/light';
 
 const STAR_COUNT = 20 * 1000;
 const MAX_STAR_ALPHA = 1.0;
 const MIN_STAR_ALPHA = 0.2;
 const STAR_ALPHA_DELTA = 0.005;
 
-const CLOUD_COUNT = 50;
+const CLOUD_COUNT = 65;
 
 const ROTATE_Y = 0.0002;
 const ROTATE_X = 0.000005;
@@ -39,9 +43,14 @@ export default function sceneManager(rendererContainer: HTMLDivElement) {
     cloudCount += 1;
   }
 
-  cloudCover.position.z = camera.position.z;
-
   scene.add(cloudCover);
+
+  const aLight = createAmbientLight(0xffffff);
+  scene.add(aLight);
+
+  const dLight = createDirectionalLight(0xc70039);
+  dLight.position.set(-1, 0, 1);
+  scene.add(dLight);
 
   window.addEventListener('resize', onResize);
 
@@ -61,6 +70,10 @@ export default function sceneManager(rendererContainer: HTMLDivElement) {
 
     cloudCover.rotateX(ROTATE_X * 20);
     cloudCover.rotateY(ROTATE_Y * 2.5);
+
+    cloudCover.children.forEach(cloud => {
+      (cloud as Mesh).lookAt(camera.position);
+    });
 
     // use alphaDirection to maintain alpha adjustment direction until we
     // reach a limit, then switch the direction
@@ -93,6 +106,10 @@ export default function sceneManager(rendererContainer: HTMLDivElement) {
 
     stars.geometry.dispose();
     (stars.material as PointsMaterial).dispose();
+    cloudCover.children.forEach(cloud => {
+      (cloud as Mesh).geometry.dispose();
+      ((cloud as Mesh).material as ShaderMaterial).dispose();
+    });
   }
 
   function onResize() {

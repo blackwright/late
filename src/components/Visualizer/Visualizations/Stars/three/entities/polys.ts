@@ -5,8 +5,11 @@ import {
   Color,
   BufferGeometry,
   TextureLoader,
-  SpriteMaterial,
-  Sprite
+  MeshLambertMaterial,
+  Mesh,
+  PlaneGeometry,
+  BackSide,
+  DoubleSide
 } from 'three';
 import { starVertexShader, starFragmentShader } from './shaders';
 import { toRadians } from '../../../../../../utils';
@@ -38,9 +41,7 @@ export function createStars(starCount: number): Points {
 
   const shaderMaterial = new ShaderMaterial({
     uniforms: {
-      color: {
-        value: new Color(0xffffff)
-      }
+      color: { type: 'c', value: new Color(0xffffff) }
     },
     vertexShader: starVertexShader,
     fragmentShader: starFragmentShader,
@@ -50,25 +51,30 @@ export function createStars(starCount: number): Points {
   return new Points(geometry, shaderMaterial);
 }
 
-export function createCloud(): Sprite {
-  const cloudMaterial = new SpriteMaterial({
+export function createCloud(): Mesh {
+  const texture = Math.random() < 0.5 ? 'cloud.png' : 'smoke.png';
+
+  const geometry = new PlaneGeometry(50, 50);
+
+  const cloudMaterial = new MeshLambertMaterial({
     color: 0xffffff,
-    map: new TextureLoader().load('assets/images/cloud.png'),
+    map: new TextureLoader().load(`assets/images/${texture}`),
     transparent: true,
     opacity: 0.1,
-    rotation: toRadians(Math.random() * 360)
+    depthTest: false
   });
 
-  const cloud = new Sprite(cloudMaterial);
+  const cloud = new Mesh(geometry, cloudMaterial);
+
+  cloud.rotateZ(Math.random() * 360);
+
+  const zPosition = Math.random() * 15 + 10;
 
   cloud.position.set(
     Math.random() * 100 - 50,
     Math.random() * 100 - 50,
-    Math.random() * 25 - 10
+    Math.random() < 0.5 ? zPosition : -zPosition
   );
-
-  const scale = Math.random() * 20 + 10;
-  cloud.scale.set(scale, scale, 1);
 
   return cloud;
 }
