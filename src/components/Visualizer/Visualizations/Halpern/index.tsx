@@ -22,7 +22,7 @@ const Halpern: React.FunctionComponent<VisualizationHOC.WrappedProps> = ({
 
   useEffect(() => {
     const rendererContainer = rendererRef.current!;
-    const { animate, cleanup, sphereGeometry, halpern } = sceneManager(
+    const { clock, animate, cleanup, sphereGeometry, halpern } = sceneManager(
       rendererContainer
     );
 
@@ -42,6 +42,8 @@ const Halpern: React.FunctionComponent<VisualizationHOC.WrappedProps> = ({
 
     originalVerticesRef.current = (halpernGeometry.attributes.position
       .array as Float32Array).slice(0);
+
+    clock.start();
 
     animate();
 

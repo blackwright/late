@@ -1,11 +1,13 @@
-import { Scene, PointsMaterial, MeshLambertMaterial } from 'three';
+import { Scene, PointsMaterial, Clock } from 'three';
 import { createRenderer } from './entities/renderer';
 import { createCamera } from './entities/camera';
 import { createSphereGeometry, createPoints } from './entities/polys';
 
 const DELAY_BEFORE_ROTATING_X = 1500;
 const CAMERA_MAX_DISTANCE = 200;
-const CAMERA_DRIFT = 0.05;
+const CAMERA_DRIFT = 0.025;
+const ROTATE_Y = -0.3;
+const ROTATE_X = 0.3;
 
 export default function sceneManager(rendererContainer: HTMLDivElement) {
   let animationFrameId: number;
@@ -23,14 +25,20 @@ export default function sceneManager(rendererContainer: HTMLDivElement) {
 
   window.addEventListener('resize', onResize);
 
+  // clock is started in Halpern component when the
+  // animation loop is started
+  const clock = new Clock();
+
   function animate() {
-    halpern.rotateY(-0.002);
+    const delta = clock.getDelta();
+
+    halpern.rotateY(ROTATE_Y * delta);
 
     if (Date.now() - sceneInitializedTimestamp > DELAY_BEFORE_ROTATING_X) {
-      halpern.rotateX(0.002);
+      halpern.rotateX(ROTATE_X * delta);
     }
 
-    t += 0.005;
+    t += delta;
 
     if (t >= Math.PI * 2) {
       t = 0;
@@ -65,6 +73,7 @@ export default function sceneManager(rendererContainer: HTMLDivElement) {
   }
 
   return {
+    clock,
     sphereGeometry,
     halpern,
     animate,
