@@ -3,7 +3,8 @@ import { StoreState, ActionConstants, ActionUnionType } from './types';
 const initialState: StoreState = {
   currentVisualizationIndex: 0,
   prevVisualizationIndex: 0,
-  isTransitioning: false
+  isTransitioning: false,
+  quality: 2
 };
 
 export default function reducer(
@@ -41,6 +42,12 @@ export default function reducer(
       return {
         ...state,
         isTransitioning: false
+      };
+
+    case ActionConstants.SET_QUALITY:
+      return {
+        ...state,
+        quality: action.quality
       };
 
     default:

@@ -5,6 +5,7 @@ import classNames from 'classnames';
 import Loading from '../Loading';
 import * as Actions from '../../store/actions';
 import * as versionInfo from '../../metadata/build-version.json';
+import Quality from './Quality';
 import './Controls.scss';
 
 const CONTROLS_FADE_OUT_DELAY = 1500;
@@ -20,6 +21,7 @@ type Props = ReturnType<typeof mapDispatchToProps> & {
 const Controls: React.FunctionComponent<Props> = props => {
   const [isOverlayShown, setIsOverlayShown] = useState(false);
   const [isArrowHovered, setIsArrowHovered] = useState(false);
+  const [isQualityHovered, setIsQualityHovered] = useState(false);
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
@@ -50,11 +52,11 @@ const Controls: React.FunctionComponent<Props> = props => {
 
     setIsOverlayShown(true);
     timeoutRef.current = window.setTimeout(() => {
-      if (!isArrowHovered) {
+      if (!isArrowHovered && !isQualityHovered) {
         setIsOverlayShown(false);
       }
     }, CONTROLS_FADE_OUT_DELAY);
-  }, [isArrowHovered]);
+  }, [isArrowHovered, isQualityHovered]);
 
   const togglePlay = useCallback(() => {
     props.context && props.context.resume();
@@ -126,17 +128,18 @@ const Controls: React.FunctionComponent<Props> = props => {
       {wantsToPlay && !isPlaying && <Loading />}
       <div
         id="overlay"
-        onMouseDown={onMouseDown}
-        onMouseUp={onMouseUp}
         onTouchStart={recordTouchTimestamp}
         onTouchEnd={onTouchEnd}
         onMouseMove={showOverlay}
         className={classNames({ show: isOverlayShown })}
       >
         <h1 id="title">LATE</h1>
+        <Quality setIsQualityHovered={setIsQualityHovered} />
         <div id="version">build {versionInfo.version}</div>
         {
           <div
+            onMouseDown={onMouseDown}
+            onMouseUp={onMouseUp}
             onTouchEnd={togglePlay}
             className={classNames({
               play: !wantsToPlay && !isPlaying,

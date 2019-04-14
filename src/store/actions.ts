@@ -15,3 +15,8 @@ export const goToNextVisualization = (): ActionUnionType => ({
 export const goToPrevVisualization = (): ActionUnionType => ({
   type: ActionConstants.GO_TO_PREV_VISUALIZATION
 });
+
+export const setQuality = (quality: number): ActionUnionType => ({
+  type: ActionConstants.SET_QUALITY,
+  quality
+});
