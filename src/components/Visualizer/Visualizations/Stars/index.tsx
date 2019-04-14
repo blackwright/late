@@ -9,7 +9,6 @@ const MAX_LIGHT_INTENSITY_DELTA = 2;
 const MIN_LIGHT_INTENSITY = 1;
 
 const Stars: React.FunctionComponent<VisualizationHOC.WrappedProps> = ({
-  isBeat,
   lowPassIntensity,
   style
 }) => {

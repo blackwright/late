@@ -23,11 +23,12 @@ export default function sceneManager(rendererContainer: HTMLDivElement) {
   const scene = new Scene();
   scene.add(halpern);
 
-  window.addEventListener('resize', onResize);
-
   // clock is started in Halpern component when the
   // animation loop is started
   const clock = new Clock();
+
+  window.addEventListener('resize', onResize);
+  document.addEventListener('visibilitychange', onVisibilityChange);
 
   function animate() {
     const delta = clock.getDelta();
@@ -55,6 +56,7 @@ export default function sceneManager(rendererContainer: HTMLDivElement) {
   function cleanup() {
     window.cancelAnimationFrame(animationFrameId);
     window.removeEventListener('resize', onResize);
+    document.removeEventListener('visibilitychange', onVisibilityChange);
     rendererContainer.removeChild(renderer.domElement);
 
     scene.remove(halpern);
@@ -70,6 +72,14 @@ export default function sceneManager(rendererContainer: HTMLDivElement) {
 
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.render(scene, camera);
+  }
+
+  function onVisibilityChange() {
+    if (document.visibilityState === 'hidden') {
+      clock.stop();
+    } else {
+      clock.start();
+    }
   }
 
   return {

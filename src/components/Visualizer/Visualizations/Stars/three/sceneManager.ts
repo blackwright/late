@@ -57,8 +57,6 @@ export default function sceneManager(
   dLight.position.set(0, 0, 1);
   scene.add(dLight);
 
-  window.addEventListener('resize', onResize);
-
   // create a fixed array to track which direction to adjust each star alpha
   const starAlphas = (stars.geometry as BufferGeometry).attributes.alpha;
   const alphaDirection = new Float32Array(starAlphas.count);
@@ -72,6 +70,9 @@ export default function sceneManager(
   // clock is started in Stars component when
   // the animation loop is first triggered
   const clock = new Clock();
+
+  window.addEventListener('resize', onResize);
+  document.addEventListener('visibilitychange', onVisibilityChange);
 
   function animate() {
     const delta = clock.getDelta();
@@ -111,6 +112,7 @@ export default function sceneManager(
   function cleanup() {
     window.cancelAnimationFrame(animationFrameId);
     window.removeEventListener('resize', onResize);
+    document.removeEventListener('visibilitychange', onVisibilityChange);
     rendererContainer.removeChild(renderer.domElement);
 
     scene.remove(stars);
@@ -130,6 +132,14 @@ export default function sceneManager(
 
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.render(scene, camera);
+  }
+
+  function onVisibilityChange() {
+    if (document.visibilityState === 'hidden') {
+      clock.stop();
+    } else {
+      clock.start();
+    }
   }
 
   return {
