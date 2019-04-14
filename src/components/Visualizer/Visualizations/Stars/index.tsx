@@ -37,7 +37,7 @@ const Stars: React.FunctionComponent<VisualizationHOC.WrappedProps> = ({
     const now = Date.now();
     const currentLightIntensity = dLightRef.current!.intensity;
 
-    let newLightIntensity = lowPassIntensity / 4;
+    let newLightIntensity = lowPassIntensity / 4 || MIN_LIGHT_INTENSITY;
 
     if (now - lightTimestampRef.current > MIN_DELAY_BETWEEN_INTENSITY_CHANGE) {
       if (
