@@ -60,9 +60,9 @@ export function createCloud(): Mesh {
     depthTest: false
   });
 
-  const cloud = new Mesh(geometry, cloudMaterial);
+  geometry.rotateZ(Math.random() * 360);
 
-  cloud.rotateZ(Math.random() * 360);
+  const cloud = new Mesh(geometry, cloudMaterial);
 
   const zPosition = Math.random() * 15 + 10;
 
