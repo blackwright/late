@@ -15,6 +15,7 @@ export const TRANSITION_ANIMATION_LENGTH = 500;
 
 type Props = {
   data: Uint8Array;
+  lowPassData: Uint8Array;
 };
 
 type DynamicChildProps = VisualizationHOC.Props & { classNames: string };
@@ -40,6 +41,7 @@ const VisualizationSelector: React.FunctionComponent<
     ReturnType<typeof mapDispatchToProps>
 > = ({
   data,
+  lowPassData,
   startTransition,
   endTransition,
   isTransitioning,
@@ -79,6 +81,7 @@ const VisualizationSelector: React.FunctionComponent<
       >
         <selectedVisualization.component
           data={data}
+          lowPassData={lowPassData}
           isTransitioning={isTransitioning}
           timeout={TRANSITION_ANIMATION_LENGTH}
           options={selectedVisualization.options}

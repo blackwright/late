@@ -16,6 +16,7 @@ const colorChangeThreshold = COLOR_CHANGE_THRESHOLD / DATA_SIZE;
 
 const Drummer: React.FunctionComponent<VisualizationHOC.WrappedProps> = ({
   data,
+  isBeat,
   isTransitioning,
   style
 }) => {
@@ -65,17 +66,11 @@ const Drummer: React.FunctionComponent<VisualizationHOC.WrappedProps> = ({
     }
   });
 
-  // determine if we should change the background color by
-  // comparing total drummer hits against a minimum threshold
-  const totalHits = Object.values(freqMap).reduce((acc, hitCount) => {
-    return hitCount > MIN_HIT_COUNT ? acc + 1 : acc;
-  }, 0);
-
   // space out background color changes so they're not jarring
   const now = Date.now();
   if (
+    isBeat &&
     !isTransitioning &&
-    totalHits / NUM_DRUMMERS > colorChangeThreshold &&
     now - color.lastChangedTimestamp > MIN_DELAY_BETWEEN_COLOR_CHANGE
   ) {
     let newColor;

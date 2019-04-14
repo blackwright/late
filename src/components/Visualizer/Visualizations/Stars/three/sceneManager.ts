@@ -17,9 +17,7 @@ const STAR_COUNT = 20 * 1000;
 const MAX_STAR_ALPHA = 1.0;
 const MIN_STAR_ALPHA = 0.2;
 const STAR_ALPHA_DELTA = 0.75;
-
 const CLOUD_COUNT = 65;
-
 const ROTATE_Y = 0.025;
 const ROTATE_X = 0.001;
 
@@ -64,8 +62,8 @@ export default function sceneManager(rendererContainer: HTMLDivElement) {
     alphaDirection[i] = Math.random() < 0.5 ? 1 : -1;
   }
 
-  // clock is started in Stars component, when the animation loop
-  // is first triggered
+  // clock is started in Stars component when
+  // the animation loop is first triggered
   const clock = new Clock();
 
   function animate() {
