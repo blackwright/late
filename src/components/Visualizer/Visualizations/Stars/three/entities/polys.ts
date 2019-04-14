@@ -56,7 +56,7 @@ export function createCloud(): Mesh {
   const cloudMaterial = new MeshLambertMaterial({
     map: new TextureLoader().load(`assets/images/${texture}`),
     transparent: true,
-    opacity: 0.1,
+    opacity: 0.15,
     depthTest: false
   });
 

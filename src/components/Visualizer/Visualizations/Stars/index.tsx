@@ -1,13 +1,11 @@
 import React, { useRef, useEffect } from 'react';
-import { DirectionalLight, Color } from 'three';
+import { DirectionalLight } from 'three';
 import * as VisualizationHOC from '../VisualizationHOC';
 import sceneManager from './three/sceneManager';
-import { getRandomColor } from '../../../../utils/colors';
 import './Stars.scss';
 
-const MIN_DELAY_BETWEEN_COLOR_CHANGE = 200;
 const MIN_DELAY_BETWEEN_INTENSITY_CHANGE = 75;
-const MAX_LIGHT_INTENSITY_DELTA = 1;
+const MAX_LIGHT_INTENSITY_DELTA = 2;
 const MIN_LIGHT_INTENSITY = 1;
 
 const Stars: React.FunctionComponent<VisualizationHOC.WrappedProps> = ({
@@ -17,7 +15,6 @@ const Stars: React.FunctionComponent<VisualizationHOC.WrappedProps> = ({
 }) => {
   const rendererRef = useRef<HTMLDivElement>(null);
   const dLightRef = useRef<DirectionalLight>();
-  const beatTimestampRef = useRef<number>(Date.now());
   const lightTimestampRef = useRef<number>(Date.now());
 
   useEffect(() => {
@@ -37,20 +34,9 @@ const Stars: React.FunctionComponent<VisualizationHOC.WrappedProps> = ({
 
   useEffect(() => {
     const now = Date.now();
-
-    if (now - beatTimestampRef.current > MIN_DELAY_BETWEEN_COLOR_CHANGE) {
-      const cloudColor = new Color(getRandomColor());
-      dLightRef.current!.color.set(cloudColor);
-
-      beatTimestampRef.current = now;
-    }
-  }, [isBeat]);
-
-  useEffect(() => {
-    const now = Date.now();
     const currentLightIntensity = dLightRef.current!.intensity;
 
-    let newLightIntensity = lowPassIntensity / 8;
+    let newLightIntensity = lowPassIntensity / 4;
 
     if (now - lightTimestampRef.current > MIN_DELAY_BETWEEN_INTENSITY_CHANGE) {
       if (
