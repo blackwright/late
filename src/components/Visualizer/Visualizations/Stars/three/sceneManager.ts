@@ -80,8 +80,9 @@ export default function sceneManager(
     stars.rotateX(ROTATE_X * delta);
     stars.rotateY(ROTATE_Y * delta);
 
-    cloudCover.rotateX(ROTATE_X * 2 * delta);
+    cloudCover.rotateX(ROTATE_X * 8 * delta);
     cloudCover.rotateY(ROTATE_Y * 2 * delta);
+    cloudCover.rotateZ(ROTATE_X * 3 * delta);
 
     cloudCover.children.forEach(cloud => {
       (cloud as Mesh).lookAt(camera.position);

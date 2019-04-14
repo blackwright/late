@@ -24,11 +24,11 @@ const visualizations: SelectableVisualization[] = [
     options: { smoothing: 128 }
   },
   { component: Waveform },
+  { component: Halpern },
   {
     component: Drummer,
     options: { smoothing: 64 }
-  },
-  { component: Halpern }
+  }
 ];
 
 export default visualizations;
