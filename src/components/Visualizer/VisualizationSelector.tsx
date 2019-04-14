@@ -27,7 +27,8 @@ const dynamicChildFactory = (classNames?: string) => (
 const mapStateToProps = (state: StoreState) => ({
   currentIndex: state.currentVisualizationIndex,
   prevIndex: state.prevVisualizationIndex,
-  isTransitioning: state.isTransitioning
+  isTransitioning: state.isTransitioning,
+  quality: state.quality
 });
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({
@@ -46,7 +47,8 @@ const VisualizationSelector: React.FunctionComponent<
   endTransition,
   isTransitioning,
   prevIndex,
-  currentIndex
+  currentIndex,
+  quality
 }) => {
   const transitionClassName =
     prevIndex != null && prevIndex < currentIndex ? 'next' : 'prev';
@@ -85,6 +87,7 @@ const VisualizationSelector: React.FunctionComponent<
           isTransitioning={isTransitioning}
           timeout={TRANSITION_ANIMATION_LENGTH}
           options={selectedVisualization.options}
+          quality={quality}
         />
       </CSSTransition>
     </TransitionGroup>

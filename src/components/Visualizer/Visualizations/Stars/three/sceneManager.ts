@@ -12,17 +12,32 @@ import { createRenderer } from './entities/renderer';
 import { createCamera } from './entities/camera';
 import { createStars, createCloud } from './entities/polys';
 import { createAmbientLight, createDirectionalLight } from './entities/light';
+import { QualitySettings } from '../../index';
 
-const STAR_COUNT = 20 * 1000;
 const MAX_STAR_ALPHA = 1.0;
 const MIN_STAR_ALPHA = 0.2;
 const STAR_ALPHA_DELTA = 0.75;
-const CLOUD_COUNT = 65;
 const ROTATE_Y = 0.025;
 const ROTATE_X = 0.001;
 
+const QUALITY: QualitySettings = {
+  0: {
+    STAR_COUNT: 5 * 1000,
+    CLOUD_COUNT: 20
+  },
+  1: {
+    STAR_COUNT: 10 * 1000,
+    CLOUD_COUNT: 40
+  },
+  2: {
+    STAR_COUNT: 20 * 1000,
+    CLOUD_COUNT: 65
+  }
+};
+
 export default function sceneManager(
   rendererContainer: HTMLDivElement,
+  quality: number,
   lightIntensity: number
 ) {
   let animationFrameId: number;
@@ -32,13 +47,13 @@ export default function sceneManager(
   const camera = createCamera();
   const scene = new Scene();
 
-  const stars = createStars(STAR_COUNT);
+  const stars = createStars(QUALITY[quality].STAR_COUNT);
   scene.add(stars);
 
   const cloudCover = new Group();
 
   let cloudCount = 0;
-  while (cloudCount <= CLOUD_COUNT) {
+  while (cloudCount <= QUALITY[quality].CLOUD_COUNT) {
     const cloud = createCloud();
     cloudCover.add(cloud);
     cloudCount += 1;

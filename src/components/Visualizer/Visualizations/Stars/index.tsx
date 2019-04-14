@@ -10,7 +10,8 @@ const MIN_LIGHT_INTENSITY = 1;
 
 const Stars: React.FunctionComponent<VisualizationHOC.WrappedProps> = ({
   lowPassIntensity,
-  style
+  style,
+  quality
 }) => {
   const rendererRef = useRef<HTMLDivElement>(null);
   const dLightRef = useRef<DirectionalLight>();
@@ -20,6 +21,7 @@ const Stars: React.FunctionComponent<VisualizationHOC.WrappedProps> = ({
     const rendererContainer = rendererRef.current!;
     const { clock, animate, cleanup, dLight } = sceneManager(
       rendererContainer,
+      quality,
       MIN_LIGHT_INTENSITY
     );
 
@@ -29,7 +31,7 @@ const Stars: React.FunctionComponent<VisualizationHOC.WrappedProps> = ({
     animate();
 
     return cleanup;
-  }, []);
+  }, [quality]);
 
   useEffect(() => {
     const now = Date.now();

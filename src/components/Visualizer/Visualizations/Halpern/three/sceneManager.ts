@@ -2,6 +2,8 @@ import { Scene, PointsMaterial, Clock } from 'three';
 import { createRenderer } from './entities/renderer';
 import { createCamera } from './entities/camera';
 import { createSphereGeometry, createPoints } from './entities/polys';
+import { Quality } from '../../../../../store/types';
+import { QualitySettings } from '../../index';
 
 const DELAY_BEFORE_ROTATING_X = 1500;
 const CAMERA_MAX_DISTANCE = 200;
@@ -9,12 +11,21 @@ const CAMERA_DRIFT = 0.025;
 const ROTATE_Y = -0.3;
 const ROTATE_X = 0.3;
 
-export default function sceneManager(rendererContainer: HTMLDivElement) {
+const QUALITY: QualitySettings = {
+  0: { sphereSegments: 30 },
+  1: { sphereSegments: 48 },
+  2: { sphereSegments: 72 }
+};
+
+export default function sceneManager(
+  rendererContainer: HTMLDivElement,
+  quality: Quality
+) {
   let animationFrameId: number;
   let sceneInitializedTimestamp = Date.now();
   let t = 0;
 
-  const sphereGeometry = createSphereGeometry();
+  const sphereGeometry = createSphereGeometry(QUALITY[quality].sphereSegments);
   const halpern = createPoints(sphereGeometry);
   const camera = createCamera(CAMERA_MAX_DISTANCE);
   const renderer = createRenderer();

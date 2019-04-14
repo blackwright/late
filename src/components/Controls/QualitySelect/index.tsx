@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { Dispatch } from 'redux';
 import * as Actions from '../../../store/actions';
-import { StoreState } from '../../../store/types';
+import { StoreState, Quality } from '../../../store/types';
 import './Quality.scss';
 
 type Props = {
@@ -16,7 +16,7 @@ const qualities = [
   { label: 'high', value: 2 }
 ];
 
-const Quality: React.FunctionComponent<Props> = ({
+const QualitySelect: React.FunctionComponent<Props> = ({
   quality,
   setQuality,
   setIsQualityHovered
@@ -27,7 +27,10 @@ const Quality: React.FunctionComponent<Props> = ({
       onMouseEnter={() => setIsQualityHovered(true)}
       onMouseLeave={() => setIsQualityHovered(false)}
     >
-      <select value={quality} onChange={e => setQuality(+e.target.value)}>
+      <select
+        value={quality}
+        onChange={e => setQuality(+e.target.value as Quality)}
+      >
         {qualities.map(quality => (
           <option key={quality.label} value={quality.value}>
             {quality.label}
@@ -43,10 +46,10 @@ const mapStateToProps = (state: StoreState) => ({
 });
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({
-  setQuality: (quality: number) => dispatch(Actions.setQuality(quality))
+  setQuality: (quality: Quality) => dispatch(Actions.setQuality(quality))
 });
 
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(Quality);
+)(QualitySelect);

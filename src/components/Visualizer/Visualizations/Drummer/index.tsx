@@ -4,11 +4,17 @@ import * as VisualizationHOC from '../VisualizationHOC';
 import './Drummer.scss';
 import { getRandomColor } from '../../../../utils/colors';
 import { DATA_SIZE } from '../../../../config';
+import { QualitySettings } from '../index';
 
-const NUM_DRUMMERS = 13;
 const MIN_HIT_COUNT = 0.04;
 const MIN_FREQUENCY_VARIATION = 10;
 const MIN_DELAY_BETWEEN_COLOR_CHANGE = 200;
+
+const QUALITY: QualitySettings = {
+  0: { NUM_DRUMMERS: 6 },
+  1: { NUM_DRUMMERS: 10 },
+  2: { NUM_DRUMMERS: 16 }
+};
 
 const minHitCount = MIN_HIT_COUNT * DATA_SIZE;
 
@@ -16,6 +22,7 @@ const Drummer: React.FunctionComponent<VisualizationHOC.WrappedProps> = ({
   data,
   isBeat,
   isTransitioning,
+  quality,
   style
 }) => {
   const [size, setSize] = useState(0);
@@ -39,19 +46,20 @@ const Drummer: React.FunctionComponent<VisualizationHOC.WrappedProps> = ({
   }, []);
 
   const color = colorRef.current;
+  const numDrummers = QUALITY[quality].NUM_DRUMMERS;
 
   const freqMap: { [key: string]: number } = {};
-  const numPerSlice = 256 / NUM_DRUMMERS;
+  const numPerSlice = 256 / numDrummers;
 
   let freqKey = 0;
-  while (freqKey < NUM_DRUMMERS) {
+  while (freqKey < numDrummers) {
     freqMap[freqKey] = 0;
     freqKey += 1;
   }
 
   data.forEach(freqData => {
     let freqKey = 0;
-    while (freqKey < NUM_DRUMMERS) {
+    while (freqKey < numDrummers) {
       const ceiling = numPerSlice * (freqKey + 1);
       if (
         Math.abs(freqData - 128) > MIN_FREQUENCY_VARIATION &&
@@ -81,7 +89,7 @@ const Drummer: React.FunctionComponent<VisualizationHOC.WrappedProps> = ({
   }
 
   const drummers = Object.entries(freqMap).map(([freqKey, hitCount], i) => {
-    const drummerContainerSize = ((1 + +freqKey) * size) / NUM_DRUMMERS;
+    const drummerContainerSize = ((1 + +freqKey) * size) / numDrummers;
 
     return (
       <div
@@ -90,7 +98,7 @@ const Drummer: React.FunctionComponent<VisualizationHOC.WrappedProps> = ({
         style={{
           width: `${drummerContainerSize}px`,
           height: `${drummerContainerSize}px`,
-          opacity: ((NUM_DRUMMERS - i) / NUM_DRUMMERS) * 0.5 * 0.25
+          opacity: ((numDrummers - i) / numDrummers) * 0.5 * 0.25
         }}
       >
         <div className={classNames('beat', { hit: hitCount > minHitCount })} />

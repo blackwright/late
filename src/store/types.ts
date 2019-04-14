@@ -1,8 +1,10 @@
+export type Quality = 0 | 1 | 2;
+
 export type StoreState = {
   currentVisualizationIndex: number;
   prevVisualizationIndex: number;
   isTransitioning: boolean;
-  quality: number;
+  quality: Quality;
 };
 
 export enum ActionConstants {
@@ -31,7 +33,7 @@ interface GoToPrevVisualizationAction {
 
 interface SetQualityAction {
   type: typeof ActionConstants.SET_QUALITY;
-  quality: number;
+  quality: Quality;
 }
 
 export type ActionUnionType =

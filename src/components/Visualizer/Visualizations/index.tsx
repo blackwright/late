@@ -8,6 +8,10 @@ import { isMobileDevice as isMobileDeviceCheck } from '../../../utils';
 
 export const isMobileDevice = isMobileDeviceCheck();
 
+export type QualitySettings = {
+  [quality: number]: { [setting: string]: any };
+};
+
 export type Options = {
   smoothing?: number;
   mobileDisabled?: boolean;

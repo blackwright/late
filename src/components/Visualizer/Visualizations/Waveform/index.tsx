@@ -1,6 +1,6 @@
 import React, { useLayoutEffect, useRef } from 'react';
 import * as VisualizationHOC from '../VisualizationHOC';
-import { getRandomColorTriple } from '../../../../utils/colors';
+import { getColors } from './utils';
 import './Waveform.scss';
 
 const LINE_WIDTH = 10;
@@ -9,6 +9,7 @@ const LINE_Y_OFFSET = 5;
 
 const Waveform: React.FunctionComponent<VisualizationHOC.WrappedProps> = ({
   data,
+  quality,
   style
 }) => {
   const canvasEl = useRef<HTMLCanvasElement>(null);
@@ -55,7 +56,7 @@ const Waveform: React.FunctionComponent<VisualizationHOC.WrappedProps> = ({
     const canvas = canvasEl.current!;
     const ctx = canvas.getContext('2d')!;
 
-    const colors = getRandomColorTriple();
+    const colors = getColors(quality + 1);
 
     ctx.lineWidth = LINE_WIDTH;
     ctx.lineCap = 'round';

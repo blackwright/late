@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { TRANSITION_ANIMATION_LENGTH } from '../VisualizationSelector';
-import './Visualization.scss';
 import { Options } from './index';
+import { Quality } from '../../../store/types';
+import './Visualization.scss';
 
 export type Props = {
   // array of frequency data with values 0-255
@@ -11,6 +12,7 @@ export type Props = {
   timeout: number;
   isTransitioning: boolean;
   options?: Options;
+  quality: Quality;
 };
 
 export type WrappedProps = {
@@ -20,6 +22,7 @@ export type WrappedProps = {
   lowPassIntensity: number;
   style: { transition: string };
   isTransitioning: boolean;
+  quality: Quality;
 };
 
 const defaultProps: Props = {
@@ -27,7 +30,8 @@ const defaultProps: Props = {
   lowPassData: new Uint8Array(),
   timeout: TRANSITION_ANIMATION_LENGTH,
   isTransitioning: false,
-  options: {}
+  options: {},
+  quality: 2
 };
 
 // all visualization components should be wrapped with this HOC
@@ -39,7 +43,8 @@ export function wrap(
     lowPassData,
     timeout,
     isTransitioning,
-    options
+    options,
+    quality
   }: Props = defaultProps) {
     const [isDelayedAfterReflow, setIsDelayedAfterReflow] = useState(false);
 
@@ -137,6 +142,7 @@ export function wrap(
         lowPassIntensity={currentLowPassIntensity}
         style={transitionStyle}
         isTransitioning={isTransitioning}
+        quality={quality}
       />
     );
   };

@@ -2,14 +2,21 @@ import React, { useEffect, useRef } from 'react';
 import { BufferGeometry, BufferAttribute } from 'three';
 import * as VisualizationHOC from '../VisualizationHOC';
 import sceneManager from './three/sceneManager';
+import { QualitySettings } from '../index';
 import './Halpern.scss';
 
-const RIPPLE_SPEED = 5;
 const VERTEX_SEGMENT_WEIGHT_COEFFICIENT = 0.1;
 const BASELINE_VERTEX_SCALAR_FACTOR = 1;
 
+const QUALITY: QualitySettings = {
+  0: { RIPPLE_SPEED: 2 },
+  1: { RIPPLE_SPEED: 3 },
+  2: { RIPPLE_SPEED: 4 }
+};
+
 const Halpern: React.FunctionComponent<VisualizationHOC.WrappedProps> = ({
   data,
+  quality,
   style
 }) => {
   const rendererRef = useRef<HTMLDivElement>(null);
@@ -23,7 +30,8 @@ const Halpern: React.FunctionComponent<VisualizationHOC.WrappedProps> = ({
   useEffect(() => {
     const rendererContainer = rendererRef.current!;
     const { clock, animate, cleanup, sphereGeometry, halpern } = sceneManager(
-      rendererContainer
+      rendererContainer,
+      quality
     );
 
     const halpernGeometry = halpern.geometry as BufferGeometry;
@@ -48,12 +56,14 @@ const Halpern: React.FunctionComponent<VisualizationHOC.WrappedProps> = ({
     animate();
 
     return cleanup;
-  }, []);
+  }, [quality]);
 
   useEffect(() => {
-    focusedDataRef.current.splice(0, RIPPLE_SPEED);
+    const rippleSpeed = QUALITY[quality].RIPPLE_SPEED;
+
+    focusedDataRef.current.splice(0, rippleSpeed);
     focusedDataRef.current = focusedDataRef.current.concat(
-      new Array(RIPPLE_SPEED).fill(data[focusedDataIndexRef.current!])
+      new Array(rippleSpeed).fill(data[focusedDataIndexRef.current!])
     );
 
     const halpernBufferPositions = halpernGeometryRef.current!.getAttribute(

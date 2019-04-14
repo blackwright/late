@@ -7,8 +7,8 @@ import {
   TextureLoader
 } from 'three';
 
-export function createSphereGeometry(): SphereGeometry {
-  return new SphereGeometry(48, 48, 48);
+export function createSphereGeometry(segments: number): SphereGeometry {
+  return new SphereGeometry(48, segments, segments);
 }
 
 export function createPoints(sphereGeometry: SphereGeometry): Points {

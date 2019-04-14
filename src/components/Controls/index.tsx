@@ -5,7 +5,7 @@ import classNames from 'classnames';
 import Loading from '../Loading';
 import * as Actions from '../../store/actions';
 import * as versionInfo from '../../metadata/build-version.json';
-import Quality from './Quality';
+import QualitySelect from './QualitySelect';
 import './Controls.scss';
 
 const CONTROLS_FADE_OUT_DELAY = 1500;
@@ -134,7 +134,7 @@ const Controls: React.FunctionComponent<Props> = props => {
         className={classNames({ show: isOverlayShown })}
       >
         <h1 id="title">LATE</h1>
-        <Quality setIsQualityHovered={setIsQualityHovered} />
+        <QualitySelect setIsQualityHovered={setIsQualityHovered} />
         <div id="version">build {versionInfo.version}</div>
         {
           <div
