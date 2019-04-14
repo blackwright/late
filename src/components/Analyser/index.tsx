@@ -1,4 +1,4 @@
-import React, { useState, useLayoutEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import VisualizationSelector from '../Visualizer/VisualizationSelector';
 import { FFT_SIZE } from '../../config';
 
@@ -8,22 +8,35 @@ type Props = {
 };
 
 const Analyser: React.FunctionComponent<Props> = ({ context, source }) => {
-  const [data, setData] = useState(new Uint8Array());
+  const [rawData, setRawData] = useState(new Uint8Array());
+  const [lowPassData, setLowPassData] = useState(new Uint8Array());
 
   const animationFrameIdRef = useRef<number>();
 
-  useLayoutEffect(() => {
-    const analyser = context.createAnalyser();
-    analyser.fftSize = FFT_SIZE;
-    analyser.smoothingTimeConstant = 0;
+  useEffect(() => {
+    const rawAnalyser = context.createAnalyser();
+    rawAnalyser.fftSize = FFT_SIZE;
+    rawAnalyser.smoothingTimeConstant = 0;
+    source.connect(rawAnalyser);
+    rawAnalyser.connect(context.destination);
 
-    source.connect(analyser);
-    analyser.connect(context.destination);
+    const filter = context.createBiquadFilter();
+    filter.type = 'lowpass';
+    const lowPassAnalyser = context.createAnalyser();
+    lowPassAnalyser.fftSize = FFT_SIZE;
+    lowPassAnalyser.smoothingTimeConstant = 0;
+    source.connect(filter);
+    filter.connect(lowPassAnalyser);
 
     const tick = () => {
-      const dataContainer = new Uint8Array(FFT_SIZE);
-      analyser.getByteTimeDomainData(dataContainer);
-      setData(dataContainer);
+      const rawDataContainer = new Uint8Array(FFT_SIZE);
+      rawAnalyser.getByteTimeDomainData(rawDataContainer);
+      setRawData(rawDataContainer);
+
+      const lowPassDataContainer = new Uint8Array(FFT_SIZE);
+      lowPassAnalyser.getByteTimeDomainData(lowPassDataContainer);
+      setLowPassData(lowPassDataContainer);
+
       animationFrameIdRef.current = window.requestAnimationFrame(tick);
     };
 
@@ -32,12 +45,13 @@ const Analyser: React.FunctionComponent<Props> = ({ context, source }) => {
     return () => {
       animationFrameIdRef.current != null &&
         window.cancelAnimationFrame(animationFrameIdRef.current);
-      analyser && analyser.disconnect();
+      rawAnalyser && rawAnalyser.disconnect();
+      lowPassAnalyser && lowPassAnalyser.disconnect();
       source && source.disconnect();
     };
-  }, []);
+  }, [context, source]);
 
-  return <VisualizationSelector data={data} />;
+  return <VisualizationSelector data={rawData} lowPassData={lowPassData} />;
 };
 
 export default Analyser;
