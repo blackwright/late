@@ -1,9 +1,9 @@
 import { DirectionalLight, AmbientLight } from 'three';
 
-export function createAmbientLight(color: number) {
-  return new AmbientLight(color, 1);
+export function createAmbientLight(color: number, intensity: number) {
+  return new AmbientLight(color, intensity);
 }
 
-export function createDirectionalLight(color: number) {
-  return new DirectionalLight(color, 10);
+export function createDirectionalLight(color: number, intensity: number) {
+  return new DirectionalLight(color, intensity);
 }

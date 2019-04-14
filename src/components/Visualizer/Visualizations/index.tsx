@@ -19,7 +19,10 @@ type SelectableVisualization = {
 };
 
 const visualizations: SelectableVisualization[] = [
-  { component: Stars },
+  {
+    component: Stars,
+    options: { smoothing: 128 }
+  },
   { component: Waveform },
   {
     component: Drummer,

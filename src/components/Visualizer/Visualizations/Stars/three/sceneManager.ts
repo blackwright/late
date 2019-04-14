@@ -21,7 +21,10 @@ const CLOUD_COUNT = 65;
 const ROTATE_Y = 0.025;
 const ROTATE_X = 0.001;
 
-export default function sceneManager(rendererContainer: HTMLDivElement) {
+export default function sceneManager(
+  rendererContainer: HTMLDivElement,
+  lightIntensity: number
+) {
   let animationFrameId: number;
 
   const renderer = createRenderer();
@@ -43,10 +46,14 @@ export default function sceneManager(rendererContainer: HTMLDivElement) {
 
   scene.add(cloudCover);
 
-  const aLight = createAmbientLight(0xffffff);
+  const aLight = createAmbientLight(0xffffff, lightIntensity);
   scene.add(aLight);
 
-  const dLight = createDirectionalLight(0xc70039);
+  const fixedDLight = createDirectionalLight(0xc70039, 2);
+  fixedDLight.position.set(0, 0, 1);
+  scene.add(fixedDLight);
+
+  const dLight = createDirectionalLight(0xc70039, lightIntensity);
   dLight.position.set(0, 0, 1);
   scene.add(dLight);
 
@@ -129,7 +136,6 @@ export default function sceneManager(rendererContainer: HTMLDivElement) {
     clock,
     animate,
     cleanup,
-    stars,
-    camera
+    dLight
   };
 }

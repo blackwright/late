@@ -7,12 +7,9 @@ import {
   TextureLoader,
   MeshLambertMaterial,
   Mesh,
-  PlaneGeometry,
-  BackSide,
-  DoubleSide
+  PlaneGeometry
 } from 'three';
 import { starVertexShader, starFragmentShader } from './shaders';
-import { toRadians } from '../../../../../../utils';
 
 export function createStars(starCount: number): Points {
   const geometry = new BufferGeometry();
@@ -57,7 +54,6 @@ export function createCloud(): Mesh {
   const geometry = new PlaneGeometry(50, 50);
 
   const cloudMaterial = new MeshLambertMaterial({
-    color: 0xffffff,
     map: new TextureLoader().load(`assets/images/${texture}`),
     transparent: true,
     opacity: 0.1,

@@ -8,11 +8,9 @@ import { DATA_SIZE } from '../../../../config';
 const NUM_DRUMMERS = 13;
 const MIN_HIT_COUNT = 0.04;
 const MIN_FREQUENCY_VARIATION = 10;
-const COLOR_CHANGE_THRESHOLD = 70;
 const MIN_DELAY_BETWEEN_COLOR_CHANGE = 200;
 
 const minHitCount = MIN_HIT_COUNT * DATA_SIZE;
-const colorChangeThreshold = COLOR_CHANGE_THRESHOLD / DATA_SIZE;
 
 const Drummer: React.FunctionComponent<VisualizationHOC.WrappedProps> = ({
   data,
