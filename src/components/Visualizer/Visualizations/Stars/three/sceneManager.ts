@@ -19,6 +19,8 @@ const MIN_STAR_ALPHA = 0.2;
 const STAR_ALPHA_DELTA = 0.75;
 const ROTATE_Y = 0.025;
 const ROTATE_X = 0.001;
+const STATIC_LIGHT_COLOR = 0x00c4b6;
+const VARIABLE_LIGHT_COLOR = 0xd10022;
 
 const QUALITY: QualitySettings = {
   0: {
@@ -64,11 +66,11 @@ export default function sceneManager(
   const aLight = createAmbientLight(0xffffff, lightIntensity);
   scene.add(aLight);
 
-  const fixedDLight = createDirectionalLight(0xc70039, 2);
+  const fixedDLight = createDirectionalLight(STATIC_LIGHT_COLOR, 2);
   fixedDLight.position.set(0, 0, 1);
   scene.add(fixedDLight);
 
-  const dLight = createDirectionalLight(0xc70039, lightIntensity);
+  const dLight = createDirectionalLight(VARIABLE_LIGHT_COLOR, lightIntensity);
   dLight.position.set(0, 0, 1);
   scene.add(dLight);
 
@@ -95,7 +97,7 @@ export default function sceneManager(
     stars.rotateX(ROTATE_X * delta);
     stars.rotateY(ROTATE_Y * delta);
 
-    cloudCover.rotateX(ROTATE_X * 8 * delta);
+    cloudCover.rotateX(ROTATE_X * 24 * delta);
     cloudCover.rotateY(ROTATE_Y * 2 * delta);
     cloudCover.rotateZ(ROTATE_X * 3 * delta);
 

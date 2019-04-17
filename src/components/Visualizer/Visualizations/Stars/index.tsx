@@ -5,11 +5,11 @@ import sceneManager from './three/sceneManager';
 import './Stars.scss';
 
 const MIN_DELAY_BETWEEN_INTENSITY_CHANGE = 75;
-const MAX_LIGHT_INTENSITY_DELTA = 2;
+const MAX_LIGHT_INTENSITY_DELTA = 2.5;
 const MIN_LIGHT_INTENSITY = 1;
 
 const Stars: React.FunctionComponent<VisualizationHOC.WrappedProps> = ({
-  lowPassIntensity,
+  intensity,
   style,
   quality
 }) => {
@@ -35,28 +35,28 @@ const Stars: React.FunctionComponent<VisualizationHOC.WrappedProps> = ({
 
   useEffect(() => {
     const now = Date.now();
+
+    if (now - lightTimestampRef.current <= MIN_DELAY_BETWEEN_INTENSITY_CHANGE) {
+      return;
+    }
+
     const currentLightIntensity = dLightRef.current!.intensity;
 
-    let newLightIntensity = lowPassIntensity / 4 || MIN_LIGHT_INTENSITY;
+    let newLightIntensity = intensity / 2 || MIN_LIGHT_INTENSITY;
 
-    if (now - lightTimestampRef.current > MIN_DELAY_BETWEEN_INTENSITY_CHANGE) {
-      if (
-        newLightIntensity - currentLightIntensity >
-        MAX_LIGHT_INTENSITY_DELTA
-      ) {
-        newLightIntensity = currentLightIntensity + MAX_LIGHT_INTENSITY_DELTA;
-      } else if (
-        currentLightIntensity - newLightIntensity >
-        MAX_LIGHT_INTENSITY_DELTA
-      ) {
-        newLightIntensity = currentLightIntensity - MAX_LIGHT_INTENSITY_DELTA;
-      }
-
-      dLightRef.current!.intensity = newLightIntensity;
-
-      lightTimestampRef.current = now;
+    if (newLightIntensity - currentLightIntensity > MAX_LIGHT_INTENSITY_DELTA) {
+      newLightIntensity = currentLightIntensity + MAX_LIGHT_INTENSITY_DELTA;
+    } else if (
+      currentLightIntensity - newLightIntensity >
+      MAX_LIGHT_INTENSITY_DELTA
+    ) {
+      newLightIntensity = currentLightIntensity - MAX_LIGHT_INTENSITY_DELTA;
     }
-  }, [lowPassIntensity]);
+
+    dLightRef.current!.intensity = newLightIntensity;
+
+    lightTimestampRef.current = now;
+  }, [intensity]);
 
   return (
     <div className="visualization stars" ref={rendererRef} style={style} />
