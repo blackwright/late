@@ -9,6 +9,7 @@ const MAX_LIGHT_INTENSITY_DELTA = 2.5;
 const MIN_LIGHT_INTENSITY = 1;
 
 const Stars: React.FunctionComponent<VisualizationHOC.WrappedProps> = ({
+  data,
   intensity,
   style,
   quality
@@ -56,7 +57,7 @@ const Stars: React.FunctionComponent<VisualizationHOC.WrappedProps> = ({
     dLightRef.current!.intensity = newLightIntensity;
 
     lightTimestampRef.current = now;
-  }, [intensity]);
+  }, [data]);
 
   return (
     <div className="visualization stars" ref={rendererRef} style={style} />
