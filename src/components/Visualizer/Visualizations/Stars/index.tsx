@@ -8,10 +8,9 @@ const MIN_DELAY_BETWEEN_INTENSITY_CHANGE = 75;
 const MAX_LIGHT_INTENSITY_DELTA = 2.5;
 const MIN_LIGHT_INTENSITY = 1;
 
-const Stars: React.FunctionComponent<VisualizationHOC.WrappedProps> = ({
+const Stars: React.FC<VisualizationHOC.WrappedProps> = ({
   data,
   intensity,
-  style,
   quality
 }) => {
   const rendererRef = useRef<HTMLDivElement>(null);
@@ -59,9 +58,7 @@ const Stars: React.FunctionComponent<VisualizationHOC.WrappedProps> = ({
     lightTimestampRef.current = now;
   }, [data]);
 
-  return (
-    <div className="visualization stars" ref={rendererRef} style={style} />
-  );
+  return <div className="stars" ref={rendererRef} />;
 };
 
 export default VisualizationHOC.wrap(Stars);

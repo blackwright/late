@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { TRANSITION_ANIMATION_LENGTH } from '../VisualizationSelector';
 import { Options } from './index';
 import { Quality } from '../../../store/types';
 import './Visualization.scss';
@@ -8,28 +7,22 @@ export type Props = {
   // array of frequency data with values 0-255
   data: Uint8Array;
   lowPassData: Uint8Array;
-  // length of CSS transitions
-  timeout: number;
-  isTransitioning: boolean;
   options?: Options;
   quality: Quality;
 };
 
 export type WrappedProps = {
   data: Uint8Array;
+  lowPassData: Uint8Array;
   isBeat: boolean;
   intensity: number;
   lowPassIntensity: number;
-  style: { transition: string };
-  isTransitioning: boolean;
   quality: Quality;
 };
 
 const defaultProps: Props = {
   data: new Uint8Array(),
   lowPassData: new Uint8Array(),
-  timeout: TRANSITION_ANIMATION_LENGTH,
-  isTransitioning: false,
   options: {},
   quality: 2
 };
@@ -41,8 +34,6 @@ export function wrap(
   return function({
     data,
     lowPassData,
-    timeout,
-    isTransitioning,
     options,
     quality
   }: Props = defaultProps) {
@@ -132,16 +123,13 @@ export function wrap(
 
     const isBeat = currentLowPassIntensity > recentLowPassAvgIntensity * 1.75;
 
-    const transitionStyle = { transition: `transform ${timeout}ms linear` };
-
     return (
       <WrappedComponent
         data={renderedData}
+        lowPassData={lowPassData}
         isBeat={isBeat}
         intensity={currentRawIntensity}
         lowPassIntensity={currentLowPassIntensity}
-        style={transitionStyle}
-        isTransitioning={isTransitioning}
         quality={quality}
       />
     );

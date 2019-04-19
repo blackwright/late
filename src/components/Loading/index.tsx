@@ -6,7 +6,7 @@ type Props = {
   show?: boolean;
 };
 
-const Loading: React.FunctionComponent<Props> = ({ show }) => (
+const Loading: React.FC<Props> = ({ show }) => (
   <div
     className={classNames('loading', { show: show === false ? false : true })}
   >

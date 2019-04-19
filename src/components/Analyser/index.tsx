@@ -7,7 +7,7 @@ type Props = {
   source: MediaElementAudioSourceNode;
 };
 
-const Analyser: React.FunctionComponent<Props> = ({ context, source }) => {
+const Analyser: React.FC<Props> = ({ context, source }) => {
   const [rawData, setRawData] = useState(new Uint8Array());
   const [lowPassData, setLowPassData] = useState(new Uint8Array());
 

@@ -14,10 +14,9 @@ const QUALITY: QualitySettings = {
   2: { RIPPLE_SPEED: 4 }
 };
 
-const Halpern: React.FunctionComponent<VisualizationHOC.WrappedProps> = ({
+const Halpern: React.FC<VisualizationHOC.WrappedProps> = ({
   data,
-  quality,
-  style
+  quality
 }) => {
   const rendererRef = useRef<HTMLDivElement>(null);
   const sphereDataSegmentsRef = useRef<number>();
@@ -109,9 +108,7 @@ const Halpern: React.FunctionComponent<VisualizationHOC.WrappedProps> = ({
     ) as BufferAttribute).needsUpdate = true;
   }, [data]);
 
-  return (
-    <div className="visualization halpern" ref={rendererRef} style={style} />
-  );
+  return <div className="halpern" ref={rendererRef} />;
 };
 
 export default VisualizationHOC.wrap(Halpern);

@@ -18,12 +18,10 @@ const QUALITY: QualitySettings = {
 
 const minHitCount = MIN_HIT_COUNT * DATA_SIZE;
 
-const Drummer: React.FunctionComponent<VisualizationHOC.WrappedProps> = ({
+const Drummer: React.FC<VisualizationHOC.WrappedProps> = ({
   data,
   isBeat,
-  isTransitioning,
-  quality,
-  style
+  quality
 }) => {
   const [size, setSize] = useState(0);
 
@@ -76,7 +74,6 @@ const Drummer: React.FunctionComponent<VisualizationHOC.WrappedProps> = ({
   const now = Date.now();
   if (
     isBeat &&
-    !isTransitioning &&
     now - color.lastChangedTimestamp > MIN_DELAY_BETWEEN_COLOR_CHANGE
   ) {
     let newColor;
@@ -107,7 +104,7 @@ const Drummer: React.FunctionComponent<VisualizationHOC.WrappedProps> = ({
   });
 
   return (
-    <div className="visualization drummer" style={style}>
+    <div className="drummer">
       {drummers}
       <div className="overlay" style={{ backgroundColor: color.value }} />
     </div>

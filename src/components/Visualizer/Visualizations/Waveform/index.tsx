@@ -7,10 +7,9 @@ const LINE_WIDTH = 10;
 const LINE_X_OFFSET = 0;
 const LINE_Y_OFFSET = 5;
 
-const Waveform: React.FunctionComponent<VisualizationHOC.WrappedProps> = ({
+const Waveform: React.FC<VisualizationHOC.WrappedProps> = ({
   data,
-  quality,
-  style
+  quality
 }) => {
   const canvasEl = useRef<HTMLCanvasElement>(null);
 
@@ -84,9 +83,9 @@ const Waveform: React.FunctionComponent<VisualizationHOC.WrappedProps> = ({
   }, [data]);
 
   return (
-    <div className="visualization waveform" style={style}>
+    <div className="waveform">
       <div className="backdrop" />
-      <canvas ref={canvasEl} />;
+      <canvas ref={canvasEl} />
     </div>
   );
 };

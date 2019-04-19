@@ -16,7 +16,7 @@ const qualities = [
   { label: 'high', value: 2 }
 ];
 
-const QualitySelect: React.FunctionComponent<Props> = ({
+const QualitySelect: React.FC<Props> = ({
   quality,
   setQuality,
   setIsQualityHovered

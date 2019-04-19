@@ -1,100 +1,78 @@
-import React from 'react';
-import { Dispatch } from 'redux';
+import React, { useCallback } from 'react';
 import { connect } from 'react-redux';
-import { TransitionGroup, CSSTransition } from 'react-transition-group';
+import { useTransition, animated } from 'react-spring';
 import * as VisualizationHOC from './Visualizations/VisualizationHOC';
-import visualizations, {
-  isMobileDevice,
-  MobileDisabled
-} from './Visualizations';
+import visualizations from './Visualizations';
 import { modulo } from '../../utils';
-import * as Actions from '../../../src/store/actions';
 import { StoreState } from '../../../src/store/types';
 
 export const TRANSITION_ANIMATION_LENGTH = 500;
 
-type Props = {
-  data: Uint8Array;
-  lowPassData: Uint8Array;
-};
+type Props = Pick<VisualizationHOC.Props, 'data' | 'lowPassData'>;
 
-type DynamicChildProps = VisualizationHOC.Props & { classNames: string };
-
-const dynamicChildFactory = (classNames?: string) => (
-  child: React.ReactElement<DynamicChildProps>
-) => React.cloneElement(child, { classNames });
+type StyledProps = Props &
+  Pick<StoreState, 'quality'> & {
+    style: React.CSSProperties;
+  };
 
 const mapStateToProps = (state: StoreState) => ({
   currentIndex: state.currentVisualizationIndex,
   prevIndex: state.prevVisualizationIndex,
-  isTransitioning: state.isTransitioning,
   quality: state.quality
 });
 
-const mapDispatchToProps = (dispatch: Dispatch) => ({
-  startTransition: () => dispatch(Actions.beginVisualizationTransition()),
-  endTransition: () => dispatch(Actions.endVisualizationTransition())
+const styledVisualizations = visualizations.map(vis => {
+  return (props: StyledProps) => {
+    const { style, ...rest } = props;
+    return (
+      <animated.div className="visualization" style={props.style}>
+        <vis.component {...rest} options={vis.options} />
+      </animated.div>
+    );
+  };
 });
 
-const VisualizationSelector: React.FunctionComponent<
-  Props &
-    ReturnType<typeof mapStateToProps> &
-    ReturnType<typeof mapDispatchToProps>
-> = ({
-  data,
-  lowPassData,
-  startTransition,
-  endTransition,
-  isTransitioning,
-  prevIndex,
-  currentIndex,
-  quality
-}) => {
-  const transitionClassName =
-    prevIndex != null && prevIndex < currentIndex ? 'next' : 'prev';
+const VisualizationSelector: React.FC<
+  Props & ReturnType<typeof mapStateToProps>
+> = ({ data, lowPassData, prevIndex, currentIndex, quality }) => {
+  const visIndex = modulo(currentIndex, visualizations.length);
 
-  const classNameRoot = transitionClassName
-    ? `visualization-${transitionClassName}`
-    : undefined;
+  const direction = useCallback((current?, prev?) => {
+    let translateXMultiplier = 0;
+    if (current < prev) {
+      translateXMultiplier = 1;
+    } else if (prev < current) {
+      translateXMultiplier = -1;
+    }
+    return `translate3d(${100 * translateXMultiplier}%, 0, 0)`;
+  }, []);
 
-  const index = modulo(currentIndex, visualizations.length);
-  const intendedVisualization = visualizations[index];
-
-  const selectedVisualization =
-    intendedVisualization.options &&
-    intendedVisualization.options.mobileDisabled &&
-    isMobileDevice
-      ? MobileDisabled
-      : intendedVisualization;
+  const transitions = useTransition(visIndex, null, {
+    from: { transform: direction(currentIndex, prevIndex) },
+    enter: { transform: direction() },
+    leave: { transform: direction(prevIndex, currentIndex) },
+    initial: { transform: direction(0, -1) }
+  });
 
   return (
-    <TransitionGroup
-      component={null}
-      childFactory={dynamicChildFactory(classNameRoot)}
-    >
-      <CSSTransition
-        key={index}
-        timeout={TRANSITION_ANIMATION_LENGTH}
-        classNames={classNameRoot || ''}
-        onExit={startTransition}
-        onExited={endTransition}
-        mountOnEnter
-        unmountOnExit
-      >
-        <selectedVisualization.component
-          data={data}
-          lowPassData={lowPassData}
-          isTransitioning={isTransitioning}
-          timeout={TRANSITION_ANIMATION_LENGTH}
-          options={selectedVisualization.options}
-          quality={quality}
-        />
-      </CSSTransition>
-    </TransitionGroup>
+    <>
+      {transitions.map(({ item, props, key }) => {
+        const Visualization = styledVisualizations[item];
+        return (
+          <Visualization
+            key={key}
+            data={data}
+            lowPassData={lowPassData}
+            quality={quality}
+            style={props}
+          />
+        );
+      })}
+    </>
   );
 };
 
 export default connect(
   mapStateToProps,
-  mapDispatchToProps
+  null
 )(VisualizationSelector);

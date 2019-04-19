@@ -2,11 +2,9 @@ import React from 'react';
 import * as VisualizationHOC from '../VisualizationHOC';
 import './MobileDisabled.scss';
 
-const MobileDisabled: React.FunctionComponent<
-  VisualizationHOC.WrappedProps
-> = ({ style }) => {
+const MobileDisabled: React.FC<VisualizationHOC.WrappedProps> = () => {
   return (
-    <div className="visualization mobile-disabled" style={style}>
+    <div className="mobile-disabled">
       <div className="content">
         <img
           id="desktop-icon"

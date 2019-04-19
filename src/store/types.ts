@@ -3,7 +3,6 @@ export type Quality = 0 | 1 | 2;
 export type StoreState = {
   currentVisualizationIndex: number;
   prevVisualizationIndex: number;
-  isTransitioning: boolean;
   quality: Quality;
 };
 
@@ -13,14 +12,6 @@ export enum ActionConstants {
   GO_TO_PREV_VISUALIZATION = 'GO_TO_PREV_VISUALIZATION',
   GO_TO_NEXT_VISUALIZATION = 'GO_TO_NEXT_VISUALIZATION',
   SET_QUALITY = 'SET_QUALITY'
-}
-
-interface BeginVisualizationTransitionAction {
-  type: typeof ActionConstants.BEGIN_VISUALIZATION_TRANSITION;
-}
-
-interface EndVisualizationTransitionAction {
-  type: typeof ActionConstants.END_VISUALIZATION_TRANSITION;
 }
 
 interface GoToNextVisualizationAction {
@@ -37,8 +28,6 @@ interface SetQualityAction {
 }
 
 export type ActionUnionType =
-  | BeginVisualizationTransitionAction
-  | EndVisualizationTransitionAction
   | GoToNextVisualizationAction
   | GoToPrevVisualizationAction
   | SetQualityAction;

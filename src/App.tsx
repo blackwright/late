@@ -11,7 +11,7 @@ const AUDIO_SERVER_URL =
 
 type Props = {};
 
-const App: React.FunctionComponent<Props> = props => {
+const App: React.FC<Props> = props => {
   const [wantsToPlay, setWantsToPlay] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [context, setContext, contextRef] = useStateRef<

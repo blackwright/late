@@ -17,7 +17,7 @@ export type Options = {
   mobileDisabled?: boolean;
 };
 
-type SelectableVisualization = {
+export type SelectableVisualization = {
   component: React.ComponentType<Props>;
   options?: Options;
 };
@@ -27,8 +27,12 @@ const visualizations: SelectableVisualization[] = [
     component: Stars,
     options: { smoothing: 128 }
   },
-  { component: Waveform },
-  { component: Halpern },
+  {
+    component: Waveform
+  },
+  {
+    component: Halpern
+  },
   {
     component: Drummer,
     options: { smoothing: 64 }
