@@ -18,10 +18,13 @@ type Props = ReturnType<typeof mapDispatchToProps> & {
   togglePlay: () => void;
 };
 
-const Controls: React.FunctionComponent<Props> = props => {
+const Controls: React.FC<Props> = props => {
   const [isOverlayShown, setIsOverlayShown] = useState(false);
   const [isArrowHovered, setIsArrowHovered] = useState(false);
   const [isQualityHovered, setIsQualityHovered] = useState(false);
+
+  const timeoutRef = useRef<number>();
+  const touchTimestampRef = useRef<number>();
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
@@ -42,10 +45,6 @@ const Controls: React.FunctionComponent<Props> = props => {
     document.addEventListener('keydown', onKeyDown);
     return () => document.removeEventListener('keydown', onKeyDown);
   }, []);
-
-  const timeoutRef = useRef<number>();
-
-  const touchTimestampRef = useRef<number>();
 
   const showOverlay = useCallback(() => {
     timeoutRef.current != null && window.clearTimeout(timeoutRef.current);
@@ -85,15 +84,18 @@ const Controls: React.FunctionComponent<Props> = props => {
     }
   }, []);
 
-  const onTouchEnd = useCallback((event: React.TouchEvent) => {
-    event.preventDefault();
-    if (
-      touchTimestampRef.current &&
-      Date.now() - touchTimestampRef.current < TOUCH_WAS_CLICK_THRESHOLD
-    ) {
-      showOverlay();
-    }
-  }, []);
+  const onTouchEnd = useCallback(
+    (event: React.TouchEvent) => {
+      event.preventDefault();
+      if (
+        touchTimestampRef.current &&
+        Date.now() - touchTimestampRef.current < TOUCH_WAS_CLICK_THRESHOLD
+      ) {
+        showOverlay();
+      }
+    },
+    [isArrowHovered, isQualityHovered]
+  );
 
   const onPrev = useCallback(
     (event: React.MouseEvent | React.TouchEvent) => {
@@ -101,7 +103,7 @@ const Controls: React.FunctionComponent<Props> = props => {
       props.goToPrevVisualization();
       showOverlay();
     },
-    [props.goToPrevVisualization]
+    [isArrowHovered, isQualityHovered]
   );
 
   const onNext = useCallback(
@@ -110,7 +112,7 @@ const Controls: React.FunctionComponent<Props> = props => {
       props.goToNextVisualization();
       showOverlay();
     },
-    [props.goToNextVisualization]
+    [isArrowHovered, isQualityHovered]
   );
 
   const doNothing = useCallback((event: React.MouseEvent) => {
