@@ -1,4 +1,5 @@
 import React, { useState, useRef, useLayoutEffect } from 'react';
+import { useTransition, animated, config } from 'react-spring';
 import classNames from 'classnames';
 import * as VisualizationHOC from '../VisualizationHOC';
 import './Drummer.scss';
@@ -24,9 +25,10 @@ const Drummer: React.FC<VisualizationHOC.WrappedProps> = ({
   quality
 }) => {
   const [size, setSize] = useState(0);
+  const [colorSize, setColorSize] = useState(0);
 
-  const colorRef = useRef({
-    value: getRandomColor(),
+  const colorsRef = useRef({
+    values: [getRandomColor()],
     lastChangedTimestamp: Date.now()
   });
 
@@ -35,6 +37,11 @@ const Drummer: React.FC<VisualizationHOC.WrappedProps> = ({
       const { innerWidth, innerHeight } = window;
       const maxSideLength = Math.max(innerWidth, innerHeight);
       setSize(maxSideLength * 2);
+
+      const colorDiameter = Math.sqrt(
+        Math.pow(innerWidth, 2) + Math.pow(innerHeight, 2)
+      );
+      setColorSize(colorDiameter);
     };
 
     onResize();
@@ -43,7 +50,7 @@ const Drummer: React.FC<VisualizationHOC.WrappedProps> = ({
     return () => window.removeEventListener('resize', onResize);
   }, []);
 
-  const color = colorRef.current;
+  const colors = colorsRef.current;
   const numDrummers = QUALITY[quality].NUM_DRUMMERS;
 
   const freqMap: { [key: string]: number } = {};
@@ -74,15 +81,18 @@ const Drummer: React.FC<VisualizationHOC.WrappedProps> = ({
   const now = Date.now();
   if (
     isBeat &&
-    now - color.lastChangedTimestamp > MIN_DELAY_BETWEEN_COLOR_CHANGE
+    now - colors.lastChangedTimestamp > MIN_DELAY_BETWEEN_COLOR_CHANGE
   ) {
     let newColor;
     do {
       newColor = getRandomColor();
-    } while (color.value === newColor);
+    } while (colors.values[colors.values.length - 1] === newColor);
 
-    color.value = newColor;
-    color.lastChangedTimestamp = now;
+    colors.values.push(newColor);
+    if (colors.values.length > 1) {
+      colors.values.shift();
+    }
+    colors.lastChangedTimestamp = now;
   }
 
   const drummers = Object.entries(freqMap).map(([freqKey, hitCount], i) => {
@@ -103,10 +113,31 @@ const Drummer: React.FC<VisualizationHOC.WrappedProps> = ({
     );
   });
 
+  const startingColorSize = size / (numDrummers * 2);
+
+  const transitions = useTransition(colors.values, null, {
+    from: item => ({
+      backgroundColor: item,
+      opacity: 0.5,
+      transform: `translate3d(0, 0, 0) scale(${startingColorSize})`
+    }),
+    enter: item => ({
+      backgroundColor: item,
+      opacity: 0.33,
+      transform: `translate3d(0, 0, 0) scale(${colorSize})`
+    }),
+    leave: { opacity: 0 },
+    config: config.gentle
+  });
+
   return (
     <div className="drummer">
       {drummers}
-      <div className="overlay" style={{ backgroundColor: color.value }} />
+      {transitions.map(({ item, props, key }) => {
+        return (
+          <animated.div className="color-overlay" key={key} style={props} />
+        );
+      })}
     </div>
   );
 };
