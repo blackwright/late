@@ -118,15 +118,10 @@ const Drummer: React.FC<VisualizationHOC.WrappedProps> = ({
   const transitions = useTransition(colors.values, null, {
     from: item => ({
       backgroundColor: item,
-      opacity: 0.5,
       transform: `translate3d(0, 0, 0) scale(${startingColorSize})`
     }),
-    enter: item => ({
-      backgroundColor: item,
-      opacity: 0.33,
-      transform: `translate3d(0, 0, 0) scale(${colorSize})`
-    }),
-    leave: { opacity: 0 },
+    enter: { transform: `translate3d(0, 0, 0) scale(${colorSize})` },
+    leave: { transform: `translate3d(0, 0, 0) scale(0)` },
     config: config.gentle
   });
 
