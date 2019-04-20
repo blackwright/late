@@ -121,7 +121,7 @@ export function wrap(
       lowPassIntensitiesRef.current.shift();
     }
 
-    const isBeat = currentLowPassIntensity > recentLowPassAvgIntensity * 1.75;
+    const isBeat = currentLowPassIntensity > recentLowPassAvgIntensity * 1.5;
 
     return (
       <WrappedComponent

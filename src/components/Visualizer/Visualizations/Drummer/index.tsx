@@ -1,5 +1,5 @@
 import React, { useState, useRef, useLayoutEffect } from 'react';
-import { useTransition, animated, config } from 'react-spring';
+import { useTransition, animated, interpolate, config } from 'react-spring';
 import classNames from 'classnames';
 import * as VisualizationHOC from '../VisualizationHOC';
 import './Drummer.scss';
@@ -113,24 +113,38 @@ const Drummer: React.FC<VisualizationHOC.WrappedProps> = ({
     );
   });
 
-  const startingColorSize = size / (numDrummers * 2);
+  const smallestDrummerSize = size / (numDrummers * 2);
 
   const transitions = useTransition(colors.values, null, {
     from: item => ({
       backgroundColor: item,
-      transform: `translate3d(0, 0, 0) scale(${startingColorSize})`
+      width: smallestDrummerSize,
+      height: smallestDrummerSize,
+      scale: 1
     }),
-    enter: { transform: `translate3d(0, 0, 0) scale(${colorSize})` },
-    leave: { transform: `translate3d(0, 0, 0) scale(0)` },
-    config: config.gentle
+    enter: { scale: colorSize / smallestDrummerSize },
+    leave: { scale: 0 },
+    config: config.slow
   });
 
   return (
     <div className="drummer">
       {drummers}
       {transitions.map(({ item, props, key }) => {
+        const { scale, ...style } = props as any;
+
         return (
-          <animated.div className="color-overlay" key={key} style={props} />
+          <animated.div
+            className="color-overlay"
+            key={key}
+            style={{
+              ...style,
+              transform: interpolate(
+                [scale],
+                (s: number) => `translate3d(0, 0, 0) scale(${s})`
+              )
+            }}
+          />
         );
       })}
     </div>
