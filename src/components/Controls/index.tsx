@@ -20,8 +20,7 @@ type Props = ReturnType<typeof mapDispatchToProps> & {
 
 const Controls: React.FC<Props> = props => {
   const [isOverlayShown, setIsOverlayShown] = useState(false);
-  const [isArrowHovered, setIsArrowHovered] = useState(false);
-  const [isQualityHovered, setIsQualityHovered] = useState(false);
+  const [isControlHovered, setIsControlHovered] = useState(false);
 
   const timeoutRef = useRef<number>();
   const touchTimestampRef = useRef<number>();
@@ -51,11 +50,11 @@ const Controls: React.FC<Props> = props => {
 
     setIsOverlayShown(true);
     timeoutRef.current = window.setTimeout(() => {
-      if (!isArrowHovered && !isQualityHovered) {
+      if (!isControlHovered) {
         setIsOverlayShown(false);
       }
     }, CONTROLS_FADE_OUT_DELAY);
-  }, [isArrowHovered, isQualityHovered]);
+  }, [isControlHovered]);
 
   const togglePlay = useCallback(() => {
     props.context && props.context.resume();
@@ -94,7 +93,7 @@ const Controls: React.FC<Props> = props => {
         showOverlay();
       }
     },
-    [isArrowHovered, isQualityHovered]
+    [isControlHovered]
   );
 
   const onPrev = useCallback(
@@ -103,7 +102,7 @@ const Controls: React.FC<Props> = props => {
       props.goToPrevVisualization();
       showOverlay();
     },
-    [isArrowHovered, isQualityHovered]
+    [isControlHovered]
   );
 
   const onNext = useCallback(
@@ -112,16 +111,16 @@ const Controls: React.FC<Props> = props => {
       props.goToNextVisualization();
       showOverlay();
     },
-    [isArrowHovered, isQualityHovered]
+    [isControlHovered]
   );
 
   const doNothing = useCallback((event: React.MouseEvent) => {
     event.stopPropagation();
   }, []);
 
-  const onToggleArrowHover = useCallback((isHovered: boolean) => {
-    setIsArrowHovered(isHovered);
-  }, []);
+  const onHover = useCallback(() => setIsControlHovered(true), []);
+
+  const onHoverStop = useCallback(() => setIsControlHovered(false), []);
 
   const { wantsToPlay, isPlaying } = props;
 
@@ -136,13 +135,15 @@ const Controls: React.FC<Props> = props => {
         className={classNames({ show: isOverlayShown })}
       >
         <h1 id="title">LATE</h1>
-        <QualitySelect setIsQualityHovered={setIsQualityHovered} />
+        <QualitySelect onHover={onHover} onHoverStop={onHoverStop} />
         <div id="version">build {versionInfo.version}</div>
         {
           <div
             onMouseDown={onMouseDown}
             onMouseUp={onMouseUp}
             onTouchEnd={togglePlay}
+            onMouseEnter={onHover}
+            onMouseLeave={onHoverStop}
             className={classNames({
               play: !wantsToPlay && !isPlaying,
               pause: wantsToPlay && isPlaying
@@ -155,8 +156,8 @@ const Controls: React.FC<Props> = props => {
             onClick={onPrev}
             onTouchStart={onPrev}
             onMouseUp={doNothing}
-            onMouseEnter={() => onToggleArrowHover(true)}
-            onMouseLeave={() => onToggleArrowHover(false)}
+            onMouseEnter={onHover}
+            onMouseLeave={onHoverStop}
           >
             <svg
               className="arrow"
@@ -180,8 +181,8 @@ const Controls: React.FC<Props> = props => {
             onClick={onNext}
             onTouchStart={onNext}
             onMouseUp={doNothing}
-            onMouseEnter={() => onToggleArrowHover(true)}
-            onMouseLeave={() => onToggleArrowHover(false)}
+            onMouseEnter={onHover}
+            onMouseLeave={onHoverStop}
           >
             <svg
               className="arrow"

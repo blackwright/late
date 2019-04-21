@@ -6,7 +6,8 @@ import { StoreState, Quality } from '../../../store/types';
 import './Quality.scss';
 
 type Props = {
-  setIsQualityHovered: (isQualityHovered: boolean) => void;
+  onHover: () => void;
+  onHoverStop: () => void;
 } & ReturnType<typeof mapStateToProps> &
   ReturnType<typeof mapDispatchToProps>;
 
@@ -19,14 +20,11 @@ const qualities = [
 const QualitySelect: React.FC<Props> = ({
   quality,
   setQuality,
-  setIsQualityHovered
+  onHover,
+  onHoverStop
 }) => {
   return (
-    <div
-      id="quality"
-      onMouseEnter={() => setIsQualityHovered(true)}
-      onMouseLeave={() => setIsQualityHovered(false)}
-    >
+    <div id="quality" onMouseEnter={onHover} onMouseLeave={onHoverStop}>
       <select
         value={quality}
         onChange={e => setQuality(+e.target.value as Quality)}
