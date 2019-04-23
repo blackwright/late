@@ -17,9 +17,10 @@ const Waveform: React.FC<VisualizationHOC.WrappedProps> = ({
     const canvas = canvasEl.current!;
 
     const resizeCanvas = () => {
-      const { innerWidth, innerHeight } = window;
-      canvas.width = innerWidth;
-      canvas.height = innerHeight;
+      const { innerWidth, innerHeight, devicePixelRatio = 1 } = window;
+
+      canvas.width = innerWidth * devicePixelRatio;
+      canvas.height = innerHeight * devicePixelRatio;
     };
 
     resizeCanvas();
@@ -32,7 +33,6 @@ const Waveform: React.FC<VisualizationHOC.WrappedProps> = ({
   useLayoutEffect(() => {
     const canvas = canvasEl.current!;
     const ctx = canvas.getContext('2d')!;
-
     ctx.fillStyle = '#101010';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
   }, []);
@@ -40,6 +40,9 @@ const Waveform: React.FC<VisualizationHOC.WrappedProps> = ({
   useLayoutEffect(() => {
     const canvas = canvasEl.current!;
     const ctx = canvas.getContext('2d')!;
+    ctx.lineWidth = LINE_WIDTH;
+    ctx.lineCap = 'round';
+    ctx.save();
 
     const fadeOut = () => {
       ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
@@ -56,9 +59,6 @@ const Waveform: React.FC<VisualizationHOC.WrappedProps> = ({
     const ctx = canvas.getContext('2d')!;
 
     const colors = getColors(quality + 1);
-
-    ctx.lineWidth = LINE_WIDTH;
-    ctx.lineCap = 'round';
 
     const sliceWidth = canvas.width / data.length;
 
