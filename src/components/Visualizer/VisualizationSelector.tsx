@@ -6,8 +6,6 @@ import visualizations from './Visualizations';
 import { modulo } from '../../utils';
 import { StoreState } from '../../../src/store/types';
 
-export const TRANSITION_ANIMATION_LENGTH = 500;
-
 type Props = Pick<VisualizationHOC.Props, 'data' | 'lowPassData'>;
 
 type StyledProps = Props &
