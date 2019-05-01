@@ -115,7 +115,7 @@ export function wrap(
       currentLowPassIntensity
     );
 
-    // remove intensities older than 1 second
+    // remove intensities older than 2 seconds
     if (Date.now() - startingTimestampRef.current > 2000) {
       rawIntensitiesRef.current.shift();
       lowPassIntensitiesRef.current.shift();
