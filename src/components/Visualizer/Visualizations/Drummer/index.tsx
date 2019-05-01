@@ -1,4 +1,4 @@
-import React, { useState, useRef, useLayoutEffect } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useTransition, animated, interpolate, config } from 'react-spring';
 import classNames from 'classnames';
 import * as VisualizationHOC from '../VisualizationHOC';
@@ -32,7 +32,7 @@ const Drummer: React.FC<VisualizationHOC.WrappedProps> = ({
     lastChangedTimestamp: Date.now()
   });
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     const onResize = () => {
       const { innerWidth, innerHeight } = window;
       const maxSideLength = Math.max(innerWidth, innerHeight);

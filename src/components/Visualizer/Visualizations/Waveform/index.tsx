@@ -1,4 +1,4 @@
-import React, { useLayoutEffect, useRef } from 'react';
+import React, { useRef, useEffect } from 'react';
 import * as VisualizationHOC from '../VisualizationHOC';
 import { getColors } from './utils';
 import './Waveform.scss';
@@ -13,7 +13,7 @@ const Waveform: React.FC<VisualizationHOC.WrappedProps> = ({
 }) => {
   const canvasEl = useRef<HTMLCanvasElement>(null);
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     const canvas = canvasEl.current!;
 
     const resizeCanvas = () => {
@@ -30,14 +30,14 @@ const Waveform: React.FC<VisualizationHOC.WrappedProps> = ({
   }, []);
 
   // initial paint to match fade out color from rounding error
-  useLayoutEffect(() => {
+  useEffect(() => {
     const canvas = canvasEl.current!;
     const ctx = canvas.getContext('2d')!;
     ctx.fillStyle = '#101010';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
   }, []);
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     const canvas = canvasEl.current!;
     const ctx = canvas.getContext('2d')!;
     ctx.lineWidth = LINE_WIDTH;
@@ -54,7 +54,7 @@ const Waveform: React.FC<VisualizationHOC.WrappedProps> = ({
   }, []);
 
   // paint on every data update
-  useLayoutEffect(() => {
+  useEffect(() => {
     const canvas = canvasEl.current!;
     const ctx = canvas.getContext('2d')!;
 
