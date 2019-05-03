@@ -5,7 +5,7 @@ import sceneManager from './three/sceneManager';
 import './Stars.scss';
 
 const MIN_DELAY_BETWEEN_INTENSITY_CHANGE = 75;
-const MAX_LIGHT_INTENSITY_DELTA = 2.5;
+const MAX_LIGHT_INTENSITY_INCREASE_DELTA = 2.5;
 const MIN_LIGHT_INTENSITY = 1;
 
 const Stars: React.FC<VisualizationHOC.WrappedProps> = ({
@@ -44,13 +44,12 @@ const Stars: React.FC<VisualizationHOC.WrappedProps> = ({
 
     let newLightIntensity = intensity / 2 || MIN_LIGHT_INTENSITY;
 
-    if (newLightIntensity - currentLightIntensity > MAX_LIGHT_INTENSITY_DELTA) {
-      newLightIntensity = currentLightIntensity + MAX_LIGHT_INTENSITY_DELTA;
-    } else if (
-      currentLightIntensity - newLightIntensity >
-      MAX_LIGHT_INTENSITY_DELTA
+    if (
+      newLightIntensity - currentLightIntensity >
+      MAX_LIGHT_INTENSITY_INCREASE_DELTA
     ) {
-      newLightIntensity = currentLightIntensity - MAX_LIGHT_INTENSITY_DELTA;
+      newLightIntensity =
+        currentLightIntensity + MAX_LIGHT_INTENSITY_INCREASE_DELTA;
     }
 
     dLightRef.current!.intensity = newLightIntensity;
