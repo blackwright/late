@@ -59,6 +59,10 @@
     text-transform: uppercase;
     letter-spacing: 1rem;
     user-select: none;
+
+    &:hover {
+      cursor: pointer;
+    }
   }
 
   .navigation {

@@ -67,6 +67,8 @@ const Controls: React.FC<Props> = props => {
     touchTimestampRef.current = Date.now();
   }, []);
 
+  const goToRepo = () => window.open('https://github.com/blackwright/late');
+
   const onMouseDown = useCallback((event: React.MouseEvent) => {
     if (event.nativeEvent.which === 1) {
       touchTimestampRef.current = Date.now();
@@ -134,7 +136,9 @@ const Controls: React.FC<Props> = props => {
         onMouseMove={showOverlay}
         className={classNames({ show: isOverlayShown })}
       >
-        <h1 id="title">LATE</h1>
+        <h1 id="title" onClick={goToRepo} onTouchEnd={goToRepo}>
+          LATE
+        </h1>
         <QualitySelect onHover={onHover} onHoverStop={onHoverStop} />
         <div id="version">build {versionInfo.version}</div>
         {
