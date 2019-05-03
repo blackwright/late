@@ -2,6 +2,7 @@ import Waveform from './Waveform';
 import Drummer from './Drummer';
 import Halpern from './Halpern';
 import Stars from './Stars';
+import Rain from './Rain';
 import MobileDisabledComponent from './MobileDisabled';
 import { Props } from './VisualizationHOC';
 import { isMobileDevice as isMobileDeviceCheck } from '../../../utils';
@@ -24,6 +25,9 @@ export type SelectableVisualization = {
 
 const visualizations: SelectableVisualization[] = [
   {
+    component: Rain
+  },
+  {
     component: Stars,
     options: { smoothing: 128 }
   },
@@ -31,11 +35,11 @@ const visualizations: SelectableVisualization[] = [
     component: Waveform
   },
   {
-    component: Halpern
-  },
-  {
     component: Drummer,
     options: { smoothing: 64 }
+  },
+  {
+    component: Halpern
   }
 ];
 

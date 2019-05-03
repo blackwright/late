@@ -1,0 +1,44 @@
+.rain {
+  position: relative;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+
+  canvas {
+    position: absolute;
+    display: block;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  .backdrop {
+    position: absolute;
+    display: block;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #7dcbcc;
+    background: linear-gradient(
+      to bottom,
+      #7dcbcc 0%,
+      #b0cdcd 49%,
+      #afc2bd 100%
+    );
+    background: -webkit-linear-gradient(
+      top,
+      #7dcbcc 0%,
+      #b0cdcd 49%,
+      #afc2bd 100%
+    );
+    background: -moz-linear-gradient(
+      top,
+      #7dcbcc 0%,
+      #b0cdcd 49%,
+      #afc2bd 100%
+    );
+  }
+}
