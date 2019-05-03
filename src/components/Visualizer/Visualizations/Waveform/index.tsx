@@ -11,16 +11,21 @@ const Waveform: React.FC<VisualizationHOC.WrappedProps> = ({
   data,
   quality
 }) => {
-  const canvasEl = useRef<HTMLCanvasElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
-    const canvas = canvasEl.current!;
+    const canvas = canvasRef.current!;
 
     const resizeCanvas = () => {
       const { innerWidth, innerHeight, devicePixelRatio = 1 } = window;
 
       canvas.width = innerWidth * devicePixelRatio;
       canvas.height = innerHeight * devicePixelRatio;
+
+      // initial paint to match fade out color from rounding error
+      const ctx = canvas.getContext('2d')!;
+      ctx.fillStyle = '#101010';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
     };
 
     resizeCanvas();
@@ -29,20 +34,9 @@ const Waveform: React.FC<VisualizationHOC.WrappedProps> = ({
     return () => window.removeEventListener('resize', resizeCanvas);
   }, []);
 
-  // initial paint to match fade out color from rounding error
   useEffect(() => {
-    const canvas = canvasEl.current!;
+    const canvas = canvasRef.current!;
     const ctx = canvas.getContext('2d')!;
-    ctx.fillStyle = '#101010';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-  }, []);
-
-  useEffect(() => {
-    const canvas = canvasEl.current!;
-    const ctx = canvas.getContext('2d')!;
-    ctx.lineWidth = LINE_WIDTH;
-    ctx.lineCap = 'round';
-    ctx.save();
 
     const fadeOut = () => {
       ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
@@ -55,8 +49,10 @@ const Waveform: React.FC<VisualizationHOC.WrappedProps> = ({
 
   // paint on every data update
   useEffect(() => {
-    const canvas = canvasEl.current!;
+    const canvas = canvasRef.current!;
     const ctx = canvas.getContext('2d')!;
+    ctx.lineWidth = LINE_WIDTH;
+    ctx.lineCap = 'round';
 
     const colors = getColors(quality + 1);
 
@@ -85,7 +81,7 @@ const Waveform: React.FC<VisualizationHOC.WrappedProps> = ({
   return (
     <div className="waveform">
       <div className="backdrop" />
-      <canvas ref={canvasEl} />
+      <canvas ref={canvasRef} />
     </div>
   );
 };
