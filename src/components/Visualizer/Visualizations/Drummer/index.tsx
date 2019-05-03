@@ -122,7 +122,7 @@ const Drummer: React.FC<VisualizationHOC.WrappedProps> = ({
       height: smallestDrummerSize,
       scale: 1
     }),
-    enter: { scale: colorSize / smallestDrummerSize },
+    enter: { scale: (colorSize / smallestDrummerSize) * 1.5 },
     leave: { scale: 0 },
     config: config.slow
   });
