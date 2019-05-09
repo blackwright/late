@@ -9,7 +9,8 @@ const WINDOW_DECORATION_COLOR = '#682634';
 const WINDOW_FRAME_THICKNESS_DIVISOR = 50;
 const CLOCK_INNER_COLOR = '#AAA';
 const CLOCK_HANDS_COLOR = '#793147';
-const CLOCK_OUTER_COLOR = WOOD_COLOR;
+const CLOCK_DECORATION_COLOR = '#594651';
+const LAMP_COLOR = '#F7E9CF';
 
 export class Home {
   private canvasWidth = 0;
@@ -69,9 +70,9 @@ export class Home {
     // window trim
     ctx.fillRect(
       oneThirdCanvasWidth - windowFrameThickness,
-      oneHalfCanvasHeight / 2 - windowFrameThickness * 2,
+      oneHalfCanvasHeight / 2 - windowFrameThickness,
       oneThirdCanvasWidth + windowFrameThickness * 2,
-      oneHalfCanvasHeight + windowFrameThickness * 4
+      oneHalfCanvasHeight + windowFrameThickness * 2
     );
 
     this.hole();
@@ -122,7 +123,7 @@ export class Home {
       oneThirdCanvasWidth - windowFrameThickness * 2,
       oneHalfCanvasHeight / 2 - windowFrameThickness * 2,
       oneThirdCanvasWidth + windowFrameThickness * 4,
-      windowFrameThickness
+      windowFrameThickness - 1
     );
 
     // window stool
@@ -136,11 +137,30 @@ export class Home {
     roundedRect(
       ctx,
       oneThirdCanvasWidth - windowFrameThickness * 2,
-      (oneHalfCanvasHeight * 3) / 2 + windowFrameThickness,
+      (oneHalfCanvasHeight * 3) / 2 + windowFrameThickness + 1,
       oneThirdCanvasWidth + windowFrameThickness * 4,
       windowFrameThickness,
       windowSillCornerRadii
     );
+
+    // trim decoration
+    ctx.lineWidth = 2;
+    ctx.strokeStyle = WINDOW_DECORATION_COLOR;
+    ctx.rect(
+      oneThirdCanvasWidth - (windowFrameThickness * 2) / 3,
+      oneHalfCanvasHeight / 2 - (windowFrameThickness * 2) / 3,
+      oneThirdCanvasWidth + (windowFrameThickness * 4) / 3,
+      oneHalfCanvasHeight + (windowFrameThickness * 4) / 3
+    );
+    ctx.stroke();
+
+    ctx.rect(
+      oneThirdCanvasWidth - (windowFrameThickness * 5) / 9,
+      oneHalfCanvasHeight / 2 - (windowFrameThickness * 5) / 9,
+      oneThirdCanvasWidth + (windowFrameThickness * 10) / 9,
+      oneHalfCanvasHeight + (windowFrameThickness * 10) / 9
+    );
+    ctx.stroke();
   }
 
   clockFrame() {
@@ -149,7 +169,7 @@ export class Home {
     const x = (this.canvasWidth * 2) / 3 + this.windowFrameThickness * 10;
     const y = this.canvasHeight / 5;
     this.clockCoords = { x, y };
-    ctx.strokeStyle = CLOCK_OUTER_COLOR;
+    ctx.strokeStyle = WOOD_COLOR;
 
     // clock frame
     ctx.lineWidth = this.windowFrameThickness / 2;
@@ -157,7 +177,7 @@ export class Home {
     ctx.arc(x, y, clockSize / 1.75, 0, Math.PI * 2, true);
     ctx.stroke();
 
-    ctx.strokeStyle = '#594651';
+    ctx.strokeStyle = CLOCK_DECORATION_COLOR;
     ctx.beginPath();
     ctx.arc(x, y, clockSize / 2, 0, Math.PI * 2, true);
     ctx.stroke();
@@ -322,7 +342,9 @@ export class Home {
     } = this;
 
     // table top
+    const width = oneThirdCanvasWidth * 1.1;
     const y = (canvasHeight * 5) / 6;
+    const thickness = windowFrameThickness * 1.35;
 
     const tableCornerRadii: CornerRadii = {
       tl: 0,
@@ -332,14 +354,7 @@ export class Home {
     };
 
     ctx.fillStyle = WOOD_COLOR;
-    roundedRect(
-      ctx,
-      0,
-      y,
-      oneThirdCanvasWidth * 1.1,
-      windowFrameThickness * 1.35,
-      tableCornerRadii
-    );
+    roundedRect(ctx, 0, y, width, thickness, tableCornerRadii);
 
     // table leg
     ctx.strokeStyle = WOOD_COLOR;
@@ -347,6 +362,51 @@ export class Home {
     ctx.beginPath();
     ctx.moveTo((oneThirdCanvasWidth * 2) / 3, y);
     ctx.lineTo((oneThirdCanvasWidth * 2) / 3, canvasHeight);
+    ctx.stroke();
+
+    // decoration
+    ctx.fillStyle = CLOCK_DECORATION_COLOR;
+    ctx.rect(
+      0,
+      y + thickness - windowFrameThickness / 2,
+      width,
+      windowFrameThickness / 2
+    );
+    ctx.fill();
+  }
+
+  hangingLamp() {
+    const { ctx, canvasWidth, canvasHeight, windowFrameThickness } = this;
+
+    const lampWidth = windowFrameThickness * 3.5;
+    ctx.strokeStyle = LAMP_COLOR;
+    ctx.fillStyle = LAMP_COLOR;
+    ctx.lineWidth = windowFrameThickness / 5;
+    ctx.save();
+
+    const x1 = (canvasWidth * 7) / 11;
+    const height1 = canvasHeight / 5;
+    ctx.beginPath();
+    ctx.moveTo(x1, 0);
+    ctx.lineTo(x1, height1);
+    ctx.stroke();
+
+    ctx.lineWidth = 1;
+    ctx.fillRect(
+      x1 - windowFrameThickness / 5,
+      height1 - 1,
+      (windowFrameThickness * 2) / 5,
+      windowFrameThickness
+    );
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.moveTo(x1 - windowFrameThickness / 5, height1 + windowFrameThickness);
+    ctx.lineTo(x1 + windowFrameThickness / 5, height1 + windowFrameThickness);
+    ctx.lineTo(x1 + lampWidth / 2, height1 + windowFrameThickness * 3);
+    ctx.lineTo(x1 - lampWidth / 2, height1 + windowFrameThickness * 3);
+    ctx.closePath();
+    ctx.fill();
     ctx.stroke();
   }
 
@@ -358,5 +418,6 @@ export class Home {
     this.dresser();
     this.pictureFrames();
     this.table();
+    this.hangingLamp();
   }
 }
