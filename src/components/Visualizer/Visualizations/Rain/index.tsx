@@ -45,17 +45,20 @@ const Rain: React.FC<VisualizationHOC.WrappedProps> = ({
       clockInterval = window.setInterval(() => home.clockFace(), 1000);
     };
 
-    createHome();
+    const createRain = () => {
+      const ctx = rainCanvas.getContext('2d')!;
+      rainfallRef.current = new Rainfall(ctx);
+    };
 
-    window.addEventListener('resize', createHome);
-    return () => window.removeEventListener('resize', createHome);
-  }, []);
+    const createScene = () => {
+      createHome();
+      createRain();
+    };
 
-  useEffect(() => {
-    const canvas = rainCanvasRef.current!;
-    const ctx = canvas.getContext('2d')!;
+    createScene();
 
-    rainfallRef.current = new Rainfall(ctx);
+    window.addEventListener('resize', createScene);
+    return () => window.removeEventListener('resize', createScene);
   }, []);
 
   useEffect(() => {
