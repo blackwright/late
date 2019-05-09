@@ -1,5 +1,4 @@
 import React, { useRef, useEffect } from 'react';
-import { DirectionalLight } from 'three';
 import * as VisualizationHOC from '../VisualizationHOC';
 import sceneManager from './three/sceneManager';
 import './Stars.scss';
@@ -14,23 +13,23 @@ const Stars: React.FC<VisualizationHOC.WrappedProps> = ({
   quality
 }) => {
   const rendererRef = useRef<HTMLDivElement>(null);
-  const dLightRef = useRef<DirectionalLight>();
+  const managedSceneRef = useRef<any>();
   const lightTimestampRef = useRef<number>(Date.now());
 
   useEffect(() => {
     const rendererContainer = rendererRef.current!;
-    const { clock, animate, cleanup, dLight } = sceneManager(
+    const managedScene = sceneManager(
       rendererContainer,
       quality,
       MIN_LIGHT_INTENSITY
     );
 
-    dLightRef.current = dLight;
+    managedSceneRef.current = managedScene;
 
-    clock.start();
-    animate();
+    managedScene.clock.start();
+    managedScene.animate();
 
-    return cleanup;
+    return managedScene.cleanup;
   }, [quality]);
 
   useEffect(() => {
@@ -40,7 +39,9 @@ const Stars: React.FC<VisualizationHOC.WrappedProps> = ({
       return;
     }
 
-    const currentLightIntensity = dLightRef.current!.intensity;
+    const { dLight } = managedSceneRef.current!;
+
+    const currentLightIntensity = dLight.intensity;
 
     let newLightIntensity = intensity / 2 || MIN_LIGHT_INTENSITY;
 
@@ -52,7 +53,7 @@ const Stars: React.FC<VisualizationHOC.WrappedProps> = ({
         currentLightIntensity + MAX_LIGHT_INTENSITY_INCREASE_DELTA;
     }
 
-    dLightRef.current!.intensity = newLightIntensity;
+    dLight.intensity = newLightIntensity;
 
     lightTimestampRef.current = now;
   }, [data]);
