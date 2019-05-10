@@ -1,6 +1,6 @@
 const TICKS_TO_FALL = 100;
 const RAINDROPS_HEIGHTWISE = 15;
-const RAINDROP_COLOR = '#c6f1ff';
+const RAINDROP_COLOR = '#161B1D';
 
 class Raindrop {
   private heightPerTick = 0;
@@ -17,6 +17,7 @@ class Raindrop {
   }
 
   tick() {
+    // TODO: should reposition based on clock delta
     this.y += Math.floor(this.heightPerTick);
   }
 
@@ -29,8 +30,8 @@ class Raindrop {
 
 export class Rainfall {
   private raindrops: Raindrop[] = [];
-  private canvasWidth = 0;
-  private canvasHeight = 0;
+  public canvasWidth = 0;
+  public canvasHeight = 0;
 
   constructor(private ctx: CanvasRenderingContext2D) {
     this.canvasWidth = ctx.canvas.width;

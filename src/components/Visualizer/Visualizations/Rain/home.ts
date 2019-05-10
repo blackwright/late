@@ -1,16 +1,16 @@
 import { roundedRect, CornerRadii } from './utils';
 
-const WALL_START_COLOR = '#FFA265';
-const WALL_END_COLOR = '#CE6A39';
-const WOOD_COLOR = '#6F5966';
-const WOOD_DECORATION_COLOR = '#FEEFAC';
-const WINDOW_FRAME_COLOR = '#8B3536';
+const WALL_START_COLOR = '#181623';
+const WALL_END_COLOR = '#111019';
+const WOOD_COLOR = '#122C2B';
+const WOOD_DECORATION_COLOR = '#091c1b';
+const WINDOW_FRAME_COLOR = '#3D1A1E';
 const WINDOW_DECORATION_COLOR = '#682634';
 const WINDOW_FRAME_THICKNESS_DIVISOR = 50;
-const CLOCK_INNER_COLOR = '#AAA';
-const CLOCK_HANDS_COLOR = '#793147';
-const CLOCK_DECORATION_COLOR = '#594651';
-const LAMP_COLOR = '#F7E9CF';
+const CLOCK_INNER_COLOR = '#4B4721';
+const CLOCK_HANDS_COLOR = '#192124';
+const CLOCK_DECORATION_COLOR = '#06151A';
+const LAMP_COLOR = '#FCF37E';
 
 export class Home {
   private canvasWidth = 0;
@@ -321,15 +321,40 @@ export class Home {
     const width3 = windowFrameThickness * 6;
     const height3 = windowFrameThickness * 10;
 
+    // picture 3 - mountain
+
+    // background
     ctx.beginPath();
     ctx.rect(x3, y3, width3, height3);
     const gradient3 = ctx.createLinearGradient(x3, y3, x3, y3 + height3);
-    gradient3.addColorStop(0, '#F2BCAA');
-    gradient3.addColorStop(1, '#CC5285');
+    gradient3.addColorStop(0, '#09325E');
+    gradient3.addColorStop(0.75, '#2A2A47');
     ctx.fillStyle = gradient3;
-    ctx.strokeStyle = WOOD_COLOR;
+    ctx.clip();
     ctx.fill();
+
+    // sky
+    ctx.fillStyle = '#F5E7F8';
+    const starCount = 60;
+
+    for (let i = 0; i < starCount; i++) {
+      const starX = Math.floor(Math.random() * width3 + x3);
+      const starY = Math.floor(Math.random() * height3 + y3);
+      const radius = Math.floor(Math.random() * 2 + 1);
+      ctx.beginPath();
+      ctx.arc(starX, starY, radius, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    ctx.restore();
+
+    ctx.strokeStyle = '#0D0B21';
+    ctx.lineWidth = windowFrameThickness / 3;
+    ctx.beginPath();
+    ctx.rect(x3, y3, width3, height3);
     ctx.stroke();
+
+    ctx.restore();
   }
 
   table() {
@@ -366,11 +391,12 @@ export class Home {
 
     // decoration
     ctx.fillStyle = CLOCK_DECORATION_COLOR;
+    ctx.beginPath();
     ctx.rect(
       0,
-      y + thickness - windowFrameThickness / 2,
+      y + thickness - windowFrameThickness / 4,
       width,
-      windowFrameThickness / 2
+      windowFrameThickness / 4
     );
     ctx.fill();
   }
