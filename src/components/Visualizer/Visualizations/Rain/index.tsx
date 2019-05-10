@@ -23,17 +23,9 @@ const Rain: React.FC<VisualizationHOC.WrappedProps> = ({
 
     let clockInterval: number;
 
-    const createHome = () => {
-      const { innerWidth, innerHeight, devicePixelRatio = 1 } = window;
-
-      const width = innerWidth * devicePixelRatio;
-      const height = innerHeight * devicePixelRatio;
-
-      rainCanvas.width = width;
-      rainCanvas.height = height;
-
-      homeCanvas.width = width;
-      homeCanvas.height = height;
+    const createHome = (width: number, height: number, dpi: number) => {
+      homeCanvas.width = width * dpi;
+      homeCanvas.height = height * dpi;
 
       const ctx = homeCanvas.getContext('2d')!;
 
@@ -45,20 +37,30 @@ const Rain: React.FC<VisualizationHOC.WrappedProps> = ({
       clockInterval = window.setInterval(() => home.clockFace(), 1000);
     };
 
-    const createRain = () => {
+    const createRain = (width: number, height: number, dpi: number) => {
+      rainCanvas.width = width * dpi;
+      rainCanvas.height = height * dpi;
+
       const ctx = rainCanvas.getContext('2d')!;
-      rainfallRef.current = new Rainfall(ctx);
+      if (rainfallRef.current == null) {
+        rainfallRef.current = new Rainfall(ctx);
+      } else {
+        const rainfall = rainfallRef.current!;
+        rainfall.canvasWidth = width;
+        rainfall.canvasHeight = height;
+      }
     };
 
-    const createScene = () => {
-      createHome();
-      createRain();
+    const resizeScene = () => {
+      const { innerWidth, innerHeight, devicePixelRatio } = window;
+      createHome(innerWidth, innerHeight, devicePixelRatio);
+      createRain(innerWidth, innerHeight, devicePixelRatio);
     };
 
-    createScene();
+    resizeScene();
 
-    window.addEventListener('resize', createScene);
-    return () => window.removeEventListener('resize', createScene);
+    window.addEventListener('resize', resizeScene);
+    return () => window.removeEventListener('resize', resizeScene);
   }, []);
 
   useEffect(() => {
