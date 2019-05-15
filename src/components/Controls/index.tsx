@@ -136,7 +136,13 @@ const Controls: React.FC<Props> = props => {
         onMouseMove={showOverlay}
         className={classNames({ show: isOverlayShown })}
       >
-        <h1 id="title" onClick={goToRepo} onTouchEnd={goToRepo}>
+        <h1
+          id="title"
+          onClick={goToRepo}
+          onTouchEnd={goToRepo}
+          onMouseEnter={onHover}
+          onMouseLeave={onHoverStop}
+        >
           LATE
         </h1>
         <QualitySelect onHover={onHover} onHoverStop={onHoverStop} />
@@ -175,8 +181,7 @@ const Controls: React.FC<Props> = props => {
                 strokeWidth="3"
                 strokeLinecap="round"
                 strokeLinejoin="round"
-                points="
-            45.63,75.8 0.375,38.087 45.63,0.375 "
+                points="45.63,75.8 0.375,38.087 45.63,0.375"
               />
             </svg>
           </div>
@@ -200,8 +205,7 @@ const Controls: React.FC<Props> = props => {
                 strokeWidth="3"
                 strokeLinecap="round"
                 strokeLinejoin="round"
-                points="
-              0.375,0.375 45.63,38.087 0.375,75.8 "
+                points="0.375,0.375 45.63,38.087 0.375,75.8"
               />
             </svg>
           </div>
