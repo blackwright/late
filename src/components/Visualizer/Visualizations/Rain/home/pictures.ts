@@ -1,58 +1,135 @@
 import { Renderer } from './renderer';
+import { distanceBetween } from '../utils';
 
 const WOOD_COLOR = '#122C2B';
 
+type Picture = {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+};
+
 export class Pictures extends Renderer {
+  pictures: Picture[] = [];
+
   constructor(ctx: CanvasRenderingContext2D) {
     super(ctx);
+
+    const { oneThirdCanvasWidth, windowFrameThickness } = this;
+
+    // X & Y coords and dimensions for each picture
+    this.pictures.push({
+      x: (oneThirdCanvasWidth * 3) / 4 - windowFrameThickness * 4,
+      y: -windowFrameThickness,
+      width: windowFrameThickness * 4,
+      height: windowFrameThickness * 5
+    });
+
+    this.pictures.push({
+      x: this.pictures[0].x - windowFrameThickness * 7,
+      y: windowFrameThickness * 2,
+      width: windowFrameThickness * 5,
+      height: windowFrameThickness * 4
+    });
+
+    this.pictures.push({
+      x: this.pictures[1].x + windowFrameThickness * 2,
+      y:
+        this.pictures[1].y +
+        this.pictures[1].height +
+        windowFrameThickness * 1.5,
+      width: windowFrameThickness * 6,
+      height: windowFrameThickness * 10
+    });
   }
 
-  render() {
-    super.render();
-
-    const { ctx, oneThirdCanvasWidth, windowFrameThickness } = this;
-
-    const x1 = (oneThirdCanvasWidth * 3) / 4 - windowFrameThickness * 4;
-    const y1 = -windowFrameThickness;
-    const width1 = windowFrameThickness * 4;
-    const height1 = windowFrameThickness * 5;
+  graph() {
+    const { ctx, windowFrameThickness } = this;
+    const { x, y, width, height } = this.pictures[0];
 
     ctx.beginPath();
-    ctx.rect(x1, y1, width1, height1);
-    ctx.strokeStyle = WOOD_COLOR;
-    const gradient1 = ctx.createLinearGradient(x1, y1, x1, y1 + height1);
-    gradient1.addColorStop(0, '#52A3CC');
-    gradient1.addColorStop(1, '#7EA1E5');
+    ctx.rect(x, y, width, height);
+    const gradient1 = ctx.createLinearGradient(x, y, x, y + height);
+    gradient1.addColorStop(0, '#24131f');
+    gradient1.addColorStop(1, '#051b1f');
     ctx.fillStyle = gradient1;
+    ctx.clip();
     ctx.fill();
+
+    const nodes: Array<{ x: number; y: number }> = [];
+    const nodeSize = windowFrameThickness / 6;
+
+    for (let i = 0; i < 20; i++) {
+      nodes.push({
+        x: Math.floor(Math.random() * width + x),
+        y: Math.floor(Math.random() * height + y)
+      });
+    }
+
+    const nodeColor = '#703c3a';
+    ctx.fillStyle = nodeColor;
+    ctx.strokeStyle = nodeColor;
+    ctx.lineWidth = 1;
+
+    while (nodes.length) {
+      const currentNode = nodes.pop()!;
+      ctx.beginPath();
+      ctx.arc(currentNode.x, currentNode.y, nodeSize / 2, 0, Math.PI * 2);
+      ctx.fill();
+
+      for (const otherNode of nodes) {
+        if (distanceBetween(currentNode, otherNode) < height / 4) {
+          ctx.beginPath();
+          ctx.moveTo(currentNode.x, currentNode.y);
+          ctx.lineTo(otherNode.x, otherNode.y);
+          ctx.stroke();
+        }
+      }
+    }
+
+    ctx.strokeStyle = WOOD_COLOR;
+    ctx.lineWidth = windowFrameThickness / 1.5;
+    ctx.beginPath();
+    ctx.rect(x, y, width, height);
     ctx.stroke();
 
-    const x2 = x1 - windowFrameThickness * 7;
-    const y2 = windowFrameThickness * 2;
-    const width2 = windowFrameThickness * 5;
-    const height2 = windowFrameThickness * 4;
+    ctx.restore();
+  }
+
+  two() {
+    const { ctx, windowFrameThickness } = this;
+    const { x, y, width, height } = this.pictures[1];
 
     ctx.beginPath();
-    ctx.rect(x2, y2, width2, height2);
-    const gradient2 = ctx.createLinearGradient(x2, y2, x2 + width2, y2);
-    gradient2.addColorStop(0, '#F2E9C2');
-    gradient2.addColorStop(1, '#EFCA58');
+    ctx.rect(x, y, width, height);
+    const gradient2 = ctx.createLinearGradient(x, y, x, y + height);
+    gradient2.addColorStop(0, '#556e53');
+    gradient2.addColorStop(1, '#29435c');
     ctx.fillStyle = gradient2;
-    ctx.strokeStyle = '#465C7A';
+    ctx.clip();
     ctx.fill();
+
+    // TODO
+    ctx.fillStyle = '#d1d4c9';
+
+    ctx.strokeStyle = '#152a38';
+    ctx.lineWidth = windowFrameThickness / 1.2;
+    ctx.beginPath();
+    ctx.rect(x, y, width, height);
     ctx.stroke();
 
-    const x3 = x2 + windowFrameThickness * 2;
-    const y3 = y2 + height2 + windowFrameThickness * 1.5;
-    const width3 = windowFrameThickness * 6;
-    const height3 = windowFrameThickness * 10;
+    ctx.restore();
+  }
 
-    // picture 3 - mountain
+  stars() {
+    const { ctx, windowFrameThickness } = this;
+    const { x, y, width, height } = this.pictures[2];
 
     // background
     ctx.beginPath();
-    ctx.rect(x3, y3, width3, height3);
-    const gradient3 = ctx.createLinearGradient(x3, y3, x3, y3 + height3);
+    ctx.rect(x, y, width, height);
+    const gradient3 = ctx.createLinearGradient(x, y, x, y + height);
     gradient3.addColorStop(0, '#09325E');
     gradient3.addColorStop(0.75, '#2A2A47');
     ctx.fillStyle = gradient3;
@@ -64,8 +141,8 @@ export class Pictures extends Renderer {
     const starCount = 60;
 
     for (let i = 0; i < starCount; i++) {
-      const starX = Math.floor(Math.random() * width3 + x3);
-      const starY = Math.floor(Math.random() * height3 + y3);
+      const starX = Math.floor(Math.random() * width + x);
+      const starY = Math.floor(Math.random() * height + y);
       const radius = Math.floor(Math.random() * 2 + 1);
       ctx.beginPath();
       ctx.arc(starX, starY, radius, 0, Math.PI * 2);
@@ -77,9 +154,17 @@ export class Pictures extends Renderer {
     ctx.strokeStyle = '#0D0B21';
     ctx.lineWidth = windowFrameThickness / 3;
     ctx.beginPath();
-    ctx.rect(x3, y3, width3, height3);
+    ctx.rect(x, y, width, height);
     ctx.stroke();
 
     ctx.restore();
+  }
+
+  render() {
+    super.render();
+
+    this.graph();
+    this.two();
+    this.stars();
   }
 }
