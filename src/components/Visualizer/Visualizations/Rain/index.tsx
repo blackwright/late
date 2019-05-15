@@ -34,7 +34,7 @@ const Rain: React.FC<VisualizationHOC.WrappedProps> = ({
       home.render();
 
       clockInterval && window.clearTimeout(clockInterval);
-      clockInterval = window.setInterval(() => home.clockFace(), 1000);
+      clockInterval = window.setInterval(() => home.clock.tick(), 1000);
     };
 
     const createRain = (width: number, height: number, dpi: number) => {
