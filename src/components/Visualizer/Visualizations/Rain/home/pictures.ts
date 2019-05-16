@@ -97,7 +97,7 @@ export class Pictures extends Renderer {
     ctx.restore();
   }
 
-  two() {
+  orbits() {
     const { ctx, windowFrameThickness } = this;
     const { x, y, width, height } = this.pictures[1];
 
@@ -110,8 +110,32 @@ export class Pictures extends Renderer {
     ctx.clip();
     ctx.fill();
 
-    // TODO
-    ctx.fillStyle = '#d1d4c9';
+    // sun
+    const color = '#879591';
+    ctx.fillStyle = color;
+    ctx.strokeStyle = color;
+    ctx.beginPath();
+    ctx.arc(x + width / 2, y + height / 2, height / 14, 0, Math.PI * 2);
+    ctx.fill();
+
+    // orbits
+    for (
+      let radius = Math.floor(height / 6);
+      radius <= height / 2;
+      radius += windowFrameThickness / 4
+    ) {
+      ctx.beginPath();
+      ctx.arc(x + width / 2, y + height / 2, radius, 0, Math.PI * 2);
+      ctx.stroke();
+
+      const randomAngle = Math.random() * Math.PI * 2;
+      const planetX = x + width / 2 + Math.cos(randomAngle) * radius;
+      const planetY = y + height / 2 + Math.sin(randomAngle) * radius;
+      const randomRadius = Math.random() * (width / 64) + width / 192;
+      ctx.beginPath();
+      ctx.arc(planetX, planetY, randomRadius, 0, Math.PI * 2);
+      ctx.fill();
+    }
 
     ctx.strokeStyle = '#152a38';
     ctx.lineWidth = windowFrameThickness / 1.2;
@@ -164,7 +188,7 @@ export class Pictures extends Renderer {
     super.render();
 
     this.graph();
-    this.two();
+    this.orbits();
     this.stars();
   }
 }
