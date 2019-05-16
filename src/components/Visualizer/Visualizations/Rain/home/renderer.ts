@@ -21,7 +21,7 @@ export abstract class Renderer {
     ctx.save();
   }
 
-  // for initial paint
+  // for initial paint - subclasses should call super.render()
   render(): void {
     this.ctx.restore();
   }

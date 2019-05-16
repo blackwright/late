@@ -54,3 +54,13 @@ export function distanceBetween(
     Math.pow(point2.x - point1.x, 2) + Math.pow(point2.y - point1.y, 2)
   );
 }
+
+// where 0 degrees corresponds to positive direction of x-axis
+export function radiansBetween(
+  point1: { x: number; y: number },
+  point2: { x: number; y: number }
+) {
+  const deltaX = point2.x - point1.x;
+  const deltaY = point2.y - point1.y;
+  return Math.atan2(deltaY, deltaX);
+}
