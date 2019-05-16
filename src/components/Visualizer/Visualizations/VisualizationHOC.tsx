@@ -37,19 +37,9 @@ export function wrap(
     options,
     quality
   }: Props = defaultProps) {
-    const [isDelayedAfterReflow, setIsDelayedAfterReflow] = useState(false);
-
-    useEffect(() => {
-      window.setTimeout(() => setIsDelayedAfterReflow(true), 0);
-    }, [isDelayedAfterReflow]);
-
     const rawIntensitiesRef = useRef<number[]>([]);
     const lowPassIntensitiesRef = useRef<number[]>([]);
     const startingTimestampRef = useRef<number>(Date.now());
-
-    if (!isDelayedAfterReflow) {
-      return null;
-    }
 
     let totalDifferenceFromRawBaseline = 0;
     let totalDifferenceFromLowBaseline = 0;

@@ -79,7 +79,6 @@ export class Lamp extends Renderer {
     // the angle of the lampshade
     // tan θ = opposite (height) / adjacent (width)
     const lightTriangleAdjacentWidth = lightHeight / Math.tan(lightAngle);
-    console.log('lightTriangleAdjacentWidth', lightTriangleAdjacentWidth);
 
     const lightBottomLeftX = shadeBottomLeft.x - lightTriangleAdjacentWidth;
     const lightBottomRightX = shadeBottomRight.x + lightTriangleAdjacentWidth;
