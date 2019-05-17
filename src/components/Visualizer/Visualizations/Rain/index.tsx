@@ -1,15 +1,22 @@
 import React, { useRef, useEffect } from 'react';
 import * as VisualizationHOC from '../VisualizationHOC';
+import { QualitySettings } from '../index';
 import { Rainfall } from './rain';
 import { Home } from './home';
 import './Rain.scss';
 
 const MIN_RAINDROPS_PER_TICK = 1;
-const MAX_RAINDROPS_PER_TICK = 50;
+
+const QUALITY: QualitySettings = {
+  0: { MAX_RAINDROPS_PER_TICK: 10 },
+  1: { MAX_RAINDROPS_PER_TICK: 25 },
+  2: { MAX_RAINDROPS_PER_TICK: 50 }
+};
 
 const Rain: React.FC<VisualizationHOC.WrappedProps> = ({
   data,
-  lowPassIntensity
+  lowPassIntensity,
+  quality
 }) => {
   const rainCanvasRef = useRef<HTMLCanvasElement>(null);
   const rainfallRef = useRef<Rainfall>();
@@ -67,12 +74,12 @@ const Rain: React.FC<VisualizationHOC.WrappedProps> = ({
     const rainfall = rainfallRef.current!;
 
     let newRaindropsAdded = 0;
-    let raindropsToAdd = Math.floor(lowPassIntensity);
+    let raindropsToAdd = Math.floor(lowPassIntensity / 4);
 
     if (raindropsToAdd < MIN_RAINDROPS_PER_TICK) {
       raindropsToAdd = MIN_RAINDROPS_PER_TICK;
-    } else if (raindropsToAdd > MAX_RAINDROPS_PER_TICK) {
-      raindropsToAdd = MAX_RAINDROPS_PER_TICK;
+    } else if (raindropsToAdd > QUALITY[quality].MAX_RAINDROPS_PER_TICK) {
+      raindropsToAdd = QUALITY[quality].MAX_RAINDROPS_PER_TICK;
     }
 
     while (newRaindropsAdded < raindropsToAdd) {
