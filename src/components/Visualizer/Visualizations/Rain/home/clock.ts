@@ -12,14 +12,15 @@ export class Clock extends Renderer {
   constructor(ctx: CanvasRenderingContext2D) {
     super(ctx);
     this.clockSize = this.windowFrameThickness * 7;
-  }
-
-  frame() {
-    const { ctx, clockSize } = this;
-
     const x = (this.canvasWidth * 2) / 3 + this.windowFrameThickness * 10;
     const y = this.canvasHeight / 5;
     this.clockCoords = { x, y };
+  }
+
+  face() {
+    const { ctx, clockSize, clockCoords } = this;
+    const { x, y } = clockCoords;
+
     ctx.strokeStyle = WOOD_COLOR;
 
     // clock frame
@@ -32,54 +33,87 @@ export class Clock extends Renderer {
     ctx.beginPath();
     ctx.arc(x, y, clockSize / 2, 0, Math.PI * 2, true);
     ctx.stroke();
-  }
-
-  face() {
-    const { ctx, clockSize, clockCoords } = this;
-    const { x, y } = clockCoords;
-    ctx.save();
 
     ctx.beginPath();
     ctx.arc(x, y, clockSize / 2, 0, Math.PI * 2, true);
     ctx.fillStyle = CLOCK_INNER_COLOR;
     ctx.fill();
 
-    // clock hands
+    // markings
+    ctx.lineWidth = 2;
+    ctx.strokeStyle = CLOCK_HANDS_COLOR;
+
+    ctx.save();
+    ctx.translate(x, y);
+
+    for (let i = 1; i <= 60; i++) {
+      const angle = (i * Math.PI) / 30;
+
+      const start = {
+        x: Math.sin(angle) * (clockSize / 2 - clockSize / 20),
+        y: Math.cos(angle) * (clockSize / 2 - clockSize / 20)
+      };
+      const end = {
+        x: Math.sin(angle) * (clockSize / 2 - clockSize / 15),
+        y: Math.cos(angle) * (clockSize / 2 - clockSize / 15)
+      };
+
+      ctx.beginPath();
+      ctx.moveTo(start.x, start.y);
+      ctx.lineTo(end.x, end.y);
+      ctx.stroke();
+    }
+
+    ctx.restore();
+  }
+
+  hands() {
+    const { ctx, clockSize, clockCoords } = this;
+    const { x, y } = clockCoords;
+
+    // fill in hands area so we can redraw them
+    ctx.beginPath();
+    ctx.arc(x, y, clockSize / 2 - clockSize / 15, 0, Math.PI * 2, true);
+    ctx.fillStyle = CLOCK_INNER_COLOR;
+    ctx.fill();
+
+    ctx.lineWidth = clockSize / 40;
+    ctx.lineCap = 'round';
+    ctx.strokeStyle = CLOCK_HANDS_COLOR;
+
+    ctx.save();
+    ctx.translate(x, y);
+
     const now = new Date();
     const hours = now.getHours();
     const minutes = now.getMinutes();
     const seconds = now.getSeconds();
 
-    ctx.lineWidth = 10;
-    ctx.lineCap = 'round';
-    ctx.strokeStyle = CLOCK_HANDS_COLOR;
-    ctx.translate(x, y);
-    ctx.save();
-
     // hour hand
+    ctx.save();
     ctx.rotate((Math.PI / 6) * (hours + minutes / 60 + seconds / 3600));
     ctx.beginPath();
     ctx.moveTo(0, 10);
-    ctx.lineTo(0, -clockSize / 3);
+    ctx.lineTo(0, -clockSize / 4);
     ctx.stroke();
     ctx.restore();
-    ctx.save();
 
     // minute hand
+    ctx.save();
     ctx.rotate((Math.PI / 30) * (minutes + seconds / 60));
     ctx.beginPath();
     ctx.moveTo(0, 10);
-    ctx.lineTo(0, -clockSize / 2.5);
+    ctx.lineTo(0, -clockSize / 2.75);
     ctx.stroke();
     ctx.restore();
-    ctx.save();
 
     // second hand
-    ctx.lineWidth = 5;
+    ctx.lineWidth = clockSize / 100;
+    ctx.save();
     ctx.rotate((Math.PI / 30) * seconds);
     ctx.beginPath();
     ctx.moveTo(0, 10);
-    ctx.lineTo(0, -clockSize / 2.5);
+    ctx.lineTo(0, -clockSize / 2.7);
     ctx.stroke();
     ctx.restore();
 
@@ -88,11 +122,11 @@ export class Clock extends Renderer {
 
   render() {
     super.render();
-    this.frame();
     this.face();
+    this.hands();
   }
 
   tick() {
-    this.face();
+    this.hands();
   }
 }
