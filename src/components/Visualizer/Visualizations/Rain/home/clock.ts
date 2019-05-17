@@ -12,7 +12,10 @@ export class Clock extends Renderer {
   constructor(ctx: CanvasRenderingContext2D) {
     super(ctx);
     this.clockSize = this.windowFrameThickness * 7;
-    const x = (this.canvasWidth * 2) / 3 + this.windowFrameThickness * 10;
+    const x = Math.max(
+      this.canvasWidth * 0.9,
+      (this.canvasWidth * 2) / 3 + this.windowFrameThickness * 12
+    );
     const y = this.canvasHeight / 5;
     this.clockCoords = { x, y };
   }
