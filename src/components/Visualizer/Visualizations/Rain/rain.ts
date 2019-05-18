@@ -1,10 +1,10 @@
-const TICKS_TO_FALL = 100;
+const TIME_TO_FALL = 500;
 const RAINDROPS_HEIGHTWISE = 15;
 const RAINDROP_COLOR = '#161B1D';
 
 class Raindrop {
-  private heightPerTick = 0;
   private raindropHeight = 0;
+  private createdDate = 0;
 
   constructor(
     public x: number,
@@ -12,13 +12,13 @@ class Raindrop {
     private ctx: CanvasRenderingContext2D,
     private canvasHeight: number
   ) {
-    this.heightPerTick = Math.floor(this.canvasHeight / TICKS_TO_FALL);
     this.raindropHeight = Math.floor(this.canvasHeight / RAINDROPS_HEIGHTWISE);
+    this.createdDate = Date.now();
   }
 
-  tick() {
-    // TODO: should reposition based on clock delta
-    this.y += Math.floor(this.heightPerTick);
+  tick(now: number) {
+    const timeDelta = now - this.createdDate;
+    this.y = Math.floor((timeDelta / TIME_TO_FALL) * this.canvasHeight);
   }
 
   render() {
@@ -40,12 +40,13 @@ export class Rainfall {
 
   tick() {
     const nextRaindrops: Raindrop[] = [];
-    const { raindrops, canvasWidth, canvasHeight } = this;
+    const { raindrops, canvasHeight } = this;
+    const now = Date.now();
 
     raindrops.forEach(raindrop => {
-      raindrop.tick();
+      raindrop.tick(now);
 
-      if (raindrop.x < canvasWidth && raindrop.y < canvasHeight) {
+      if (raindrop.y < canvasHeight) {
         nextRaindrops.push(raindrop);
       }
     });

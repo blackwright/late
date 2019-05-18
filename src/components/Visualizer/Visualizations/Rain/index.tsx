@@ -9,8 +9,8 @@ const MIN_RAINDROPS_PER_TICK = 1;
 
 const QUALITY: QualitySettings = {
   0: { MAX_RAINDROPS_PER_TICK: 10 },
-  1: { MAX_RAINDROPS_PER_TICK: 25 },
-  2: { MAX_RAINDROPS_PER_TICK: 50 }
+  1: { MAX_RAINDROPS_PER_TICK: 33 },
+  2: { MAX_RAINDROPS_PER_TICK: 100 }
 };
 
 const Rain: React.FC<VisualizationHOC.WrappedProps> = ({
@@ -74,7 +74,9 @@ const Rain: React.FC<VisualizationHOC.WrappedProps> = ({
     const rainfall = rainfallRef.current!;
 
     let newRaindropsAdded = 0;
-    let raindropsToAdd = Math.floor(lowPassIntensity / 4);
+    let raindropsToAdd = Math.floor(
+      lowPassIntensity / Math.max(1, 4 - quality)
+    );
 
     if (raindropsToAdd < MIN_RAINDROPS_PER_TICK) {
       raindropsToAdd = MIN_RAINDROPS_PER_TICK;
