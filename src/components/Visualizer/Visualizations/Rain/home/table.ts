@@ -4,6 +4,7 @@ import { roundedRect, CornerRadii } from '../utils';
 const WOOD_COLOR = '#122C2B';
 const TABLE_DECORATION_COLOR = '#06151A';
 const BOWL_COLOR = '#3e3e3e';
+const BOWL_BASE_COLOR = '#1e1e1e';
 const FRUIT_COLORS = ['#564837', '#713C3A'];
 const FRUIT_STEM_COLOR = '#04070F';
 
@@ -140,11 +141,22 @@ export class Table extends Renderer {
       bl: oneThirdCanvasWidth * 0.1
     };
 
+    const bowlBaseHeight = bowlHeight / 8;
+    const bowlBaseWidth = bowlWidth * 0.5;
+
+    ctx.fillStyle = BOWL_BASE_COLOR;
+    ctx.fillRect(
+      bowlCenterX - bowlBaseWidth / 2,
+      y - bowlHeight - bowlBaseHeight,
+      bowlBaseWidth,
+      bowlHeight + bowlBaseHeight
+    );
+
     ctx.fillStyle = BOWL_COLOR;
     roundedRect(
       ctx,
       bowlCenterX - bowlWidth / 2,
-      y - bowlHeight,
+      y - bowlHeight - bowlBaseHeight,
       bowlWidth,
       bowlHeight,
       bowlCornerRadii
@@ -154,7 +166,7 @@ export class Table extends Renderer {
     ctx.clip();
     ctx.lineWidth = 2;
     ctx.strokeStyle = TABLE_DECORATION_COLOR;
-    const bowlDecorationY = y - bowlHeight + bowlHeight / 6;
+    const bowlDecorationY = y - bowlHeight - bowlBaseHeight + bowlHeight / 6;
     ctx.beginPath();
     ctx.moveTo(0, bowlDecorationY);
     ctx.lineTo(canvasWidth, bowlDecorationY);
