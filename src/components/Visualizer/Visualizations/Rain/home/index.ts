@@ -7,6 +7,8 @@ import { Table } from './table';
 import { Clock } from './clock';
 import { Lamp } from './lamp';
 
+export { Cat } from './cat';
+
 export class Home extends Renderer {
   wall: Wall;
   window: Window;

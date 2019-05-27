@@ -2,7 +2,7 @@ import React, { useRef, useEffect } from 'react';
 import * as VisualizationHOC from '../VisualizationHOC';
 import { QualitySettings } from '../index';
 import { Rainfall } from './rain';
-import { Home } from './home';
+import { Home, Cat } from './home';
 import './Rain.scss';
 
 const MIN_RAINDROPS_PER_TICK = 1;
@@ -24,9 +24,13 @@ const Rain: React.FC<VisualizationHOC.WrappedProps> = ({
   const homeCanvasRef = useRef<HTMLCanvasElement>(null);
   const homeRef = useRef<Home>();
 
+  const catCanvasRef = useRef<HTMLCanvasElement>(null);
+  const catRef = useRef<Cat>();
+
   useEffect(() => {
     const rainCanvas = rainCanvasRef.current!;
     const homeCanvas = homeCanvasRef.current!;
+    const catCanvas = catCanvasRef.current!;
 
     let clockInterval: number;
 
@@ -58,10 +62,22 @@ const Rain: React.FC<VisualizationHOC.WrappedProps> = ({
       }
     };
 
+    const adoptCat = (width: number, height: number, dpi: number) => {
+      catCanvas.width = width * dpi;
+      catCanvas.height = height * dpi;
+
+      const ctx = catCanvas.getContext('2d')!;
+
+      const cat = new Cat(ctx);
+      catRef.current = cat;
+      cat.render();
+    };
+
     const resizeScene = () => {
       const { innerWidth, innerHeight, devicePixelRatio } = window;
       createHome(innerWidth, innerHeight, devicePixelRatio);
       createRain(innerWidth, innerHeight, devicePixelRatio);
+      adoptCat(innerWidth, innerHeight, devicePixelRatio);
     };
 
     resizeScene();
@@ -104,6 +120,7 @@ const Rain: React.FC<VisualizationHOC.WrappedProps> = ({
       <div className="backdrop" />
       <canvas ref={rainCanvasRef} />
       <canvas ref={homeCanvasRef} />
+      <canvas ref={catCanvasRef} />
     </div>
   );
 };
