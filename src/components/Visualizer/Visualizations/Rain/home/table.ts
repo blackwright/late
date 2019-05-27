@@ -14,7 +14,7 @@ export class Table extends Renderer {
   constructor(ctx: CanvasRenderingContext2D) {
     super(ctx);
 
-    this.y = (this.canvasHeight * 5) / 6;
+    this.y = this.canvasHeight * 0.7;
   }
 
   top() {
@@ -26,7 +26,7 @@ export class Table extends Renderer {
       roundedRadius
     } = this;
 
-    const width = oneThirdCanvasWidth * 0.8;
+    const width = oneThirdCanvasWidth * 0.7;
     const thickness = windowFrameThickness * 1.35;
 
     const tableCornerRadii: CornerRadii = {
@@ -62,8 +62,8 @@ export class Table extends Renderer {
     ctx.strokeStyle = WOOD_COLOR;
     ctx.lineWidth = windowFrameThickness * 1.5;
     ctx.beginPath();
-    ctx.moveTo(oneThirdCanvasWidth * 0.6, y);
-    ctx.lineTo(oneThirdCanvasWidth * 0.6, canvasHeight);
+    ctx.moveTo(oneThirdCanvasWidth * 0.5, y);
+    ctx.lineTo(oneThirdCanvasWidth * 0.5, canvasHeight);
     ctx.stroke();
   }
 

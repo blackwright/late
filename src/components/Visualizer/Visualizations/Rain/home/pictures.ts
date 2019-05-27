@@ -40,7 +40,7 @@ export class Pictures extends Renderer {
         this.pictures[1].height +
         windowFrameThickness * 1.5,
       width: windowFrameThickness * 6,
-      height: windowFrameThickness * 9
+      height: windowFrameThickness * 8
     });
   }
 

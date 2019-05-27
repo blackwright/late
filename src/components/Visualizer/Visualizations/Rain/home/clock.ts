@@ -6,15 +6,15 @@ const CLOCK_HANDS_COLOR = '#192124';
 const CLOCK_DECORATION_COLOR = '#06151A';
 
 export class Clock extends Renderer {
-  private clockSize = 0;
-  private clockCoords: { x: number; y: number } = { x: 0, y: 0 };
+  private clockSize: number;
+  private clockCoords: { x: number; y: number };
 
   constructor(ctx: CanvasRenderingContext2D) {
     super(ctx);
-    this.clockSize = this.windowFrameThickness * 7;
+    this.clockSize = this.windowFrameThickness * 5;
     const x = Math.max(
-      this.canvasWidth * 0.9,
-      (this.canvasWidth * 2) / 3 + this.windowFrameThickness * 12
+      this.canvasWidth * 0.7,
+      (this.canvasWidth * 2) / 3 + this.windowFrameThickness * 8
     );
     const y = this.canvasHeight / 5;
     this.clockCoords = { x, y };
