@@ -8,17 +8,26 @@ export class Cat extends Renderer {
   private bodyWidth: number;
   private x: number;
   private createdTimestamp: number;
+  private tailWidth: number;
+  private tailY: number;
 
   constructor(ctx: CanvasRenderingContext2D) {
     super(ctx);
 
-    const { windowFrameThickness, oneThirdCanvasWidth } = this;
+    const {
+      windowFrameThickness,
+      oneThirdCanvasWidth,
+      oneHalfCanvasHeight
+    } = this;
 
     this.x = oneThirdCanvasWidth * 2 - windowFrameThickness * 1.2;
     this.headRadius = windowFrameThickness;
     this.bodyHeight = windowFrameThickness * 3;
     this.bodyWidth = windowFrameThickness * 2.2;
     this.createdTimestamp = Date.now();
+    this.tailWidth = windowFrameThickness / 2;
+    this.tailY =
+      (oneHalfCanvasHeight * 3) / 2 + windowFrameThickness - this.tailWidth / 2;
   }
 
   head() {
@@ -132,27 +141,14 @@ export class Cat extends Renderer {
   }
 
   tail() {
-    const {
-      ctx,
-      oneHalfCanvasHeight,
-      x,
-      bodyWidth,
-      windowFrameThickness
-    } = this;
-    const tailWidth = windowFrameThickness / 2;
-    const startY =
-      (oneHalfCanvasHeight * 3) / 2 + windowFrameThickness - tailWidth / 2;
+    const { ctx, tailWidth, x, bodyWidth, tailY } = this;
 
     ctx.lineWidth = tailWidth;
     ctx.lineCap = 'round';
     ctx.beginPath();
-    ctx.moveTo(x, startY);
-    ctx.lineTo(x - bodyWidth, startY);
+    ctx.moveTo(x, tailY);
+    ctx.lineTo(x - bodyWidth, tailY);
     ctx.stroke();
-  }
-
-  wag() {
-    const { ctx, createdTimestamp } = this;
   }
 
   render() {
@@ -164,5 +160,49 @@ export class Cat extends Renderer {
     this.head();
     this.body();
     this.tail();
+  }
+
+  tick() {
+    const {
+      ctx,
+      canvasWidth,
+      canvasHeight,
+      createdTimestamp,
+      x,
+      bodyWidth,
+      tailY
+    } = this;
+    ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+
+    this.head();
+    this.body();
+
+    const timeDelta = Date.now() - createdTimestamp;
+
+    // oscillate between -angle and angle
+    let angle = -0.5 * Math.PI + Math.sin(timeDelta / 2000) * -0.05 * Math.PI;
+    if (angle > -0.5 * Math.PI) {
+      angle = -0.5 * Math.PI;
+    }
+
+    ctx.save();
+    ctx.translate(x, tailY);
+
+    const tailEnd = {
+      x: Math.sin(angle) * bodyWidth,
+      y: Math.cos(angle) * bodyWidth
+    };
+
+    ctx.beginPath();
+    ctx.moveTo(0, 0);
+    ctx.quadraticCurveTo(
+      -bodyWidth,
+      (-Math.cos(angle) * bodyWidth) / 10,
+      tailEnd.x,
+      tailEnd.y
+    );
+    ctx.stroke();
+
+    ctx.restore();
   }
 }

@@ -89,6 +89,7 @@ const Rain: React.FC<VisualizationHOC.WrappedProps> = ({
 
   useEffect(() => {
     const rainfall = rainfallRef.current!;
+    const cat = catRef.current!;
 
     let newRaindropsAdded = 0;
     let raindropsToAdd = Math.floor(
@@ -107,11 +108,12 @@ const Rain: React.FC<VisualizationHOC.WrappedProps> = ({
     }
 
     rainfall.tick();
+    cat.tick();
 
-    const canvas = rainCanvasRef.current!;
-    const ctx = canvas.getContext('2d')!;
+    const rainCanvas = rainCanvasRef.current!;
+    const rainCtx = rainCanvas.getContext('2d')!;
 
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    rainCtx.clearRect(0, 0, rainCanvas.width, rainCanvas.height);
 
     rainfall.render();
   }, [data]);

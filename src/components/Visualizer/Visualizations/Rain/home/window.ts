@@ -1,4 +1,4 @@
-import { Renderer } from './renderer';
+import { Renderer } from '../renderer';
 import { roundedRect, CornerRadii } from '../utils';
 
 const WINDOW_FRAME_COLOR = '#3D1A1E';

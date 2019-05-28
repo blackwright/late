@@ -1,4 +1,4 @@
-import { Renderer } from './renderer';
+import { Renderer } from '../renderer';
 
 const WALL_START_COLOR = '#181623';
 const WALL_END_COLOR = '#111019';

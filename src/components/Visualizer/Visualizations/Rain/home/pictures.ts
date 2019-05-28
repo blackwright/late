@@ -1,4 +1,4 @@
-import { Renderer } from './renderer';
+import { Renderer } from '../renderer';
 import { distanceBetween } from '../utils';
 
 const WOOD_COLOR = '#122C2B';

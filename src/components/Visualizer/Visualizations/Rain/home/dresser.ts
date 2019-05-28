@@ -1,4 +1,4 @@
-import { Renderer } from './renderer';
+import { Renderer } from '../renderer';
 
 const WOOD_COLOR = '#122C2B';
 const WOOD_DECORATION_COLOR = '#091c1b';

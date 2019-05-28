@@ -1,4 +1,4 @@
-import { Renderer } from './renderer';
+import { Renderer } from '../renderer';
 import { radiansBetween } from '../utils';
 
 const STEM_COLOR = '#8e8e8e';

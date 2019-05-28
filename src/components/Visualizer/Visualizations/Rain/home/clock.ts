@@ -1,4 +1,4 @@
-import { Renderer } from './renderer';
+import { Renderer } from '../renderer';
 
 const WOOD_COLOR = '#122C2B';
 const CLOCK_INNER_COLOR = '#4B4721';
