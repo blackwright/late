@@ -48,13 +48,15 @@ export class Pictures extends Renderer {
     const { ctx, windowFrameThickness } = this;
     const { x, y, width, height } = this.pictures[0];
 
+    ctx.save();
     ctx.beginPath();
     ctx.rect(x, y, width, height);
+    ctx.clip();
+
     const gradient1 = ctx.createLinearGradient(x, y, x, y + height);
     gradient1.addColorStop(0, '#24131f');
     gradient1.addColorStop(1, '#051b1f');
     ctx.fillStyle = gradient1;
-    ctx.clip();
     ctx.fill();
 
     const nodes: Array<{ x: number; y: number }> = [];
@@ -101,13 +103,16 @@ export class Pictures extends Renderer {
     const { ctx, windowFrameThickness } = this;
     const { x, y, width, height } = this.pictures[1];
 
+    ctx.save();
+
     ctx.beginPath();
     ctx.rect(x, y, width, height);
+    ctx.clip();
+
     const gradient2 = ctx.createLinearGradient(x, y, x, y + height);
     gradient2.addColorStop(0, '#556e53');
     gradient2.addColorStop(1, '#29435c');
     ctx.fillStyle = gradient2;
-    ctx.clip();
     ctx.fill();
 
     // sun
@@ -150,14 +155,17 @@ export class Pictures extends Renderer {
     const { ctx, windowFrameThickness } = this;
     const { x, y, width, height } = this.pictures[2];
 
+    ctx.save();
+
     // background
     ctx.beginPath();
     ctx.rect(x, y, width, height);
+    ctx.clip();
+
     const gradient3 = ctx.createLinearGradient(x, y, x, y + height);
     gradient3.addColorStop(0, '#09325E');
     gradient3.addColorStop(0.75, '#2A2A47');
     ctx.fillStyle = gradient3;
-    ctx.clip();
     ctx.fill();
 
     // sky
@@ -172,8 +180,6 @@ export class Pictures extends Renderer {
       ctx.arc(starX, starY, radius, 0, Math.PI * 2);
       ctx.fill();
     }
-
-    ctx.restore();
 
     ctx.strokeStyle = '#0D0B21';
     ctx.lineWidth = windowFrameThickness / 3;

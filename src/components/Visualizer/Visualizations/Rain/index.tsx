@@ -2,7 +2,7 @@ import React, { useRef, useEffect } from 'react';
 import * as VisualizationHOC from '../VisualizationHOC';
 import { QualitySettings } from '../index';
 import { Rainfall } from './rain';
-import { Home, Cat } from './home';
+import { Home, Cat, Lamp } from './home';
 import './Rain.scss';
 
 const MIN_RAINDROPS_PER_TICK = 1;
@@ -15,6 +15,7 @@ const QUALITY: QualitySettings = {
 
 const Rain: React.FC<VisualizationHOC.WrappedProps> = ({
   data,
+  isBeat,
   lowPassIntensity,
   quality
 }) => {
@@ -27,10 +28,14 @@ const Rain: React.FC<VisualizationHOC.WrappedProps> = ({
   const catCanvasRef = useRef<HTMLCanvasElement>(null);
   const catRef = useRef<Cat>();
 
+  const lampCanvasRef = useRef<HTMLCanvasElement>(null);
+  const lampRef = useRef<Lamp>();
+
   useEffect(() => {
     const rainCanvas = rainCanvasRef.current!;
     const homeCanvas = homeCanvasRef.current!;
     const catCanvas = catCanvasRef.current!;
+    const lampCanvas = lampCanvasRef.current!;
 
     let clockInterval: number;
 
@@ -74,11 +79,23 @@ const Rain: React.FC<VisualizationHOC.WrappedProps> = ({
       cat.render();
     };
 
+    const createLamp = (width: number, height: number, dpi: number) => {
+      lampCanvas.width = width * dpi;
+      lampCanvas.height = height * dpi;
+
+      const ctx = lampCanvas.getContext('2d')!;
+
+      const lamp = new Lamp(ctx);
+      lampRef.current = lamp;
+      lamp.render();
+    };
+
     const resizeScene = () => {
       const { innerWidth, innerHeight, devicePixelRatio } = window;
       createHome(innerWidth, innerHeight, devicePixelRatio);
       createRain(innerWidth, innerHeight, devicePixelRatio);
       adoptCat(innerWidth, innerHeight, devicePixelRatio);
+      createLamp(innerWidth, innerHeight, devicePixelRatio);
     };
 
     resizeScene();
@@ -88,8 +105,10 @@ const Rain: React.FC<VisualizationHOC.WrappedProps> = ({
   }, []);
 
   useEffect(() => {
+    const home = homeRef.current!;
     const rainfall = rainfallRef.current!;
     const cat = catRef.current!;
+    const lamp = lampRef.current!;
 
     let newRaindropsAdded = 0;
     let raindropsToAdd = Math.floor(
@@ -108,6 +127,10 @@ const Rain: React.FC<VisualizationHOC.WrappedProps> = ({
     }
 
     rainfall.tick();
+    home.dresser.tick(isBeat);
+    // re-render lamp light since the dresser stereo
+    // may have been repainted by changing isBeat
+    lamp.tick();
     cat.tick();
 
     const rainCanvas = rainCanvasRef.current!;
@@ -116,7 +139,7 @@ const Rain: React.FC<VisualizationHOC.WrappedProps> = ({
     rainCtx.clearRect(0, 0, rainCanvas.width, rainCanvas.height);
 
     rainfall.render();
-  }, [data]);
+  }, [data, isBeat]);
 
   return (
     <div className="rain">
@@ -124,6 +147,7 @@ const Rain: React.FC<VisualizationHOC.WrappedProps> = ({
       <canvas ref={rainCanvasRef} />
       <canvas ref={homeCanvasRef} />
       <canvas ref={catCanvasRef} />
+      <canvas ref={lampCanvasRef} />
     </div>
   );
 };

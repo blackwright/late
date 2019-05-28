@@ -1,8 +1,10 @@
-import { Renderer } from './renderer';
+import { Renderer } from '../renderer';
 
-const CAT_COLOR = '#1A1F1A';
+const CAT_COLOR = '#000';
 
 export class Cat extends Renderer {
+  private isWagging = false;
+  private prevTailAngle = -Math.PI / 2;
   private headRadius: number;
   private bodyHeight: number;
   private bodyWidth: number;
@@ -177,27 +179,42 @@ export class Cat extends Renderer {
     this.head();
     this.body();
 
+    // tail wag
     const timeDelta = Date.now() - createdTimestamp;
 
-    // oscillate between -angle and angle
-    let angle = -0.5 * Math.PI + Math.sin(timeDelta / 2000) * -0.05 * Math.PI;
-    if (angle > -0.5 * Math.PI) {
-      angle = -0.5 * Math.PI;
+    // oscillate between angles
+    let nextTailAngle =
+      -Math.PI / 2 + (Math.sin(timeDelta / 200) * -Math.PI) / 20;
+
+    if (this.prevTailAngle > -Math.PI / 2 && nextTailAngle < -Math.PI / 2) {
+      // each oscillation has a chance of producing a tail wag
+      this.isWagging = Math.random() < 0.1;
+    }
+
+    this.prevTailAngle = nextTailAngle;
+
+    if (nextTailAngle > -Math.PI / 2) {
+      nextTailAngle = -Math.PI / 2;
+    }
+
+    if (!this.isWagging) {
+      this.tail();
+      return;
     }
 
     ctx.save();
     ctx.translate(x, tailY);
 
     const tailEnd = {
-      x: Math.sin(angle) * bodyWidth,
-      y: Math.cos(angle) * bodyWidth
+      x: Math.sin(nextTailAngle) * bodyWidth,
+      y: Math.cos(nextTailAngle) * bodyWidth
     };
 
     ctx.beginPath();
     ctx.moveTo(0, 0);
     ctx.quadraticCurveTo(
       -bodyWidth,
-      (-Math.cos(angle) * bodyWidth) / 10,
+      (-Math.cos(nextTailAngle) * bodyWidth) / 10,
       tailEnd.x,
       tailEnd.y
     );

@@ -2,27 +2,53 @@ import { Renderer } from '../renderer';
 import { radiansBetween } from '../utils';
 
 const STEM_COLOR = '#8e8e8e';
-const LIGHT_COLOR = 'rgba(252, 243, 126, 0.15)';
+const LIGHT_COLOR = 'rgba(252, 243, 126, 0.085)';
+
+type ShadeCoords = { x: number; y: number };
 
 export class Lamp extends Renderer {
+  private stemX: number;
+  private stemHeight: number;
+  private lampWidth: number;
+  private shadeTopLeft: ShadeCoords;
+  private shadeTopRight: ShadeCoords;
+  private shadeBottomRight: ShadeCoords;
+  private shadeBottomLeft: ShadeCoords;
+
   constructor(ctx: CanvasRenderingContext2D) {
     super(ctx);
+
+    const { canvasWidth, canvasHeight, windowFrameThickness } = this;
+
+    this.stemX = (canvasWidth * 7) / 11;
+    this.stemHeight = canvasHeight / 5;
+    this.lampWidth = windowFrameThickness * 3.5;
+
+    this.shadeTopLeft = {
+      x: this.stemX - windowFrameThickness / 5,
+      y: this.stemHeight + windowFrameThickness
+    };
+    this.shadeTopRight = {
+      x: this.stemX + windowFrameThickness / 5,
+      y: this.stemHeight + windowFrameThickness
+    };
+    this.shadeBottomRight = {
+      x: this.stemX + this.lampWidth / 2,
+      y: this.stemHeight + windowFrameThickness * 3
+    };
+    this.shadeBottomLeft = {
+      x: this.stemX - this.lampWidth / 2,
+      y: this.stemHeight + windowFrameThickness * 3
+    };
   }
 
-  render() {
-    super.render();
+  stem() {
+    const { ctx, windowFrameThickness, stemX, stemHeight } = this;
 
-    const { ctx, canvasWidth, canvasHeight, windowFrameThickness } = this;
-
-    // stem
-    const lampWidth = windowFrameThickness * 3.5;
     ctx.strokeStyle = STEM_COLOR;
     ctx.fillStyle = STEM_COLOR;
     ctx.lineWidth = windowFrameThickness / 5;
-    ctx.save();
 
-    const stemX = (canvasWidth * 7) / 11;
-    const stemHeight = canvasHeight / 5;
     ctx.beginPath();
     ctx.moveTo(stemX, 0);
     ctx.lineTo(stemX, stemHeight);
@@ -36,24 +62,16 @@ export class Lamp extends Renderer {
       windowFrameThickness
     );
     ctx.stroke();
+  }
 
-    // lampshade
-    const shadeTopLeft = {
-      x: stemX - windowFrameThickness / 5,
-      y: stemHeight + windowFrameThickness
-    };
-    const shadeTopRight = {
-      x: stemX + windowFrameThickness / 5,
-      y: stemHeight + windowFrameThickness
-    };
-    const shadeBottomRight = {
-      x: stemX + lampWidth / 2,
-      y: stemHeight + windowFrameThickness * 3
-    };
-    const shadeBottomLeft = {
-      x: stemX - lampWidth / 2,
-      y: stemHeight + windowFrameThickness * 3
-    };
+  lampshade() {
+    const {
+      ctx,
+      shadeTopLeft,
+      shadeTopRight,
+      shadeBottomRight,
+      shadeBottomLeft
+    } = this;
 
     ctx.beginPath();
     ctx.moveTo(shadeTopLeft.x, shadeTopLeft.y);
@@ -63,8 +81,21 @@ export class Lamp extends Renderer {
     ctx.closePath();
     ctx.fill();
     ctx.stroke();
+  }
 
-    // light
+  light() {
+    const {
+      ctx,
+      canvasHeight,
+      windowFrameThickness,
+      stemX,
+      stemHeight,
+      lampWidth,
+      shadeTopLeft,
+      shadeBottomRight,
+      shadeBottomLeft
+    } = this;
+
     ctx.fillStyle = LIGHT_COLOR;
     const lightHeight = canvasHeight - shadeBottomLeft.y;
     // compensate for inverted canvas y-coords when
@@ -89,5 +120,32 @@ export class Lamp extends Renderer {
     ctx.lineTo(lightBottomRightX, canvasHeight);
     ctx.lineTo(lightBottomLeftX, canvasHeight);
     ctx.fill();
+  }
+
+  render() {
+    super.render();
+
+    this.stem();
+    this.lampshade();
+    this.tick();
+  }
+
+  tick() {
+    const {
+      ctx,
+      canvasWidth,
+      canvasHeight,
+      windowFrameThickness,
+      stemHeight
+    } = this;
+
+    ctx.clearRect(
+      0,
+      stemHeight + windowFrameThickness * 3,
+      canvasWidth,
+      canvasHeight
+    );
+
+    this.light();
   }
 }

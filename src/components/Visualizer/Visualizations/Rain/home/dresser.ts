@@ -84,25 +84,10 @@ export class Dresser extends Renderer {
     ctx.arc(driverCenterX, driverCenterY, driverRadius, 0, Math.PI * 2);
     ctx.fill();
 
-    // speaker woofer
-    const wooferRadius = Math.min(speakerWidth, speakerHeight) / 2.5;
-    const wooferCenterY = Math.max(
-      speakerY + wooferRadius + driverRadius * 4,
-      speakerY + speakerHeight - (wooferRadius + driverRadius * 2)
-    );
-
-    ctx.strokeStyle = STEREO_DETAIL_COLOR;
-    ctx.lineWidth = windowFrameThickness / 8;
-    ctx.beginPath();
-    ctx.arc(driverCenterX, wooferCenterY, wooferRadius, 0, Math.PI * 2);
-    ctx.stroke();
-
-    ctx.beginPath();
-    ctx.arc(driverCenterX, wooferCenterY, wooferRadius * 0.6, 0, Math.PI * 2);
-    ctx.fill();
-
     // dividers
     const dividerWidth = windowFrameThickness / 10;
+    ctx.fillStyle = STEREO_DARK_COLOR;
+
     ctx.fillRect(
       speakerX - dividerWidth,
       speakerY,
@@ -129,6 +114,7 @@ export class Dresser extends Renderer {
 
     ctx.fillStyle = STEREO_DETAIL_COLOR;
     ctx.strokeStyle = STEREO_DARK_COLOR;
+    ctx.lineWidth = windowFrameThickness / 8;
     ctx.beginPath();
     ctx.rect(
       deckDetailX,
@@ -191,5 +177,49 @@ export class Dresser extends Renderer {
 
     this.dresser();
     this.stereo();
+    this.tick();
+  }
+
+  tick(isBeat = false) {
+    const { ctx, canvasWidth, canvasHeight, windowFrameThickness } = this;
+
+    const dresserX = (canvasWidth * 2) / 3 + windowFrameThickness * 5;
+    const dresserY = (canvasHeight * 2) / 3;
+
+    // speaker body
+    const speakerWidth = windowFrameThickness * 3.5;
+    const speakerHeight = canvasHeight * 0.2;
+    const speakerX = dresserX + windowFrameThickness * 4;
+    const speakerY = dresserY - speakerHeight;
+
+    // mid driver
+    const driverRadius = Math.min(speakerWidth, speakerHeight) / 8;
+    const driverCenterX = speakerX + speakerWidth / 2;
+
+    // speaker woofer
+    const wooferRadius = Math.min(speakerWidth, speakerHeight) / 2.5;
+    const wooferCenterY = Math.max(
+      speakerY + wooferRadius + driverRadius * 4,
+      speakerY + speakerHeight - (wooferRadius + driverRadius * 2)
+    );
+
+    ctx.strokeStyle = STEREO_DETAIL_COLOR;
+    ctx.fillStyle = STEREO_COLOR;
+    ctx.lineWidth = windowFrameThickness / 8;
+    ctx.beginPath();
+    ctx.arc(driverCenterX, wooferCenterY, wooferRadius, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
+
+    ctx.fillStyle = STEREO_DARK_COLOR;
+    ctx.beginPath();
+    ctx.arc(
+      driverCenterX,
+      wooferCenterY,
+      isBeat ? wooferRadius * 0.63 : wooferRadius * 0.6,
+      0,
+      Math.PI * 2
+    );
+    ctx.fill();
   }
 }

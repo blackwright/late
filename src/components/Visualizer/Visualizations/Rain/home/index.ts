@@ -5,9 +5,9 @@ import { Dresser } from './dresser';
 import { Pictures } from './pictures';
 import { Table } from './table';
 import { Clock } from './clock';
-import { Lamp } from './lamp';
 
-export { Cat } from '../cat';
+export { Cat } from './cat';
+export { Lamp } from './lamp';
 
 export class Home extends Renderer {
   wall: Wall;
@@ -16,7 +16,6 @@ export class Home extends Renderer {
   pictures: Pictures;
   table: Table;
   clock: Clock;
-  lamp: Lamp;
 
   constructor(ctx: CanvasRenderingContext2D) {
     super(ctx);
@@ -27,7 +26,6 @@ export class Home extends Renderer {
     this.pictures = new Pictures(ctx);
     this.table = new Table(ctx);
     this.clock = new Clock(ctx);
-    this.lamp = new Lamp(ctx);
   }
 
   render() {
@@ -37,6 +35,5 @@ export class Home extends Renderer {
     this.pictures.render();
     this.table.render();
     this.clock.render();
-    this.lamp.render();
   }
 }
