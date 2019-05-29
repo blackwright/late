@@ -182,7 +182,7 @@ export class Pictures extends Renderer {
     }
 
     ctx.strokeStyle = '#0D0B21';
-    ctx.lineWidth = windowFrameThickness / 3;
+    ctx.lineWidth = windowFrameThickness / 1.5;
     ctx.beginPath();
     ctx.rect(x, y, width, height);
     ctx.stroke();
