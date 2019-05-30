@@ -10,9 +10,9 @@ import './Rain.scss';
 const MIN_RAINDROPS_PER_TICK = 1;
 
 const QUALITY: QualitySettings = {
-  0: { MAX_RAINDROPS_PER_TICK: 10 },
+  0: { MAX_RAINDROPS_PER_TICK: 8 },
   1: { MAX_RAINDROPS_PER_TICK: 33 },
-  2: { MAX_RAINDROPS_PER_TICK: 100 }
+  2: { MAX_RAINDROPS_PER_TICK: 60 }
 };
 
 const Rain: React.FC<VisualizationHOC.WrappedProps> = ({
@@ -148,7 +148,6 @@ const Rain: React.FC<VisualizationHOC.WrappedProps> = ({
     const cat = catRef.current!;
     const lamp = lampRef.current!;
 
-    let newRaindropsAdded = 0;
     let raindropsToAdd = Math.floor(
       lowPassIntensity / Math.max(1, 4 - quality)
     );
@@ -158,6 +157,8 @@ const Rain: React.FC<VisualizationHOC.WrappedProps> = ({
     } else if (raindropsToAdd > QUALITY[quality].MAX_RAINDROPS_PER_TICK) {
       raindropsToAdd = QUALITY[quality].MAX_RAINDROPS_PER_TICK;
     }
+
+    let newRaindropsAdded = 0;
 
     while (newRaindropsAdded < raindropsToAdd) {
       rainfall.add();
@@ -177,11 +178,10 @@ const Rain: React.FC<VisualizationHOC.WrappedProps> = ({
     rainCtx.clearRect(0, 0, rainCanvas.width, rainCanvas.height);
 
     rainfall.render();
-  }, [data, isBeat]);
+  }, [data]);
 
   return (
     <div className="rain">
-      <div className="backdrop" />
       <canvas ref={cityCanvasRef} />
       <canvas ref={rainCanvasRef} />
       <canvas ref={homeCanvasRef} />

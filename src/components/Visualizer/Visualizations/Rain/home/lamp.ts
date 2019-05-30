@@ -81,6 +81,15 @@ export class Lamp extends Renderer {
     ctx.closePath();
     ctx.fill();
     ctx.stroke();
+
+    // thin line of bright light color at bottom
+    ctx.fillStyle = '#ff7';
+    ctx.fillRect(
+      shadeBottomLeft.x,
+      shadeBottomLeft.y,
+      shadeBottomRight.x - shadeBottomLeft.x,
+      2
+    );
   }
 
   light() {
@@ -95,15 +104,6 @@ export class Lamp extends Renderer {
       shadeBottomRight,
       shadeBottomLeft
     } = this;
-
-    // thin line of bright light color at bottom
-    ctx.fillStyle = '#ff7';
-    ctx.fillRect(
-      shadeBottomLeft.x,
-      shadeBottomLeft.y,
-      shadeBottomRight.x - shadeBottomLeft.x,
-      2
-    );
 
     ctx.fillStyle = LIGHT_COLOR;
     const lightHeight = canvasHeight - shadeBottomLeft.y;
@@ -150,7 +150,8 @@ export class Lamp extends Renderer {
 
     ctx.clearRect(
       0,
-      stemHeight + windowFrameThickness * 3,
+      // add 2 to clear under the thin line
+      stemHeight + windowFrameThickness * 3 + 2,
       canvasWidth,
       canvasHeight
     );

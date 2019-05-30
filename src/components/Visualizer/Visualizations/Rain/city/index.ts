@@ -11,8 +11,7 @@ const MIN_BUILDING_WIDTH_RATIO = 0.08;
 const MAX_BUILDING_WIDTH_RATIO = 0.15;
 const MIN_BUILDING_GAP_RATIO = 0.02;
 const MAX_BUILDING_GAP_RATIO = 0.05;
-const MIN_LAYERS = 4;
-const MAX_LAYERS = 8;
+const NUMBER_OF_LAYERS = 4;
 
 export class City extends Renderer {
   private layers: Building[][] = [];
@@ -25,9 +24,7 @@ export class City extends Renderer {
   generateBuildings() {
     const { ctx, canvasWidth, canvasHeight } = this;
 
-    const layers = randomNumberBetween(MIN_LAYERS, MAX_LAYERS);
-
-    for (let i = 0; i < layers; i++) {
+    for (let i = 0; i < NUMBER_OF_LAYERS; i++) {
       // buildings per layer
       const layer: Building[] = [];
       let x = 0;

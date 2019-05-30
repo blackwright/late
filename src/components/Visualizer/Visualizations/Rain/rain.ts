@@ -39,23 +39,23 @@ export class Rainfall {
   }
 
   tick() {
-    const nextRaindrops: Raindrop[] = [];
     const { raindrops, canvasHeight } = this;
     const now = Date.now();
 
-    raindrops.forEach(raindrop => {
+    for (let i = raindrops.length - 1; i >= 0; i--) {
+      const raindrop = raindrops[i];
       raindrop.tick(now);
 
-      if (raindrop.y < canvasHeight) {
-        nextRaindrops.push(raindrop);
+      // remove raindrops that have fallen out of view
+      if (raindrop.y >= canvasHeight) {
+        raindrops.splice(i, 1);
       }
-    });
-
-    this.raindrops = nextRaindrops;
+    }
   }
 
   add() {
     const { raindrops, ctx, canvasWidth, canvasHeight } = this;
+
     const startingX = Math.floor(Math.random() * (canvasWidth - 1) + 1);
     const startingY = -canvasHeight / RAINDROPS_HEIGHTWISE;
 

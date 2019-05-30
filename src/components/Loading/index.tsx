@@ -6,7 +6,7 @@ type Props = {
   isShown?: boolean;
 };
 
-const Loading: React.FC<Props> = ({ isShown }) => (
+const Loading: React.FC<Props> = ({ isShown = true }) => (
   <div className={classNames('loading', { show: isShown })}>
     <span className="loading-dot" />
     <span className="loading-dot" />

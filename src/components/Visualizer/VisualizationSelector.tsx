@@ -22,6 +22,7 @@ const mapStateToProps = (state: StoreState) => ({
 const styledVisualizations = visualizations.map(vis => {
   return (props: StyledProps) => {
     const { style, ...rest } = props;
+
     return (
       <animated.div className="visualization" style={props.style}>
         <vis.component {...rest} options={vis.options} />
@@ -37,11 +38,13 @@ const VisualizationSelector: React.FC<
 
   const direction = useCallback((current?, prev?) => {
     let translateXMultiplier = 0;
+
     if (current < prev) {
       translateXMultiplier = 1;
     } else if (prev < current) {
       translateXMultiplier = -1;
     }
+
     return `translate3d(${100 * translateXMultiplier}%, 0, 0)`;
   }, []);
 
@@ -70,7 +73,4 @@ const VisualizationSelector: React.FC<
   );
 };
 
-export default connect(
-  mapStateToProps,
-  null
-)(VisualizationSelector);
+export default connect(mapStateToProps)(VisualizationSelector);
