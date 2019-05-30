@@ -7,3 +7,19 @@ export function isMobileDevice(): boolean {
     navigator.userAgent
   );
 }
+
+function isInteger(number: number) {
+  return modulo(number, 1) === 0;
+}
+
+export function randomNumberBetween(
+  min: number,
+  max: number,
+  decimalPrecision = 1
+) {
+  if (isInteger(min) && isInteger(max)) {
+    return min + Math.floor(Math.random() * (max - min));
+  }
+  const randomFloat = min + Math.random() * (max - min);
+  return Number(randomFloat.toPrecision(decimalPrecision));
+}

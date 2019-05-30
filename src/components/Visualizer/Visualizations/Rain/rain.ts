@@ -1,6 +1,6 @@
 const TIME_TO_FALL = 400;
 const RAINDROPS_HEIGHTWISE = 15;
-const RAINDROP_COLOR = '#161B1D';
+const RAINDROP_COLOR = '#788';
 
 class Raindrop {
   private raindropHeight = 0;

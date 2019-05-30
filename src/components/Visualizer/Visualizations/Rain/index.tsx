@@ -1,6 +1,7 @@
 import React, { useRef, useEffect } from 'react';
 import * as VisualizationHOC from '../VisualizationHOC';
 import { QualitySettings } from '../index';
+import { City } from './city';
 import { Rainfall } from './rain';
 import { Home, Cat, Lamp } from './home';
 import './Rain.scss';
@@ -19,38 +20,32 @@ const Rain: React.FC<VisualizationHOC.WrappedProps> = ({
   lowPassIntensity,
   quality
 }) => {
-  const homeCanvasRef = useRef<HTMLCanvasElement>(null);
-  const homeRef = useRef<Home>();
+  // city
+  const cityCanvasRef = useRef<HTMLCanvasElement>(null);
+  const cityRef = useRef<City>();
 
-  // home
   useEffect(() => {
-    const homeCanvas = homeCanvasRef.current!;
+    const cityCanvas = cityCanvasRef.current!;
 
-    let clockInterval: number;
+    const createCity = (width: number, height: number, dpi: number) => {
+      cityCanvas.width = width * dpi;
+      cityCanvas.height = height * dpi;
 
-    const createHome = (width: number, height: number, dpi: number) => {
-      homeCanvas.width = width * dpi;
-      homeCanvas.height = height * dpi;
-
-      const ctx = homeCanvas.getContext('2d')!;
-
-      const home = new Home(ctx);
-      homeRef.current = home;
-      home.render();
-
-      clockInterval && window.clearTimeout(clockInterval);
-      clockInterval = window.setInterval(() => home.clock.tick(), 1000);
+      const ctx = cityCanvas.getContext('2d')!;
+      const city = new City(ctx);
+      cityRef.current = city;
+      city.render();
     };
 
-    const resizeHome = () => {
+    const resizeCity = () => {
       const { innerWidth, innerHeight, devicePixelRatio } = window;
-      createHome(innerWidth, innerHeight, devicePixelRatio);
+      createCity(innerWidth, innerHeight, devicePixelRatio);
     };
 
-    resizeHome();
+    resizeCity();
 
-    window.addEventListener('resize', resizeHome);
-    return () => window.removeEventListener('resize', resizeHome);
+    window.addEventListener('resize', resizeCity);
+    return () => window.removeEventListener('resize', resizeCity);
   }, []);
 
   // rain
@@ -86,6 +81,40 @@ const Rain: React.FC<VisualizationHOC.WrappedProps> = ({
     return () => window.removeEventListener('resize', resizeRain);
   }, []);
 
+  const homeCanvasRef = useRef<HTMLCanvasElement>(null);
+  const homeRef = useRef<Home>();
+
+  // home
+  useEffect(() => {
+    const homeCanvas = homeCanvasRef.current!;
+
+    let clockInterval: number;
+
+    const createHome = (width: number, height: number, dpi: number) => {
+      homeCanvas.width = width * dpi;
+      homeCanvas.height = height * dpi;
+
+      const ctx = homeCanvas.getContext('2d')!;
+
+      const home = new Home(ctx);
+      homeRef.current = home;
+      home.render();
+
+      clockInterval && window.clearTimeout(clockInterval);
+      clockInterval = window.setInterval(() => home.clock.tick(), 1000);
+    };
+
+    const resizeHome = () => {
+      const { innerWidth, innerHeight, devicePixelRatio } = window;
+      createHome(innerWidth, innerHeight, devicePixelRatio);
+    };
+
+    resizeHome();
+
+    window.addEventListener('resize', resizeHome);
+    return () => window.removeEventListener('resize', resizeHome);
+  }, []);
+
   // cat
   const catCanvasRef = useRef<HTMLCanvasElement>(null);
   const catRef = useRef<Cat>();
@@ -113,7 +142,7 @@ const Rain: React.FC<VisualizationHOC.WrappedProps> = ({
 
     window.addEventListener('resize', resizeCat);
     return () => window.removeEventListener('resize', resizeCat);
-  });
+  }, []);
 
   // lamp
   const lampCanvasRef = useRef<HTMLCanvasElement>(null);
@@ -142,7 +171,7 @@ const Rain: React.FC<VisualizationHOC.WrappedProps> = ({
 
     window.addEventListener('resize', resizeLamp);
     return () => window.removeEventListener('resize', resizeLamp);
-  });
+  }, []);
 
   // call animating effects on each data and isBeat change
   useEffect(() => {
@@ -185,6 +214,7 @@ const Rain: React.FC<VisualizationHOC.WrappedProps> = ({
   return (
     <div className="rain">
       <div className="backdrop" />
+      <canvas ref={cityCanvasRef} />
       <canvas ref={rainCanvasRef} />
       <canvas ref={homeCanvasRef} />
       <canvas ref={catCanvasRef} />
