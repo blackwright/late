@@ -96,6 +96,15 @@ export class Lamp extends Renderer {
       shadeBottomLeft
     } = this;
 
+    // thin line of bright light color at bottom
+    ctx.fillStyle = '#ff7';
+    ctx.fillRect(
+      shadeBottomLeft.x,
+      shadeBottomLeft.y,
+      shadeBottomRight.x - shadeBottomLeft.x,
+      2
+    );
+
     ctx.fillStyle = LIGHT_COLOR;
     const lightHeight = canvasHeight - shadeBottomLeft.y;
     // compensate for inverted canvas y-coords when
