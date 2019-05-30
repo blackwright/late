@@ -11,6 +11,8 @@ const MIN_LIGHT_PADDING_RATIO = 0.01;
 const MAX_LIGHT_PADDING_RATIO = 0.03;
 const MIN_BUILDING_X_PADDING_RATIO = 0.05;
 const MAX_BUILDING_X_PADDING_RATIO = 0.1;
+const MIN_BUILDING_TOP_PADDING_RATIO = 0.025;
+const MAX_BUILDING_TOP_PADDING_RATIO = 0.1;
 
 export type BuildingBlueprint = {
   ctx: CanvasRenderingContext2D;
@@ -75,6 +77,12 @@ export class Building {
         MAX_BUILDING_X_PADDING_RATIO
       ) * width;
 
+    const buildingTopPadding =
+      randomNumberBetween(
+        MIN_BUILDING_TOP_PADDING_RATIO,
+        MAX_BUILDING_TOP_PADDING_RATIO
+      ) * height;
+
     const gapWidth =
       randomNumberBetween(MIN_GAP_WIDTH_RATIO, MAX_GAP_WIDTH_RATIO) * width;
 
@@ -84,7 +92,7 @@ export class Building {
 
     const lights: Light[] = [];
     let x = this.x + buildingXPadding;
-    let y = this.y + lightPadding;
+    let y = this.y + buildingTopPadding;
 
     while (y < canvasHeight * 0.98) {
       // each iteration generates a row of lights for the floor
