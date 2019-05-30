@@ -4,6 +4,7 @@ import { QualitySettings } from '../index';
 import { City } from './city';
 import { Rainfall } from './rain';
 import { Home, Cat, Lamp } from './home';
+import { debounced } from '../../../../utils';
 import './Rain.scss';
 
 const MIN_RAINDROPS_PER_TICK = 1;
@@ -44,8 +45,9 @@ const Rain: React.FC<VisualizationHOC.WrappedProps> = ({
 
     resizeCity();
 
-    window.addEventListener('resize', resizeCity);
-    return () => window.removeEventListener('resize', resizeCity);
+    const debouncedResize = debounced(resizeCity);
+    window.addEventListener('resize', debouncedResize);
+    return () => window.removeEventListener('resize', debouncedResize);
   }, []);
 
   // rain
@@ -77,8 +79,9 @@ const Rain: React.FC<VisualizationHOC.WrappedProps> = ({
 
     resizeRain();
 
-    window.addEventListener('resize', resizeRain);
-    return () => window.removeEventListener('resize', resizeRain);
+    const debouncedResize = debounced(resizeRain);
+    window.addEventListener('resize', debouncedResize);
+    return () => window.removeEventListener('resize', debouncedResize);
   }, []);
 
   const homeCanvasRef = useRef<HTMLCanvasElement>(null);
@@ -111,8 +114,9 @@ const Rain: React.FC<VisualizationHOC.WrappedProps> = ({
 
     resizeHome();
 
-    window.addEventListener('resize', resizeHome);
-    return () => window.removeEventListener('resize', resizeHome);
+    const debouncedResize = debounced(resizeHome);
+    window.addEventListener('resize', debouncedResize);
+    return () => window.removeEventListener('resize', debouncedResize);
   }, []);
 
   // cat
@@ -140,8 +144,9 @@ const Rain: React.FC<VisualizationHOC.WrappedProps> = ({
 
     resizeCat();
 
-    window.addEventListener('resize', resizeCat);
-    return () => window.removeEventListener('resize', resizeCat);
+    const debouncedResize = debounced(resizeCat);
+    window.addEventListener('resize', debouncedResize);
+    return () => window.removeEventListener('resize', debouncedResize);
   }, []);
 
   // lamp
@@ -169,8 +174,9 @@ const Rain: React.FC<VisualizationHOC.WrappedProps> = ({
 
     resizeLamp();
 
-    window.addEventListener('resize', resizeLamp);
-    return () => window.removeEventListener('resize', resizeLamp);
+    const debouncedResize = debounced(resizeLamp);
+    window.addEventListener('resize', debouncedResize);
+    return () => window.removeEventListener('resize', debouncedResize);
   }, []);
 
   // call animating effects on each data and isBeat change

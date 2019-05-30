@@ -13,6 +13,7 @@ import { createCamera } from './entities/camera';
 import { createStars, createCloud } from './entities/polys';
 import { createAmbientLight, createDirectionalLight } from './entities/light';
 import { QualitySettings } from '../../index';
+import { debounced } from '../../../../../utils';
 
 const MAX_STAR_ALPHA = 1.0;
 const MIN_STAR_ALPHA = 0.2;
@@ -88,7 +89,8 @@ export default function sceneManager(
   // the animation loop is first triggered
   const clock = new Clock();
 
-  window.addEventListener('resize', onResize);
+  const debouncedResize = debounced(onResize);
+  window.addEventListener('resize', debouncedResize);
   document.addEventListener('visibilitychange', onVisibilityChange);
 
   function animate() {
@@ -129,7 +131,7 @@ export default function sceneManager(
 
   function cleanup() {
     window.cancelAnimationFrame(animationFrameId);
-    window.removeEventListener('resize', onResize);
+    window.removeEventListener('resize', debouncedResize);
     document.removeEventListener('visibilitychange', onVisibilityChange);
     rendererContainer.removeChild(renderer.domElement);
 

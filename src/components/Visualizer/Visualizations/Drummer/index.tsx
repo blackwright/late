@@ -2,10 +2,11 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useTransition, animated, interpolate, config } from 'react-spring';
 import classNames from 'classnames';
 import * as VisualizationHOC from '../VisualizationHOC';
-import './Drummer.scss';
+import { debounced } from '../../../../utils';
 import { getRandomColor } from '../../../../utils/colors';
 import { DATA_SIZE } from '../../../../config';
 import { QualitySettings } from '../index';
+import './Drummer.scss';
 
 const MIN_HIT_COUNT = 0.04;
 const MIN_FREQUENCY_VARIATION = 10;
@@ -46,8 +47,9 @@ const Drummer: React.FC<VisualizationHOC.WrappedProps> = ({
 
     onResize();
 
-    window.addEventListener('resize', onResize);
-    return () => window.removeEventListener('resize', onResize);
+    const debouncedResize = debounced(onResize);
+    window.addEventListener('resize', debouncedResize);
+    return () => window.removeEventListener('resize', debouncedResize);
   }, []);
 
   const colors = colorsRef.current;

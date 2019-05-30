@@ -1,6 +1,7 @@
 import React, { useRef, useEffect } from 'react';
 import * as VisualizationHOC from '../VisualizationHOC';
 import { getColors } from './utils';
+import { debounced } from '../../../../utils';
 import './Waveform.scss';
 
 const LINE_WIDTH = 10;
@@ -16,7 +17,7 @@ const Waveform: React.FC<VisualizationHOC.WrappedProps> = ({
   useEffect(() => {
     const canvas = canvasRef.current!;
 
-    const resizeCanvas = () => {
+    const onResize = () => {
       const { innerWidth, innerHeight, devicePixelRatio = 1 } = window;
 
       canvas.width = innerWidth * devicePixelRatio;
@@ -28,10 +29,11 @@ const Waveform: React.FC<VisualizationHOC.WrappedProps> = ({
       ctx.fillRect(0, 0, canvas.width, canvas.height);
     };
 
-    resizeCanvas();
+    onResize();
 
-    window.addEventListener('resize', resizeCanvas);
-    return () => window.removeEventListener('resize', resizeCanvas);
+    const debouncedResize = debounced(onResize);
+    window.addEventListener('resize', debouncedResize);
+    return () => window.removeEventListener('resize', debouncedResize);
   }, []);
 
   useEffect(() => {

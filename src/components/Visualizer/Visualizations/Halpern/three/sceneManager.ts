@@ -2,8 +2,9 @@ import { Scene, PointsMaterial, Clock } from 'three';
 import { createRenderer } from './entities/renderer';
 import { createCamera } from './entities/camera';
 import { createSphereGeometry, createPoints } from './entities/polys';
-import { Quality } from '../../../../../store/types';
 import { QualitySettings } from '../../index';
+import { debounced } from '../../../../../utils';
+import { Quality } from '../../../../../store/types';
 
 const DELAY_BEFORE_ROTATING_X = 1500;
 const CAMERA_MAX_DISTANCE = 200;
@@ -38,7 +39,8 @@ export default function sceneManager(
   // animation loop is started
   const clock = new Clock();
 
-  window.addEventListener('resize', onResize);
+  const debouncedResize = debounced(onResize);
+  window.addEventListener('resize', debouncedResize);
   document.addEventListener('visibilitychange', onVisibilityChange);
 
   function animate() {
@@ -66,7 +68,7 @@ export default function sceneManager(
 
   function cleanup() {
     window.cancelAnimationFrame(animationFrameId);
-    window.removeEventListener('resize', onResize);
+    window.removeEventListener('resize', debouncedResize);
     document.removeEventListener('visibilitychange', onVisibilityChange);
     rendererContainer.removeChild(renderer.domElement);
 
