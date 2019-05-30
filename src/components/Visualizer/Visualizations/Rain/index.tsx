@@ -4,7 +4,7 @@ import { QualitySettings } from '../index';
 import { City } from './city';
 import { Rainfall } from './rain';
 import { Home, Cat, Lamp } from './home';
-import { debounced } from '../../../../utils';
+import { useDebouncedResize } from '../../../../utils/hooks';
 import './Rain.scss';
 
 const MIN_RAINDROPS_PER_TICK = 1;
@@ -25,7 +25,7 @@ const Rain: React.FC<VisualizationHOC.WrappedProps> = ({
   const cityCanvasRef = useRef<HTMLCanvasElement>(null);
   const cityRef = useRef<City>();
 
-  useEffect(() => {
+  useDebouncedResize(() => {
     const cityCanvas = cityCanvasRef.current!;
 
     const createCity = (width: number, height: number, dpi: number) => {
@@ -38,23 +38,15 @@ const Rain: React.FC<VisualizationHOC.WrappedProps> = ({
       city.render();
     };
 
-    const resizeCity = () => {
-      const { innerWidth, innerHeight, devicePixelRatio } = window;
-      createCity(innerWidth, innerHeight, devicePixelRatio);
-    };
-
-    resizeCity();
-
-    const debouncedResize = debounced(resizeCity);
-    window.addEventListener('resize', debouncedResize);
-    return () => window.removeEventListener('resize', debouncedResize);
+    const { innerWidth, innerHeight, devicePixelRatio } = window;
+    createCity(innerWidth, innerHeight, devicePixelRatio);
   }, []);
 
   // rain
   const rainCanvasRef = useRef<HTMLCanvasElement>(null);
   const rainfallRef = useRef<Rainfall>();
 
-  useEffect(() => {
+  useDebouncedResize(() => {
     const rainCanvas = rainCanvasRef.current!;
 
     const createRain = (width: number, height: number, dpi: number) => {
@@ -72,26 +64,17 @@ const Rain: React.FC<VisualizationHOC.WrappedProps> = ({
       }
     };
 
-    const resizeRain = () => {
-      const { innerWidth, innerHeight, devicePixelRatio } = window;
-      createRain(innerWidth, innerHeight, devicePixelRatio);
-    };
-
-    resizeRain();
-
-    const debouncedResize = debounced(resizeRain);
-    window.addEventListener('resize', debouncedResize);
-    return () => window.removeEventListener('resize', debouncedResize);
+    const { innerWidth, innerHeight, devicePixelRatio } = window;
+    createRain(innerWidth, innerHeight, devicePixelRatio);
   }, []);
 
   const homeCanvasRef = useRef<HTMLCanvasElement>(null);
   const homeRef = useRef<Home>();
+  const clockIntervalRef = useRef<number>();
 
   // home
-  useEffect(() => {
+  useDebouncedResize(() => {
     const homeCanvas = homeCanvasRef.current!;
-
-    let clockInterval: number;
 
     const createHome = (width: number, height: number, dpi: number) => {
       homeCanvas.width = width * dpi;
@@ -103,27 +86,22 @@ const Rain: React.FC<VisualizationHOC.WrappedProps> = ({
       homeRef.current = home;
       home.render();
 
-      clockInterval && window.clearTimeout(clockInterval);
-      clockInterval = window.setInterval(() => home.clock.tick(), 1000);
+      clockIntervalRef.current && window.clearTimeout(clockIntervalRef.current);
+      clockIntervalRef.current = window.setInterval(
+        () => home.clock.tick(),
+        1000
+      );
     };
 
-    const resizeHome = () => {
-      const { innerWidth, innerHeight, devicePixelRatio } = window;
-      createHome(innerWidth, innerHeight, devicePixelRatio);
-    };
-
-    resizeHome();
-
-    const debouncedResize = debounced(resizeHome);
-    window.addEventListener('resize', debouncedResize);
-    return () => window.removeEventListener('resize', debouncedResize);
+    const { innerWidth, innerHeight, devicePixelRatio } = window;
+    createHome(innerWidth, innerHeight, devicePixelRatio);
   }, []);
 
   // cat
   const catCanvasRef = useRef<HTMLCanvasElement>(null);
   const catRef = useRef<Cat>();
 
-  useEffect(() => {
+  useDebouncedResize(() => {
     const catCanvas = catCanvasRef.current!;
 
     const adoptCat = (width: number, height: number, dpi: number) => {
@@ -137,23 +115,15 @@ const Rain: React.FC<VisualizationHOC.WrappedProps> = ({
       cat.render();
     };
 
-    const resizeCat = () => {
-      const { innerWidth, innerHeight, devicePixelRatio } = window;
-      adoptCat(innerWidth, innerHeight, devicePixelRatio);
-    };
-
-    resizeCat();
-
-    const debouncedResize = debounced(resizeCat);
-    window.addEventListener('resize', debouncedResize);
-    return () => window.removeEventListener('resize', debouncedResize);
+    const { innerWidth, innerHeight, devicePixelRatio } = window;
+    adoptCat(innerWidth, innerHeight, devicePixelRatio);
   }, []);
 
   // lamp
   const lampCanvasRef = useRef<HTMLCanvasElement>(null);
   const lampRef = useRef<Lamp>();
 
-  useEffect(() => {
+  useDebouncedResize(() => {
     const lampCanvas = lampCanvasRef.current!;
 
     const createLamp = (width: number, height: number, dpi: number) => {
@@ -167,16 +137,8 @@ const Rain: React.FC<VisualizationHOC.WrappedProps> = ({
       lamp.render();
     };
 
-    const resizeLamp = () => {
-      const { innerWidth, innerHeight, devicePixelRatio } = window;
-      createLamp(innerWidth, innerHeight, devicePixelRatio);
-    };
-
-    resizeLamp();
-
-    const debouncedResize = debounced(resizeLamp);
-    window.addEventListener('resize', debouncedResize);
-    return () => window.removeEventListener('resize', debouncedResize);
+    const { innerWidth, innerHeight, devicePixelRatio } = window;
+    createLamp(innerWidth, innerHeight, devicePixelRatio);
   }, []);
 
   // call animating effects on each data and isBeat change

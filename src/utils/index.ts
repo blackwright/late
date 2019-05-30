@@ -20,13 +20,14 @@ export function randomNumberBetween(
   if (isInteger(min) && isInteger(max)) {
     return min + Math.floor(Math.random() * (max - min));
   }
+
   const randomFloat = min + Math.random() * (max - min);
   return Number(randomFloat.toPrecision(decimalPrecision));
 }
 
 export function debounced(
   fn: (...args: any[]) => any,
-  msToWait: number = 250,
+  msToWait: number = 500,
   isImmediate: boolean = false
 ) {
   let timeoutId: number | null = null;

@@ -1,7 +1,7 @@
 import React, { useRef, useEffect } from 'react';
 import * as VisualizationHOC from '../VisualizationHOC';
 import { getColors } from './utils';
-import { debounced } from '../../../../utils';
+import { useDebouncedResize } from '../../../../utils/hooks';
 import './Waveform.scss';
 
 const LINE_WIDTH = 10;
@@ -14,26 +14,17 @@ const Waveform: React.FC<VisualizationHOC.WrappedProps> = ({
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  useEffect(() => {
+  useDebouncedResize(() => {
+    const { innerWidth, innerHeight, devicePixelRatio = 1 } = window;
+
     const canvas = canvasRef.current!;
+    canvas.width = innerWidth * devicePixelRatio;
+    canvas.height = innerHeight * devicePixelRatio;
 
-    const onResize = () => {
-      const { innerWidth, innerHeight, devicePixelRatio = 1 } = window;
-
-      canvas.width = innerWidth * devicePixelRatio;
-      canvas.height = innerHeight * devicePixelRatio;
-
-      // initial paint to match fade out color from rounding error
-      const ctx = canvas.getContext('2d')!;
-      ctx.fillStyle = '#101010';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-    };
-
-    onResize();
-
-    const debouncedResize = debounced(onResize);
-    window.addEventListener('resize', debouncedResize);
-    return () => window.removeEventListener('resize', debouncedResize);
+    // initial paint to match fade out color from rounding error
+    const ctx = canvas.getContext('2d')!;
+    ctx.fillStyle = '#101010';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
   }, []);
 
   useEffect(() => {

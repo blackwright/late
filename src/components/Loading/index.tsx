@@ -3,13 +3,11 @@ import classNames from 'classnames';
 import './Loading.scss';
 
 type Props = {
-  show?: boolean;
+  isShown?: boolean;
 };
 
-const Loading: React.FC<Props> = ({ show }) => (
-  <div
-    className={classNames('loading', { show: show === false ? false : true })}
-  >
+const Loading: React.FC<Props> = ({ isShown }) => (
+  <div className={classNames('loading', { show: isShown })}>
     <span className="loading-dot" />
     <span className="loading-dot" />
     <span className="loading-dot" />

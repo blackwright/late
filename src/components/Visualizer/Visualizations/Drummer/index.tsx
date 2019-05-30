@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useTransition, animated, interpolate, config } from 'react-spring';
 import classNames from 'classnames';
 import * as VisualizationHOC from '../VisualizationHOC';
-import { debounced } from '../../../../utils';
+import { useDebouncedResize } from '../../../../utils/hooks';
 import { getRandomColor } from '../../../../utils/colors';
 import { DATA_SIZE } from '../../../../config';
 import { QualitySettings } from '../index';
@@ -33,23 +33,15 @@ const Drummer: React.FC<VisualizationHOC.WrappedProps> = ({
     lastChangedTimestamp: Date.now()
   });
 
-  useEffect(() => {
-    const onResize = () => {
-      const { innerWidth, innerHeight } = window;
-      const maxSideLength = Math.max(innerWidth, innerHeight);
-      setSize(maxSideLength * 2);
+  useDebouncedResize(() => {
+    const { innerWidth, innerHeight } = window;
+    const maxSideLength = Math.max(innerWidth, innerHeight);
+    setSize(maxSideLength * 2);
 
-      const colorDiameter = Math.sqrt(
-        Math.pow(innerWidth, 2) + Math.pow(innerHeight, 2)
-      );
-      setColorSize(colorDiameter);
-    };
-
-    onResize();
-
-    const debouncedResize = debounced(onResize);
-    window.addEventListener('resize', debouncedResize);
-    return () => window.removeEventListener('resize', debouncedResize);
+    const colorDiameter = Math.sqrt(
+      Math.pow(innerWidth, 2) + Math.pow(innerHeight, 2)
+    );
+    setColorSize(colorDiameter);
   }, []);
 
   const colors = colorsRef.current;

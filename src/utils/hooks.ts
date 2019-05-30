@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { debounced } from '../utils';
 
 export function useStateRef<S>(
   initialState: S | (() => S)
@@ -11,4 +12,18 @@ export function useStateRef<S>(
   }, [state]);
 
   return [state, setState, stateRef];
+}
+
+export function useDebouncedResize(
+  fn: React.EffectCallback,
+  deps?: React.DependencyList
+) {
+  useEffect(() => {
+    fn();
+
+    const debouncedFn = debounced(fn);
+
+    window.addEventListener('resize', debouncedFn);
+    return () => window.removeEventListener('resize', debouncedFn);
+  }, deps);
 }
