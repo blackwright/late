@@ -3,16 +3,15 @@ const RAINDROPS_HEIGHTWISE = 15;
 const RAINDROP_COLOR = '#788';
 
 class Raindrop {
-  private raindropHeight = 0;
-  private createdDate = 0;
+  private createdDate: number;
 
   constructor(
+    private ctx: CanvasRenderingContext2D,
+    private canvasHeight: number,
     public x: number,
     public y: number,
-    private ctx: CanvasRenderingContext2D,
-    private canvasHeight: number
+    public height: number
   ) {
-    this.raindropHeight = Math.floor(this.canvasHeight / RAINDROPS_HEIGHTWISE);
     this.createdDate = Date.now();
   }
 
@@ -22,20 +21,28 @@ class Raindrop {
   }
 
   render() {
-    const { ctx } = this;
-    ctx.fillStyle = RAINDROP_COLOR;
-    ctx.fillRect(this.x, this.y, 1, this.raindropHeight);
+    const { ctx, x, y, height } = this;
+
+    ctx.strokeStyle = RAINDROP_COLOR;
+    ctx.lineWidth = 1;
+
+    ctx.beginPath();
+    ctx.moveTo(x, y);
+    ctx.lineTo(x, y + height);
+    ctx.stroke();
   }
 }
 
 export class Rainfall {
   private raindrops: Raindrop[] = [];
-  public canvasWidth = 0;
-  public canvasHeight = 0;
+  private raindropHeight: number;
+  public canvasWidth: number;
+  public canvasHeight: number;
 
   constructor(private ctx: CanvasRenderingContext2D) {
     this.canvasWidth = ctx.canvas.width;
     this.canvasHeight = ctx.canvas.height;
+    this.raindropHeight = Math.floor(this.canvasHeight / RAINDROPS_HEIGHTWISE);
   }
 
   tick() {
@@ -54,12 +61,14 @@ export class Rainfall {
   }
 
   add() {
-    const { raindrops, ctx, canvasWidth, canvasHeight } = this;
+    const { ctx, canvasWidth, canvasHeight, raindrops, raindropHeight } = this;
 
     const startingX = Math.floor(Math.random() * (canvasWidth - 1) + 1);
     const startingY = -canvasHeight / RAINDROPS_HEIGHTWISE;
 
-    raindrops.push(new Raindrop(startingX, startingY, ctx, canvasHeight));
+    raindrops.push(
+      new Raindrop(ctx, canvasHeight, startingX, startingY, raindropHeight)
+    );
   }
 
   render() {
