@@ -1,4 +1,4 @@
-# late
+# [late](https://blackwright.github.io/late/)
 
 [For night owls.](https://blackwright.github.io/late/)
 
@@ -10,19 +10,15 @@ Tap the arrow buttons to switch to a different visualization.
 
 Modify the quality setting to change the level of detail.
 
-### Visualizations
+## Visualizations
 
-![Rain](https://github.com/blackwright/late/blob/master/docs/rain.gif)
+<img src="https://github.com/blackwright/late/blob/master/docs/rain.gif" alt="Rain" width="100%">
+<img src="https://github.com/blackwright/late/blob/master/docs/stars.gif" alt="Stars" width="100%">
+<img src="https://github.com/blackwright/late/blob/master/docs/waveform.gif" alt="Waveform" width="100%">
+<img src="https://github.com/blackwright/late/blob/master/docs/drummer.gif" alt="Drummer" width="100%">
+<img src="https://github.com/blackwright/late/blob/master/docs/halpern.gif" alt="Halpern" width="100%">
 
-![Stars](https://github.com/blackwright/late/blob/master/docs/stars.gif)
-
-![Waveform](https://github.com/blackwright/late/blob/master/docs/waveform.gif)
-
-![Drummer](https://github.com/blackwright/late/blob/master/docs/drummer.gif)
-
-![Halpern](https://github.com/blackwright/late/blob/master/docs/halpern.gif)
-
-### Installation
+## Installation
 
 Node.js is required to run the project locally.
 
@@ -35,9 +31,7 @@ $ yarn start
 
 By default, the audio server is configured to run on port 3002 and the client on port 3000.
 
-The code was written using
-
-### Tech
+## Tech
 
 - React 16.8 + TypeScript
 - Web Audio API
@@ -48,6 +42,6 @@ The code was written using
 - ytdl-core/FFmpeg
 - SCSS
 
-### Else
+## Else
 
 Late is configured to not run on Safari and mobile iOS devices, where webkitAudioContext does not work well with a streaming audio source.
