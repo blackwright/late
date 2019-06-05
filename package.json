@@ -1,15 +1,10 @@
 {
   "name": "late",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "private": true,
   "homepage": "https://blackwright.github.io/late",
   "dependencies": {
-    "@ffmpeg-installer/ffmpeg": "^1.0.17",
     "classnames": "^2.2.6",
-    "cluster": "^0.7.7",
-    "cors": "^2.8.5",
-    "express": "^4.16.4",
-    "fluent-ffmpeg": "^2.1.2",
     "node-sass": "^4.12.0",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
@@ -18,18 +13,15 @@
     "react-spring": "^8.0.19",
     "redux": "^4.0.1",
     "three": "^0.102.1",
-    "typescript": "^3.3.3",
-    "ytdl-core": "^0.29.2"
+    "typescript": "^3.3.3"
   },
   "scripts": {
-    "client": "react-scripts start",
-    "server": "node server/index.js",
+    "start": "react-scripts start",
     "build": "node increment-build && react-scripts build",
     "predeploy": "react-scripts build",
     "deploy": "node increment-build && gh-pages -d build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject",
-    "start": "node_modules/.bin/concurrently --kill-others \"npm run server\" \"npm run client\""
+    "eject": "react-scripts eject"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -43,13 +35,10 @@
   "devDependencies": {
     "@types/classnames": "^2.2.7",
     "@types/jest": "^24.0.0",
-    "@types/node": "^11.9.0",
     "@types/react": "^16.8.3",
     "@types/react-dom": "^16.8.3",
     "@types/react-redux": "^7.0.6",
-    "@types/react-transition-group": "^2.0.16",
     "@types/webaudioapi": "^0.0.27",
-    "concurrently": "^4.1.0",
     "gh-pages": "^2.0.1",
     "prettier": "^1.16.4"
   }

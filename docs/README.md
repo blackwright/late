@@ -2,9 +2,9 @@
 
 [For night owls.](https://blackwright.github.io/late/)
 
-Late is a collection of audio visual experiments using a real-time audio stream.
+Late is a collection of audio/visual experiments for the web.
 
-Each scene has elements that animate in response to the changing beat and intensity of the music on the fly.
+Each scene has elements that animate in response to the changing beat and intensity of music on the fly.
 
 Tap the arrow buttons to switch to a different visualization.
 
