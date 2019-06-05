@@ -143,7 +143,7 @@ const Controls: React.FC<Props> = props => {
           onMouseEnter={onHover}
           onMouseLeave={onHoverStop}
         >
-          LATE
+          late
         </h1>
         <QualitySelect onHover={onHover} onHoverStop={onHoverStop} />
         <div id="version">build {versionInfo.version}</div>
