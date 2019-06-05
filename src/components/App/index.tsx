@@ -1,7 +1,6 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import Analyser from '../Analyser';
 import Controls from '../Controls';
-import NoWebAudioApi from '../NoWebAudioApi';
 import { useStateRef } from '../../utils/hooks';
 import { modulo } from '../../utils';
 import { audioPaths } from './utils';
@@ -13,19 +12,9 @@ const App: React.FC = () => {
     AudioContext | undefined
   >(undefined);
   const [source, setSource] = useState<MediaElementAudioSourceNode>();
-  const [isContextUnavailable, setIsContextUnavailable] = useState(false);
   const audioIndexRef = useRef(0);
 
   const audioRef = useRef<HTMLAudioElement>(null);
-
-  // disable if AudioContext is unavailable
-  useEffect(() => {
-    try {
-      new window.AudioContext();
-    } catch (err) {
-      setIsContextUnavailable(true);
-    }
-  }, []);
 
   // attach audio event listeners
   useEffect(() => {
@@ -59,7 +48,8 @@ const App: React.FC = () => {
 
   const initializeAudioContext = useCallback(() => {
     const audioElement = audioRef.current!;
-    const context = new window.AudioContext();
+    const context = new (window.AudioContext ||
+      (window as any).webkitAudioContext)();
     const source = context.createMediaElementSource(audioElement);
 
     setContext(context);
@@ -81,10 +71,6 @@ const App: React.FC = () => {
       audioElement.pause();
     }
   }, [audioRef.current]);
-
-  if (isContextUnavailable) {
-    return <NoWebAudioApi />;
-  }
 
   return (
     <>
