@@ -8,17 +8,16 @@ const app = express();
 
 app.use(cors());
 
-const URLs = [
-  'https://www.youtube.com/watch?v=hHW1oY26kxQ',
-  'https://www.youtube.com/watch?v=tNkZsRW7h2c'
-];
+const URL = 'https://www.youtube.com/watch?v=hHW1oY26kxQ';
 
-const options = { quality: [91, 92, 93, 94, 95] };
+const options = {
+  quality: [128, 127, 120, 96, 95, 94, 93]
+};
 
 app.use('/', (req, res) => {
   res.setHeader('Content-type', 'audio/mpeg');
 
-  const stream = ytdl(URLs[0], options);
+  const stream = ytdl(URL, options);
 
   ffmpeg(stream)
     .noVideo()
@@ -27,7 +26,10 @@ app.use('/', (req, res) => {
       console.log('Stream has ended.');
       res.end();
     })
-    .on('error', err => res.end())
+    .on('error', err => {
+      console.error(err.message ? err.message : err);
+      res.end();
+    })
     .stream(res, { end: true });
 });
 

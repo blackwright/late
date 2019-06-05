@@ -18,7 +18,7 @@
     "redux": "^4.0.1",
     "three": "^0.102.1",
     "typescript": "^3.3.3",
-    "ytdl-core": "^0.29.1"
+    "ytdl-core": "^0.29.2"
   },
   "scripts": {
     "client": "react-scripts start",
