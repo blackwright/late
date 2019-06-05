@@ -9,8 +9,7 @@ const MIN_LIGHT_INTENSITY = 1;
 
 const Stars: React.FC<VisualizationHOC.WrappedProps> = ({
   data,
-  intensity,
-  quality
+  intensity
 }) => {
   const rendererRef = useRef<HTMLDivElement>(null);
   const managedSceneRef = useRef<any>();
@@ -18,11 +17,7 @@ const Stars: React.FC<VisualizationHOC.WrappedProps> = ({
 
   useEffect(() => {
     const rendererContainer = rendererRef.current!;
-    const managedScene = sceneManager(
-      rendererContainer,
-      quality,
-      MIN_LIGHT_INTENSITY
-    );
+    const managedScene = sceneManager(rendererContainer, MIN_LIGHT_INTENSITY);
 
     managedSceneRef.current = managedScene;
 
@@ -30,7 +25,7 @@ const Stars: React.FC<VisualizationHOC.WrappedProps> = ({
     managedScene.animate();
 
     return managedScene.cleanup;
-  }, [quality]);
+  }, []);
 
   useEffect(() => {
     const now = Date.now();

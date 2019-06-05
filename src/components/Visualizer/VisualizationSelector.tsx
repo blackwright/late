@@ -8,15 +8,13 @@ import { StoreState } from '../../../src/store/types';
 
 type Props = Pick<VisualizationHOC.Props, 'data' | 'lowPassData'>;
 
-type StyledProps = Props &
-  Pick<StoreState, 'quality'> & {
-    style: React.CSSProperties;
-  };
+type StyledProps = Props & {
+  style: React.CSSProperties;
+};
 
 const mapStateToProps = (state: StoreState) => ({
   currentIndex: state.currentVisualizationIndex,
-  prevIndex: state.prevVisualizationIndex,
-  quality: state.quality
+  prevIndex: state.prevVisualizationIndex
 });
 
 const styledVisualizations = visualizations.map(vis => {
@@ -33,7 +31,7 @@ const styledVisualizations = visualizations.map(vis => {
 
 const VisualizationSelector: React.FC<
   Props & ReturnType<typeof mapStateToProps>
-> = ({ data, lowPassData, prevIndex, currentIndex, quality }) => {
+> = ({ data, lowPassData, prevIndex, currentIndex }) => {
   const visIndex = modulo(currentIndex, visualizations.length);
 
   const direction = useCallback((current?, prev?) => {
@@ -64,7 +62,6 @@ const VisualizationSelector: React.FC<
             key={key}
             data={data}
             lowPassData={lowPassData}
-            quality={quality}
             style={props}
           />
         );

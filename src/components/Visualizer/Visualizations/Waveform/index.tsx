@@ -8,10 +8,7 @@ const LINE_WIDTH = 10;
 const LINE_X_OFFSET = 0;
 const LINE_Y_OFFSET = 5;
 
-const Waveform: React.FC<VisualizationHOC.WrappedProps> = ({
-  data,
-  quality
-}) => {
+const Waveform: React.FC<VisualizationHOC.WrappedProps> = ({ data }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useDebouncedResize(() => {
@@ -47,7 +44,7 @@ const Waveform: React.FC<VisualizationHOC.WrappedProps> = ({
     ctx.lineWidth = LINE_WIDTH;
     ctx.lineCap = 'round';
 
-    const colors = getColors(quality + 1);
+    const colors = getColors(2);
 
     const sliceWidth = canvas.width / data.length;
 

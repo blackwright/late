@@ -8,18 +8,12 @@ import { useDebouncedResize } from '../../../../utils/hooks';
 import './Rain.scss';
 
 const MIN_RAINDROPS_PER_TICK = 1;
-
-const QUALITY: QualitySettings = {
-  0: { MAX_RAINDROPS_PER_TICK: 8 },
-  1: { MAX_RAINDROPS_PER_TICK: 33 },
-  2: { MAX_RAINDROPS_PER_TICK: 60 }
-};
+const MAX_RAINDROPS_PER_TICK = 30;
 
 const Rain: React.FC<VisualizationHOC.WrappedProps> = ({
   data,
   isBeat,
-  lowPassIntensity,
-  quality
+  lowPassIntensity
 }) => {
   // city
   const cityCanvasRef = useRef<HTMLCanvasElement>(null);
@@ -148,14 +142,12 @@ const Rain: React.FC<VisualizationHOC.WrappedProps> = ({
     const cat = catRef.current!;
     const lamp = lampRef.current!;
 
-    let raindropsToAdd = Math.floor(
-      lowPassIntensity / Math.max(1, 4 - quality)
-    );
+    let raindropsToAdd = Math.floor(lowPassIntensity / 2);
 
     if (raindropsToAdd < MIN_RAINDROPS_PER_TICK) {
       raindropsToAdd = MIN_RAINDROPS_PER_TICK;
-    } else if (raindropsToAdd > QUALITY[quality].MAX_RAINDROPS_PER_TICK) {
-      raindropsToAdd = QUALITY[quality].MAX_RAINDROPS_PER_TICK;
+    } else if (raindropsToAdd > MAX_RAINDROPS_PER_TICK) {
+      raindropsToAdd = MAX_RAINDROPS_PER_TICK;
     }
 
     let newRaindropsAdded = 0;

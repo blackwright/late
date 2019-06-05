@@ -5,26 +5,16 @@ import * as VisualizationHOC from '../VisualizationHOC';
 import { useDebouncedResize } from '../../../../utils/hooks';
 import { getRandomColor } from '../../../../utils/colors';
 import { DATA_SIZE } from '../../../../config';
-import { QualitySettings } from '../index';
 import './Drummer.scss';
 
 const MIN_HIT_COUNT = 0.04;
 const MIN_FREQUENCY_VARIATION = 10;
 const MIN_DELAY_BETWEEN_COLOR_CHANGE = 200;
-
-const QUALITY: QualitySettings = {
-  0: { NUM_DRUMMERS: 6 },
-  1: { NUM_DRUMMERS: 10 },
-  2: { NUM_DRUMMERS: 16 }
-};
+const NUM_DRUMMERS = 10;
 
 const minHitCount = MIN_HIT_COUNT * DATA_SIZE;
 
-const Drummer: React.FC<VisualizationHOC.WrappedProps> = ({
-  data,
-  isBeat,
-  quality
-}) => {
+const Drummer: React.FC<VisualizationHOC.WrappedProps> = ({ data, isBeat }) => {
   const [size, setSize] = useState(0);
   const [colorSize, setColorSize] = useState(0);
 
@@ -45,7 +35,7 @@ const Drummer: React.FC<VisualizationHOC.WrappedProps> = ({
   }, []);
 
   const colors = colorsRef.current;
-  const numDrummers = QUALITY[quality].NUM_DRUMMERS;
+  const numDrummers = NUM_DRUMMERS;
 
   const freqMap: { [key: string]: number } = {};
   const numPerSlice = 256 / numDrummers;

@@ -5,7 +5,6 @@ import classNames from 'classnames';
 import Loading from '../Loading';
 import * as Actions from '../../store/actions';
 import * as versionInfo from '../../metadata/build-version.json';
-import QualitySelect from './QualitySelect';
 import './Controls.scss';
 
 const CONTROLS_FADE_OUT_DELAY = 1500;
@@ -145,7 +144,6 @@ const Controls: React.FC<Props> = props => {
         >
           late
         </h1>
-        <QualitySelect onHover={onHover} onHoverStop={onHoverStop} />
         <div id="version">build {versionInfo.version}</div>
         {
           <div

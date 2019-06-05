@@ -2,22 +2,13 @@ import React, { useEffect, useRef } from 'react';
 import { BufferGeometry, BufferAttribute } from 'three';
 import * as VisualizationHOC from '../VisualizationHOC';
 import sceneManager from './three/sceneManager';
-import { QualitySettings } from '../index';
 import './Halpern.scss';
 
+const RIPPLE_SPEED = 3;
 const VERTEX_SEGMENT_WEIGHT_COEFFICIENT = 0.1;
 const BASELINE_VERTEX_SCALAR_FACTOR = 1;
 
-const QUALITY: QualitySettings = {
-  0: { RIPPLE_SPEED: 2 },
-  1: { RIPPLE_SPEED: 3 },
-  2: { RIPPLE_SPEED: 4 }
-};
-
-const Halpern: React.FC<VisualizationHOC.WrappedProps> = ({
-  data,
-  quality
-}) => {
+const Halpern: React.FC<VisualizationHOC.WrappedProps> = ({ data }) => {
   const rendererRef = useRef<HTMLDivElement>(null);
   const managedSceneRef = useRef<any>();
   const originalVerticesRef = useRef<ArrayLike<number>>();
@@ -27,7 +18,7 @@ const Halpern: React.FC<VisualizationHOC.WrappedProps> = ({
 
   useEffect(() => {
     const rendererContainer = rendererRef.current!;
-    const managedScene = sceneManager(rendererContainer, quality);
+    const managedScene = sceneManager(rendererContainer);
 
     managedSceneRef.current = managedScene;
 
@@ -51,10 +42,10 @@ const Halpern: React.FC<VisualizationHOC.WrappedProps> = ({
     managedScene.animate();
 
     return managedScene.cleanup;
-  }, [quality]);
+  }, []);
 
   useEffect(() => {
-    const rippleSpeed = QUALITY[quality].RIPPLE_SPEED;
+    const rippleSpeed = RIPPLE_SPEED;
     const focusedDataIndex = Math.floor(data.length / 2);
 
     focusedDataRef.current.splice(0, rippleSpeed);

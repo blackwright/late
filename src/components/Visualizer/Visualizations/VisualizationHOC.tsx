@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Options } from './index';
-import { Quality } from '../../../store/types';
 import './Visualization.scss';
 
 export type Props = {
@@ -8,7 +7,6 @@ export type Props = {
   data: Uint8Array;
   lowPassData: Uint8Array;
   options?: Options;
-  quality: Quality;
 };
 
 export type WrappedProps = {
@@ -17,26 +15,19 @@ export type WrappedProps = {
   isBeat: boolean;
   intensity: number;
   lowPassIntensity: number;
-  quality: Quality;
 };
 
 const defaultProps: Props = {
   data: new Uint8Array(),
   lowPassData: new Uint8Array(),
-  options: {},
-  quality: 2
+  options: {}
 };
 
 // all visualization components should be wrapped with this HOC
 export function wrap(
   WrappedComponent: React.ComponentType<WrappedProps>
 ): React.ComponentType<Props> {
-  return function({
-    data,
-    lowPassData,
-    options,
-    quality
-  }: Props = defaultProps) {
+  return function({ data, lowPassData, options }: Props = defaultProps) {
     const rawIntensitiesRef = useRef<number[]>([]);
     const lowPassIntensitiesRef = useRef<number[]>([]);
     const startingTimestampRef = useRef<number>(Date.now());
@@ -120,7 +111,6 @@ export function wrap(
         isBeat={isBeat}
         intensity={currentRawIntensity}
         lowPassIntensity={currentLowPassIntensity}
-        quality={quality}
       />
     );
   };
