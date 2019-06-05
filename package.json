@@ -6,6 +6,7 @@
   "dependencies": {
     "@ffmpeg-installer/ffmpeg": "^1.0.17",
     "classnames": "^2.2.6",
+    "cluster": "^0.7.7",
     "cors": "^2.8.5",
     "express": "^4.16.4",
     "fluent-ffmpeg": "^2.1.2",
