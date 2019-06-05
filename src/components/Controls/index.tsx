@@ -18,7 +18,7 @@ type Props = ReturnType<typeof mapDispatchToProps> & {
 };
 
 const Controls: React.FC<Props> = props => {
-  const [isOverlayShown, setIsOverlayShown] = useState(false);
+  const [isOverlayShown, setIsOverlayShown] = useState(true);
   const [isControlHovered, setIsControlHovered] = useState(false);
 
   const timeoutRef = useRef<number>();
