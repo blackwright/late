@@ -53,8 +53,8 @@ const Rain: React.FC<VisualizationHOC.WrappedProps> = ({
         rainfallRef.current = new Rainfall(ctx);
       } else {
         rainfall = rainfallRef.current!;
-        rainfall.canvasWidth = width;
-        rainfall.canvasHeight = height;
+        rainfall.canvasWidth = width * dpi;
+        rainfall.canvasHeight = height * dpi;
       }
     };
 

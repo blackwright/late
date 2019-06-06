@@ -20,7 +20,6 @@ export function useDebouncedResize(
 ) {
   useEffect(() => {
     fn();
-
     const debouncedFn = debounced(fn);
 
     window.addEventListener('resize', debouncedFn);
