@@ -3,29 +3,29 @@ import VisualizationSelector from '../Visualizer/VisualizationSelector';
 import { FFT_SIZE } from '../../config';
 
 type Props = {
-  context: AudioContext;
-  source: MediaElementAudioSourceNode;
+  audioContext: AudioContext;
+  audioSource: MediaElementAudioSourceNode;
 };
 
-const Analyser: React.FC<Props> = ({ context, source }) => {
+const Analyser: React.FC<Props> = ({ audioContext, audioSource }) => {
   const [rawData, setRawData] = useState(new Uint8Array());
   const [lowPassData, setLowPassData] = useState(new Uint8Array());
 
   const animationFrameIdRef = useRef<number>();
 
   useEffect(() => {
-    const rawAnalyser = context.createAnalyser();
+    const rawAnalyser = audioContext.createAnalyser();
     rawAnalyser.fftSize = FFT_SIZE;
     rawAnalyser.smoothingTimeConstant = 0;
-    source.connect(rawAnalyser);
-    rawAnalyser.connect(context.destination);
+    audioSource.connect(rawAnalyser);
+    rawAnalyser.connect(audioContext.destination);
 
-    const filter = context.createBiquadFilter();
+    const filter = audioContext.createBiquadFilter();
     filter.type = 'lowpass';
-    const lowPassAnalyser = context.createAnalyser();
+    const lowPassAnalyser = audioContext.createAnalyser();
     lowPassAnalyser.fftSize = FFT_SIZE;
     lowPassAnalyser.smoothingTimeConstant = 0;
-    source.connect(filter);
+    audioSource.connect(filter);
     filter.connect(lowPassAnalyser);
 
     const tick = () => {
@@ -47,9 +47,9 @@ const Analyser: React.FC<Props> = ({ context, source }) => {
         window.cancelAnimationFrame(animationFrameIdRef.current);
       rawAnalyser && rawAnalyser.disconnect();
       lowPassAnalyser && lowPassAnalyser.disconnect();
-      source && source.disconnect();
+      audioSource && audioSource.disconnect();
     };
-  }, [context, source]);
+  }, [audioContext, audioSource]);
 
   return <VisualizationSelector data={rawData} lowPassData={lowPassData} />;
 };

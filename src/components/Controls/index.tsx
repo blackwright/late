@@ -11,7 +11,7 @@ const CONTROLS_FADE_OUT_DELAY = 1500;
 const TOUCH_WAS_CLICK_THRESHOLD = 250;
 
 type Props = ReturnType<typeof mapDispatchToProps> & {
-  context?: AudioContext;
+  audioContext?: AudioContext;
   wantsToPlay: boolean;
   isPlaying: boolean;
   togglePlay: () => void;
@@ -56,10 +56,10 @@ const Controls: React.FC<Props> = props => {
   }, [isControlHovered]);
 
   const togglePlay = useCallback(() => {
-    props.context && props.context.resume();
+    props.audioContext && props.audioContext.resume();
     props.togglePlay();
     showOverlay();
-  }, [props.context, props.togglePlay]);
+  }, [props.audioContext, props.togglePlay]);
 
   const recordTouchTimestamp = useCallback((event: React.TouchEvent) => {
     event.preventDefault();

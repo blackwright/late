@@ -8,10 +8,10 @@ import { audioPaths } from './utils';
 const App: React.FC = () => {
   const [wantsToPlay, setWantsToPlay] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [context, setContext, contextRef] = useStateRef<
+  const [audioContext, setContext, contextRef] = useStateRef<
     AudioContext | undefined
   >(undefined);
-  const [source, setSource] = useState<MediaElementAudioSourceNode>();
+  const [audioSource, setSource] = useState<MediaElementAudioSourceNode>();
   const audioIndexRef = useRef(0);
 
   const audioRef = useRef<HTMLAudioElement>(null);
@@ -48,12 +48,12 @@ const App: React.FC = () => {
 
   const initializeAudioContext = useCallback(() => {
     const audioElement = audioRef.current!;
-    const context = new (window.AudioContext ||
+    const audioContext = new (window.AudioContext ||
       (window as any).webkitAudioContext)();
-    const source = context.createMediaElementSource(audioElement);
+    const audioSource = audioContext.createMediaElementSource(audioElement);
 
-    setContext(context);
-    setSource(source);
+    setContext(audioContext);
+    setSource(audioSource);
   }, [audioRef.current]);
 
   const togglePlay = useCallback(() => {
@@ -82,10 +82,12 @@ const App: React.FC = () => {
         crossOrigin="anonymous"
       />
 
-      {context && source && <Analyser context={context} source={source} />}
+      {audioContext && audioSource && (
+        <Analyser audioContext={audioContext} audioSource={audioSource} />
+      )}
 
       <Controls
-        context={context}
+        audioContext={audioContext}
         wantsToPlay={wantsToPlay}
         isPlaying={isPlaying}
         togglePlay={togglePlay}

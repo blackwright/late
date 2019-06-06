@@ -1,5 +1,5 @@
 #overlay {
-  position: absolute;
+  position: relative;
   top: 0;
   left: 0;
   width: 100%;
@@ -31,11 +31,15 @@
     position: absolute;
     top: 50%;
     left: 50%;
-    transform: translate(-50%, -50%);
+    transform: translate3d(-50%, -50%, 0) scale(0.5);
     width: 0;
     height: 5rem;
     z-index: 1;
     cursor: pointer;
+
+    @media screen and (max-height: 400px) and (orientation: landscape) {
+      transform: translate3d(-50%, -50%, 0) scale(0.33);
+    }
   }
 
   .play {
@@ -53,13 +57,19 @@
   #title {
     position: absolute;
     font-weight: 600;
-    font-size: 1.5rem;
-    top: 3rem;
-    left: calc(50% + 1rem);
-    transform: translateX(-50%);
-    letter-spacing: 10px;
+    font-size: 1.25rem;
+    left: 50%;
+    top: 5%;
+    transform: translate3d(-50%, -5%, 0);
+    letter-spacing: 7px;
+    padding-left: 7px;
     user-select: none;
     transition: text-shadow 100ms linear;
+
+    @media screen and (max-height: 400px) and (orientation: landscape) {
+      top: 10%;
+      transform: translate3d(-50%, -10%, 0) scale(0.75);
+    }
 
     &:hover {
       cursor: pointer;
@@ -82,9 +92,14 @@
     padding: 1rem;
     cursor: pointer;
     touch-action: none;
+    transform: scale(0.5);
 
     @media screen and (max-width: 400px) {
-      transform: scale(0.625);
+      transform: scale(0.33);
+    }
+
+    @media screen and (max-height: 400px) and (orientation: landscape) {
+      transform: scale(0.33);
     }
 
     .arrow polyline {
