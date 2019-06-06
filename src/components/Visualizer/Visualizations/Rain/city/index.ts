@@ -83,7 +83,10 @@ export class City extends Renderer {
 
     for (let i = 0; i < layers.length; i++) {
       const currentLayer = layers[i];
-      currentLayer.forEach(building => building.generateLights());
+
+      if (i === layers.length - 1) {
+        currentLayer.forEach(building => building.generateLights());
+      }
 
       for (const building of currentLayer) {
         building.render();
