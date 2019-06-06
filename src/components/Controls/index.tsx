@@ -9,6 +9,7 @@ import './Controls.scss';
 
 const CONTROLS_FADE_OUT_DELAY = 1500;
 const TOUCH_WAS_CLICK_THRESHOLD = 250;
+const TOUCH_WAS_SWIPE_THRESHOLD = 350;
 
 type Props = ReturnType<typeof mapDispatchToProps> & {
   audioContext?: AudioContext;
@@ -17,12 +18,17 @@ type Props = ReturnType<typeof mapDispatchToProps> & {
   togglePlay: () => void;
 };
 
+type Touch = {
+  timestamp: number;
+  x: number;
+};
+
 const Controls: React.FC<Props> = props => {
   const [isOverlayShown, setIsOverlayShown] = useState(true);
   const [isControlHovered, setIsControlHovered] = useState(false);
 
   const timeoutRef = useRef<number>();
-  const touchTimestampRef = useRef<number>();
+  const touchRef = useRef<Touch>();
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
@@ -61,24 +67,24 @@ const Controls: React.FC<Props> = props => {
     showOverlay();
   }, [props.audioContext, props.togglePlay]);
 
-  const recordTouchTimestamp = useCallback((event: React.TouchEvent) => {
+  const onTouchStart = useCallback((event: React.TouchEvent) => {
     event.preventDefault();
-    touchTimestampRef.current = Date.now();
+    touchRef.current = { timestamp: Date.now(), x: event.touches[0].clientX };
   }, []);
 
   const goToRepo = () => window.open('https://github.com/blackwright/late');
 
   const onMouseDown = useCallback((event: React.MouseEvent) => {
     if (event.nativeEvent.which === 1) {
-      touchTimestampRef.current = Date.now();
+      touchRef.current = { timestamp: Date.now(), x: event.clientX };
     }
   }, []);
 
   const onMouseUp = useCallback((event: React.MouseEvent) => {
     if (
       event.nativeEvent.which === 1 &&
-      touchTimestampRef.current &&
-      Date.now() - touchTimestampRef.current < TOUCH_WAS_CLICK_THRESHOLD
+      touchRef.current &&
+      Date.now() - touchRef.current.timestamp < TOUCH_WAS_CLICK_THRESHOLD
     ) {
       togglePlay();
     }
@@ -88,10 +94,24 @@ const Controls: React.FC<Props> = props => {
     (event: React.TouchEvent) => {
       event.preventDefault();
       if (
-        touchTimestampRef.current &&
-        Date.now() - touchTimestampRef.current < TOUCH_WAS_CLICK_THRESHOLD
+        touchRef.current &&
+        Date.now() - touchRef.current.timestamp < TOUCH_WAS_CLICK_THRESHOLD
       ) {
         showOverlay();
+      }
+
+      if (
+        touchRef.current &&
+        Date.now() - touchRef.current.timestamp < TOUCH_WAS_SWIPE_THRESHOLD
+      ) {
+        const deltaX = event.changedTouches[0].clientX - touchRef.current.x;
+        if (Math.abs(deltaX) > 50) {
+          if (deltaX < 0) {
+            props.goToPrevVisualization();
+          } else {
+            props.goToNextVisualization();
+          }
+        }
       }
     },
     [isControlHovered]
@@ -99,7 +119,7 @@ const Controls: React.FC<Props> = props => {
 
   const onPrev = useCallback(
     (event: React.MouseEvent | React.TouchEvent) => {
-      event.stopPropagation();
+      event.preventDefault();
       props.goToPrevVisualization();
       showOverlay();
     },
@@ -108,16 +128,12 @@ const Controls: React.FC<Props> = props => {
 
   const onNext = useCallback(
     (event: React.MouseEvent | React.TouchEvent) => {
-      event.stopPropagation();
+      event.preventDefault();
       props.goToNextVisualization();
       showOverlay();
     },
     [isControlHovered]
   );
-
-  const doNothing = useCallback((event: React.MouseEvent) => {
-    event.stopPropagation();
-  }, []);
 
   const onHover = useCallback(() => setIsControlHovered(true), []);
 
@@ -130,7 +146,7 @@ const Controls: React.FC<Props> = props => {
       {wantsToPlay && !isPlaying && <Loading />}
       <div
         id="overlay"
-        onTouchStart={recordTouchTimestamp}
+        onTouchStart={onTouchStart}
         onTouchEnd={onTouchEnd}
         onMouseMove={showOverlay}
         className={classNames({ show: isOverlayShown })}
@@ -161,9 +177,8 @@ const Controls: React.FC<Props> = props => {
         <div className="navigation">
           <div
             className="arrow-container"
-            onClick={onPrev}
-            onTouchStart={onPrev}
-            onMouseUp={doNothing}
+            onTouchEnd={onPrev}
+            onMouseUp={onPrev}
             onMouseEnter={onHover}
             onMouseLeave={onHoverStop}
           >
@@ -185,9 +200,8 @@ const Controls: React.FC<Props> = props => {
           </div>
           <div
             className="arrow-container"
-            onClick={onNext}
-            onTouchStart={onNext}
-            onMouseUp={doNothing}
+            onTouchEnd={onNext}
+            onMouseUp={onNext}
             onMouseEnter={onHover}
             onMouseLeave={onHoverStop}
           >

@@ -67,6 +67,8 @@ export default function sceneManager(rendererContainer: HTMLDivElement) {
     halpern.geometry.dispose();
     (halpern.material as PointsMaterial).dispose();
     sphereGeometry.dispose();
+
+    renderer.dispose();
   }
 
   function onResize() {

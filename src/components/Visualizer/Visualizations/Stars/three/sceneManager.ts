@@ -129,6 +129,9 @@ export default function sceneManager(
       (cloud as Mesh).geometry.dispose();
       ((cloud as Mesh).material as ShaderMaterial).dispose();
     });
+
+    renderer.dispose();
+    console.log('disposed three objects');
   }
 
   function onResize() {
