@@ -1,6 +1,5 @@
 import React, { useRef, useEffect } from 'react';
 import * as VisualizationHOC from '../VisualizationHOC';
-import { QualitySettings } from '../index';
 import { City } from './city';
 import { Rainfall } from './rain';
 import { Home, Cat, Lamp } from './home';
@@ -8,7 +7,7 @@ import { useDebouncedResize } from '../../../../utils/hooks';
 import './Rain.scss';
 
 const MIN_RAINDROPS_PER_TICK = 1;
-const MAX_RAINDROPS_PER_TICK = 30;
+const MAX_RAINDROPS_PER_TICK = 15;
 
 const Rain: React.FC<VisualizationHOC.WrappedProps> = ({
   data,

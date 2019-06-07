@@ -84,9 +84,7 @@ export class City extends Renderer {
     for (let i = 0; i < layers.length; i++) {
       const currentLayer = layers[i];
 
-      if (i === layers.length - 1) {
-        currentLayer.forEach(building => building.generateLights());
-      }
+      currentLayer.forEach(building => building.generateLights());
 
       for (const building of currentLayer) {
         building.render();
@@ -96,5 +94,8 @@ export class City extends Renderer {
       ctx.fillStyle = LAYER_OVERLAY_COLOR;
       ctx.fillRect(0, 0, canvasWidth, canvasHeight);
     }
+
+    // garbage collect
+    this.layers = [];
   }
 }

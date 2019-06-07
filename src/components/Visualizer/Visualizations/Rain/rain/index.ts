@@ -1,15 +1,15 @@
-const TIME_TO_FALL = 400;
-const RAINDROPS_HEIGHTWISE = 15;
+const TIME_TO_FALL = 300;
+const RAINDROPS_HEIGHTWISE = 10;
 const RAINDROP_COLOR = '#788';
 
 class Raindrop {
   private createdDate: number;
+  public y = 0;
 
   constructor(
     private ctx: CanvasRenderingContext2D,
     private canvasHeight: number,
     public x: number,
-    public y: number,
     public height: number
   ) {
     this.createdDate = Date.now();
@@ -17,7 +17,10 @@ class Raindrop {
 
   tick(now: number) {
     const timeDelta = now - this.createdDate;
-    this.y = Math.floor((timeDelta / TIME_TO_FALL) * this.canvasHeight);
+    this.y = Math.floor(
+      (timeDelta / TIME_TO_FALL) * this.canvasHeight * 0.75 +
+        this.canvasHeight * 0.25
+    );
   }
 
   render() {
@@ -42,7 +45,9 @@ export class Rainfall {
   constructor(private ctx: CanvasRenderingContext2D) {
     this.canvasWidth = ctx.canvas.width;
     this.canvasHeight = ctx.canvas.height;
-    this.raindropHeight = Math.floor(this.canvasHeight / RAINDROPS_HEIGHTWISE);
+    this.raindropHeight = Math.floor(
+      (this.canvasHeight * 0.5) / RAINDROPS_HEIGHTWISE
+    );
   }
 
   tick() {
@@ -54,7 +59,7 @@ export class Rainfall {
       raindrop.tick(now);
 
       // remove raindrops that have fallen out of view
-      if (raindrop.y >= canvasHeight) {
+      if (raindrop.y >= canvasHeight * 0.75) {
         raindrops.splice(i, 1);
       }
     }
@@ -63,12 +68,9 @@ export class Rainfall {
   add() {
     const { ctx, canvasWidth, canvasHeight, raindrops, raindropHeight } = this;
 
-    const startingX = Math.floor(Math.random() * (canvasWidth - 1) + 1);
-    const startingY = -canvasHeight / RAINDROPS_HEIGHTWISE;
+    const startingX = Math.random() * (canvasWidth / 3 - 1) + canvasWidth / 3;
 
-    raindrops.push(
-      new Raindrop(ctx, canvasHeight, startingX, startingY, raindropHeight)
-    );
+    raindrops.push(new Raindrop(ctx, canvasHeight, startingX, raindropHeight));
   }
 
   render() {

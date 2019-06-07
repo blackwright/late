@@ -1,10 +1,10 @@
 import { randomNumberBetween } from '../../../../../utils';
 
 const LIGHT_COLOR = 'rgb(255, 255, 255)';
-const MIN_LIGHT_HEIGHT_RATIO = 0.01;
-const MAX_LIGHT_HEIGHT_RATIO = 0.025;
-const MIN_LIGHTS_PER_FLOOR = 3;
-const MAX_LIGHTS_PER_FLOOR = 10;
+const MIN_LIGHT_HEIGHT_RATIO = 0.02;
+const MAX_LIGHT_HEIGHT_RATIO = 0.03;
+const MIN_LIGHTS_PER_FLOOR = 2;
+const MAX_LIGHTS_PER_FLOOR = 6;
 const MIN_GAP_WIDTH_RATIO = 0.01;
 const MAX_GAP_WIDTH_RATIO = 0.05;
 const MIN_LIGHT_PADDING_RATIO = 0.01;
@@ -131,6 +131,9 @@ export class Building {
         ctx.fillRect(light.x, light.y, light.width, light.height);
       }
     }
+
+    // garbage collect
+    this.lights = [];
 
     ctx.restore();
   }
