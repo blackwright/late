@@ -1,20 +1,39 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import Analyser from '../Analyser';
 import Controls from '../Controls';
+import AudioControls from '../AudioControls';
 import { useStateRef } from '../../utils/hooks';
 import { modulo } from '../../utils';
-import { audioPaths } from './utils';
+import { songs } from '../../songs';
 
 const App: React.FC = () => {
   const [wantsToPlay, setWantsToPlay] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [audioContext, setContext, contextRef] = useStateRef<
+  const [audioContext, setAudioContext, audioContextRef] = useStateRef<
     AudioContext | undefined
   >(undefined);
   const [audioSource, setSource] = useState<MediaElementAudioSourceNode>();
-  const audioIndexRef = useRef(0);
+  const [audioIndex, setAudioIndex, audioIndexRef] = useStateRef(0);
 
   const audioRef = useRef<HTMLAudioElement>(null);
+
+  const nextTrack = useCallback(() => {
+    const audioElement = audioRef.current!;
+    const nextAudioIndex = modulo(audioIndex + 1, songs.length);
+    audioElement.src = songs[nextAudioIndex].path;
+    audioElement.play();
+    setAudioIndex(nextAudioIndex);
+  }, [audioIndex, audioRef.current]);
+
+  const prevTrack = useCallback(() => {
+    const audioElement = audioRef.current!;
+    const prevAudioIndex = modulo(audioIndex - 1, songs.length);
+    const shouldStayOnThisTrack = audioElement.currentTime > 5;
+    audioElement.src =
+      songs[shouldStayOnThisTrack ? audioIndex : prevAudioIndex].path;
+    audioElement.play();
+    setAudioIndex(prevAudioIndex);
+  }, [audioIndex, audioRef.current]);
 
   // attach audio event listeners
   useEffect(() => {
@@ -23,28 +42,25 @@ const App: React.FC = () => {
     const onAudioPlay = () => setIsPlaying(true);
     const onAudioPause = () => setIsPlaying(false);
     const onAudioError = console.error;
-    const onAudioEnded = () => {
-      const nextAudioIndex = modulo(
-        audioIndexRef.current + 1,
-        audioPaths.length
-      );
-      audioElement.src = audioPaths[nextAudioIndex];
-      audioElement.play();
-      audioIndexRef.current = nextAudioIndex;
-    };
 
     audioElement.addEventListener('playing', onAudioPlay);
     audioElement.addEventListener('pause', onAudioPause);
     audioElement.addEventListener('error', onAudioError);
-    audioElement.addEventListener('ended', onAudioEnded);
 
     return () => {
       audioElement.removeEventListener('playing', onAudioPlay);
       audioElement.removeEventListener('pause', onAudioPause);
       audioElement.removeEventListener('error', onAudioError);
-      audioElement.removeEventListener('ended', onAudioEnded);
     };
   }, []);
+
+  // next track listener on track end
+  useEffect(() => {
+    const audioElement = audioRef.current!;
+
+    audioElement.addEventListener('ended', nextTrack);
+    return () => audioElement.removeEventListener('ended', nextTrack);
+  }, [audioIndex, audioRef.current]);
 
   const initializeAudioContext = useCallback(() => {
     const audioElement = audioRef.current!;
@@ -52,7 +68,7 @@ const App: React.FC = () => {
       (window as any).webkitAudioContext)();
     const audioSource = audioContext.createMediaElementSource(audioElement);
 
-    setContext(audioContext);
+    setAudioContext(audioContext);
     setSource(audioSource);
   }, [audioRef.current]);
 
@@ -63,7 +79,7 @@ const App: React.FC = () => {
       setWantsToPlay(true);
       audioElement.play();
 
-      if (!contextRef.current) {
+      if (!audioContextRef.current) {
         initializeAudioContext();
       }
     } else {
@@ -77,7 +93,7 @@ const App: React.FC = () => {
       <audio
         ref={audioRef}
         id="audioElement"
-        src={audioPaths[0]}
+        src={songs[0].path}
         preload="auto"
         crossOrigin="anonymous"
       />
@@ -92,6 +108,14 @@ const App: React.FC = () => {
         isPlaying={isPlaying}
         togglePlay={togglePlay}
       />
+
+      {audioRef.current && (
+        <AudioControls
+          audioIndex={audioIndex}
+          prevTrack={prevTrack}
+          nextTrack={nextTrack}
+        />
+      )}
     </>
   );
 };

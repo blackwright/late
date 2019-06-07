@@ -1,0 +1,14 @@
+#audio-controls {
+  position: fixed;
+  text-align: center;
+  width: 100%;
+  bottom: 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+
+  #track-controls {
+    margin-top: 1rem;
+  }
+}
