@@ -11,12 +11,12 @@ const CONTROLS_FADE_OUT_DELAY = 1500;
 const TOUCH_WAS_CLICK_THRESHOLD = 250;
 const TOUCH_WAS_SWIPE_THRESHOLD = 350;
 
-type Props = ReturnType<typeof mapDispatchToProps> & {
+type Props = {
   audioContext?: AudioContext;
   wantsToPlay: boolean;
   isPlaying: boolean;
   togglePlay: () => void;
-};
+} & ReturnType<typeof mapDispatchToProps>;
 
 type Touch = {
   timestamp: number;

@@ -3,11 +3,7 @@ import Drummer from './Drummer';
 import Halpern from './Halpern';
 import Stars from './Stars';
 import Rain from './Rain';
-import MobileDisabledComponent from './MobileDisabled';
 import { Props } from './VisualizationHOC';
-import { isMobileDevice as isMobileDeviceCheck } from '../../../utils';
-
-export const isMobileDevice = isMobileDeviceCheck();
 
 export type QualitySettings = {
   [quality: number]: { [setting: string]: any };
@@ -15,7 +11,6 @@ export type QualitySettings = {
 
 export type Options = {
   smoothing?: number;
-  mobileDisabled?: boolean;
 };
 
 export type SelectableVisualization = {
@@ -44,7 +39,3 @@ const visualizations: SelectableVisualization[] = [
 ];
 
 export default visualizations;
-
-export const MobileDisabled: SelectableVisualization = {
-  component: MobileDisabledComponent
-};
