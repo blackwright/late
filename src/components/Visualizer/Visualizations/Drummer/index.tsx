@@ -40,15 +40,12 @@ const Drummer: React.FC<VisualizationHOC.WrappedProps> = ({ data, isBeat }) => {
   const freqMap: { [key: string]: number } = {};
   const numPerSlice = 256 / numDrummers;
 
-  let freqKey = 0;
-  while (freqKey < numDrummers) {
+  for (let freqKey = 0; freqKey < numDrummers; freqKey++) {
     freqMap[freqKey] = 0;
-    freqKey += 1;
   }
 
   data.forEach(freqData => {
-    let freqKey = 0;
-    while (freqKey < numDrummers) {
+    for (let freqKey = 0; freqKey < numDrummers; freqKey++) {
       const ceiling = numPerSlice * (freqKey + 1);
       if (
         Math.abs(freqData - 128) > MIN_FREQUENCY_VARIATION &&
@@ -57,7 +54,6 @@ const Drummer: React.FC<VisualizationHOC.WrappedProps> = ({ data, isBeat }) => {
         freqMap[freqKey] += 1;
         break;
       }
-      freqKey += 1;
     }
   });
 

@@ -196,5 +196,7 @@ export class Pictures extends Renderer {
     this.graph();
     this.orbits();
     this.stars();
+
+    this.pictures = [];
   }
 }

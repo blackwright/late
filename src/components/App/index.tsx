@@ -97,9 +97,7 @@ const App: React.FC = () => {
         crossOrigin="anonymous"
       />
 
-      {audioContext && audioSource && (
-        <Analyser audioContext={audioContext} audioSource={audioSource} />
-      )}
+      <Analyser audioContext={audioContext} audioSource={audioSource} />
 
       <Controls
         audioContext={audioContext}

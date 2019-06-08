@@ -3,8 +3,8 @@ import VisualizationSelector from '../Visualizer/VisualizationSelector';
 import { FFT_SIZE } from '../../config';
 
 type Props = {
-  audioContext: AudioContext;
-  audioSource: MediaElementAudioSourceNode;
+  audioContext?: AudioContext;
+  audioSource?: MediaElementAudioSourceNode;
 };
 
 const Analyser: React.FC<Props> = ({ audioContext, audioSource }) => {
@@ -14,6 +14,10 @@ const Analyser: React.FC<Props> = ({ audioContext, audioSource }) => {
   const animationFrameIdRef = useRef<number>();
 
   useEffect(() => {
+    if (audioContext == null || audioSource == null) {
+      return;
+    }
+
     const rawAnalyser = audioContext.createAnalyser();
     rawAnalyser.fftSize = FFT_SIZE;
     rawAnalyser.smoothingTimeConstant = 0;

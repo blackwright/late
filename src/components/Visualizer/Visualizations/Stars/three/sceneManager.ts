@@ -114,6 +114,22 @@ export default function sceneManager(
     animationFrameId = window.requestAnimationFrame(animate);
   }
 
+  function onResize() {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.render(scene, camera);
+  }
+
+  function onVisibilityChange() {
+    if (document.visibilityState === 'hidden') {
+      clock.stop();
+    } else {
+      clock.start();
+    }
+  }
+
   function cleanup() {
     window.cancelAnimationFrame(animationFrameId);
     window.removeEventListener('resize', debouncedResize);
@@ -131,23 +147,6 @@ export default function sceneManager(
     });
 
     renderer.dispose();
-    console.log('disposed three objects');
-  }
-
-  function onResize() {
-    camera.aspect = window.innerWidth / window.innerHeight;
-    camera.updateProjectionMatrix();
-
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.render(scene, camera);
-  }
-
-  function onVisibilityChange() {
-    if (document.visibilityState === 'hidden') {
-      clock.stop();
-    } else {
-      clock.start();
-    }
   }
 
   return {

@@ -56,21 +56,6 @@ export default function sceneManager(rendererContainer: HTMLDivElement) {
     animationFrameId = window.requestAnimationFrame(animate);
   }
 
-  function cleanup() {
-    window.cancelAnimationFrame(animationFrameId);
-    window.removeEventListener('resize', debouncedResize);
-    document.removeEventListener('visibilitychange', onVisibilityChange);
-    rendererContainer.removeChild(renderer.domElement);
-
-    scene.remove(halpern);
-
-    halpern.geometry.dispose();
-    (halpern.material as PointsMaterial).dispose();
-    sphereGeometry.dispose();
-
-    renderer.dispose();
-  }
-
   function onResize() {
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
@@ -85,6 +70,21 @@ export default function sceneManager(rendererContainer: HTMLDivElement) {
     } else {
       clock.start();
     }
+  }
+
+  function cleanup() {
+    window.cancelAnimationFrame(animationFrameId);
+    window.removeEventListener('resize', debouncedResize);
+    document.removeEventListener('visibilitychange', onVisibilityChange);
+    rendererContainer.removeChild(renderer.domElement);
+
+    scene.remove(halpern);
+
+    halpern.geometry.dispose();
+    (halpern.material as PointsMaterial).dispose();
+    sphereGeometry.dispose();
+
+    renderer.dispose();
   }
 
   return {
