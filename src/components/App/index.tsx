@@ -1,7 +1,6 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import Analyser from '../Analyser';
 import Controls from '../Controls';
-import AudioControls from '../AudioControls';
 import { useStateRef } from '../../utils/hooks';
 import { modulo } from '../../utils';
 import { songs } from '../../songs';
@@ -107,15 +106,10 @@ const App: React.FC = () => {
         wantsToPlay={wantsToPlay}
         isPlaying={isPlaying}
         togglePlay={togglePlay}
+        audioIndex={audioIndex}
+        prevTrack={prevTrack}
+        nextTrack={nextTrack}
       />
-
-      {audioRef.current && (
-        <AudioControls
-          audioIndex={audioIndex}
-          prevTrack={prevTrack}
-          nextTrack={nextTrack}
-        />
-      )}
     </>
   );
 };

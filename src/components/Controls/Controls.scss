@@ -26,32 +26,38 @@
     display: none;
   }
 
-  .play,
-  .pause {
+  #play-pause-container {
     position: absolute;
     top: 50%;
     left: 50%;
+    top: 50%;
+    left: 50%;
     transform: translate3d(-50%, -50%, 0) scale(0.5);
-    width: 0;
-    height: 5rem;
+    padding: 3rem;
     z-index: 1;
-    cursor: pointer;
 
     @media screen and (max-height: 400px) and (orientation: landscape) {
       transform: translate3d(-50%, -50%, 0) scale(0.33);
     }
-  }
 
-  .play {
-    border-style: solid;
-    border-width: 2.5rem 0 2.5rem 4rem;
-    border-color: transparent transparent transparent white;
-  }
+    .play,
+    .pause {
+      height: 100%;
+      width: 100%;
+    }
 
-  .pause {
-    border-style: double;
-    border-width: 0 0 0 4rem;
-    border-color: white;
+    .play {
+      border-style: solid;
+      border-width: 2.5rem 0 2.5rem 4rem;
+      border-color: transparent transparent transparent white;
+    }
+
+    .pause {
+      border-style: double;
+      border-width: 0 0 0 4rem;
+      height: 5rem;
+      border-color: white;
+    }
   }
 
   #title {
@@ -90,7 +96,6 @@
 
   .arrow-container {
     padding: 1rem;
-    cursor: pointer;
     touch-action: none;
     transform: scale(0.5);
 

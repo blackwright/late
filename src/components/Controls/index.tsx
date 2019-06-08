@@ -5,6 +5,7 @@ import classNames from 'classnames';
 import Loading from '../Loading';
 import * as Actions from '../../store/actions';
 import * as versionInfo from '../../metadata/build-version.json';
+import AudioControls from './AudioControls';
 import './Controls.scss';
 
 const CONTROLS_FADE_OUT_DELAY = 1500;
@@ -16,6 +17,9 @@ type Props = {
   wantsToPlay: boolean;
   isPlaying: boolean;
   togglePlay: () => void;
+  audioIndex: number;
+  prevTrack: () => void;
+  nextTrack: () => void;
 } & ReturnType<typeof mapDispatchToProps>;
 
 type Touch = {
@@ -139,7 +143,7 @@ const Controls: React.FC<Props> = props => {
 
   const onHoverStop = useCallback(() => setIsControlHovered(false), []);
 
-  const { wantsToPlay, isPlaying } = props;
+  const { wantsToPlay, isPlaying, audioIndex, prevTrack, nextTrack } = props;
 
   return (
     <>
@@ -161,19 +165,21 @@ const Controls: React.FC<Props> = props => {
           late
         </h1>
         <div id="version">build {versionInfo.version}</div>
-        {
+        <div
+          id="play-pause-container"
+          onMouseDown={onMouseDown}
+          onMouseUp={onMouseUp}
+          onTouchEnd={togglePlay}
+          onMouseEnter={onHover}
+          onMouseLeave={onHoverStop}
+        >
           <div
-            onMouseDown={onMouseDown}
-            onMouseUp={onMouseUp}
-            onTouchEnd={togglePlay}
-            onMouseEnter={onHover}
-            onMouseLeave={onHoverStop}
             className={classNames({
               play: !wantsToPlay && !isPlaying,
               pause: wantsToPlay && isPlaying
             })}
           />
-        }
+        </div>
         <div className="navigation">
           <div
             className="arrow-container"
@@ -222,6 +228,13 @@ const Controls: React.FC<Props> = props => {
             </svg>
           </div>
         </div>
+        <AudioControls
+          onHover={onHover}
+          onHoverStop={onHoverStop}
+          audioIndex={audioIndex}
+          prevTrack={prevTrack}
+          nextTrack={nextTrack}
+        />
       </div>
     </>
   );

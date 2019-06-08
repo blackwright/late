@@ -1,0 +1,44 @@
+#audio-controls {
+  position: fixed;
+  text-align: center;
+  width: 100%;
+  bottom: 5%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+
+  @media screen and (max-height: 400px) and (orientation: landscape) {
+    transform: scale(0.75);
+  }
+
+  #track-controls {
+    margin-top: 1rem;
+
+    button {
+      background: none;
+      border: solid 1px white;
+      color: white;
+      font-size: 2rem;
+      outline: none;
+      transition: all 100ms linear;
+      text-align: center;
+      line-height: 50%;
+      padding: 5px;
+
+      &:last-child {
+        margin-left: -1px;
+      }
+
+      &:hover {
+        background: rgba(255, 255, 255, 0.1);
+        color: #eee;
+      }
+
+      &:active {
+        background: white;
+        color: black;
+      }
+    }
+  }
+}
