@@ -8,7 +8,7 @@ import * as versionInfo from '../../metadata/build-version.json';
 import AudioControls from './AudioControls';
 import './Controls.scss';
 
-const CONTROLS_FADE_OUT_DELAY = 1500;
+const CONTROLS_FADE_OUT_DELAY = 3000;
 const TOUCH_WAS_CLICK_THRESHOLD = 250;
 const TOUCH_WAS_SWIPE_THRESHOLD = 350;
 
