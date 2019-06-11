@@ -23,8 +23,13 @@ Node.js is required to run the project locally.
 Install the dependencies and start the client.
 
 ```sh
+$ npm install
+$ npm start
+```
+
+or
+
+```sh
 $ yarn install
 $ yarn start
 ```
-
-By default, the audio server is configured to run on port 3002 and the client on port 3000.
