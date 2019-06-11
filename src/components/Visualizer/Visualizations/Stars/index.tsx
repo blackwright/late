@@ -3,7 +3,6 @@ import * as VisualizationHOC from '../VisualizationHOC';
 import sceneManager from './three/sceneManager';
 import './Stars.scss';
 
-const MIN_DELAY_BETWEEN_INTENSITY_CHANGE = 75;
 const MAX_LIGHT_INTENSITY_INCREASE_DELTA = 2.5;
 const MIN_LIGHT_INTENSITY = 1;
 
@@ -29,10 +28,6 @@ const Stars: React.FC<VisualizationHOC.WrappedProps> = ({
 
   useEffect(() => {
     const now = Date.now();
-
-    if (now - lightTimestampRef.current <= MIN_DELAY_BETWEEN_INTENSITY_CHANGE) {
-      return;
-    }
 
     const { dLight } = managedSceneRef.current!;
 

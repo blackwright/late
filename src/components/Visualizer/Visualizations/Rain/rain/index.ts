@@ -52,6 +52,7 @@ export class Rainfall {
 
   tick() {
     const { raindrops, canvasHeight } = this;
+
     const now = Date.now();
 
     for (let i = raindrops.length - 1; i >= 0; i--) {

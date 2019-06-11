@@ -10,7 +10,7 @@ import './Drummer.scss';
 const MIN_HIT_COUNT = 0.04;
 const MIN_FREQUENCY_VARIATION = 10;
 const MIN_DELAY_BETWEEN_COLOR_CHANGE = 200;
-const NUM_DRUMMERS = 10;
+const NUM_DRUMMERS = 7;
 
 const minHitCount = MIN_HIT_COUNT * DATA_SIZE;
 
@@ -121,7 +121,7 @@ const Drummer: React.FC<VisualizationHOC.WrappedProps> = ({ data, isBeat }) => {
               ...style,
               transform: interpolate(
                 [scale],
-                (s: number) => `translate3d(0, 0, 0) scale(${s})`
+                (s: number) => `scale3d(${s}, ${s}, ${s})`
               )
             }}
           />

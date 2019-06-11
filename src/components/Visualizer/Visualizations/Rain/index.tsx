@@ -7,7 +7,7 @@ import { useDebouncedResize } from '../../../../utils/hooks';
 import './Rain.scss';
 
 const MIN_RAINDROPS_PER_TICK = 1;
-const MAX_RAINDROPS_PER_TICK = 15;
+const MAX_RAINDROPS_PER_TICK = 8;
 
 const Rain: React.FC<VisualizationHOC.WrappedProps> = ({
   data,
@@ -134,14 +134,14 @@ const Rain: React.FC<VisualizationHOC.WrappedProps> = ({
     createLamp(innerWidth, innerHeight, devicePixelRatio);
   }, []);
 
-  // call animating effects on each data and isBeat change
+  // call animating effects on each data change
   useEffect(() => {
     const home = homeRef.current!;
     const rainfall = rainfallRef.current!;
     const cat = catRef.current!;
     const lamp = lampRef.current!;
 
-    let raindropsToAdd = Math.floor(lowPassIntensity / 2);
+    let raindropsToAdd = Math.floor(lowPassIntensity / 5);
 
     if (raindropsToAdd < MIN_RAINDROPS_PER_TICK) {
       raindropsToAdd = MIN_RAINDROPS_PER_TICK;
