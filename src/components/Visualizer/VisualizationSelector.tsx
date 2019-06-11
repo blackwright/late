@@ -1,7 +1,8 @@
-import React, { useCallback } from 'react';
+import React, { Suspense, useCallback } from 'react';
 import { connect } from 'react-redux';
 import { useTransition, animated } from 'react-spring';
 import * as VisualizationHOC from './Visualizations/VisualizationHOC';
+import LoadingVisualization from './Visualizations/LoadingVisualization';
 import visualizations from './Visualizations';
 import { modulo } from '../../utils';
 import { StoreState } from '../../../src/store/types';
@@ -54,7 +55,7 @@ const VisualizationSelector: React.FC<
   });
 
   return (
-    <>
+    <Suspense fallback={<LoadingVisualization />}>
       {transitions.map(({ item, props, key }) => {
         const Visualization = styledVisualizations[item];
         return (
@@ -66,7 +67,7 @@ const VisualizationSelector: React.FC<
           />
         );
       })}
-    </>
+    </Suspense>
   );
 };
 

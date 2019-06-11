@@ -5,7 +5,6 @@ import { Dresser } from './dresser';
 import { Pictures } from './pictures';
 import { Table } from './table';
 import { Clock } from './clock';
-
 export { Cat } from './cat';
 export { Lamp } from './lamp';
 

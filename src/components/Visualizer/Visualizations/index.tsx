@@ -1,4 +1,4 @@
-import Waveform from './Waveform';
+import React from 'react';
 import Drummer from './Drummer';
 import Halpern from './Halpern';
 import Stars from './Stars';
@@ -20,21 +20,21 @@ export type SelectableVisualization = {
 
 const visualizations: SelectableVisualization[] = [
   {
-    component: Rain
+    component: React.lazy(() => import('./Rain'))
   },
   {
-    component: Stars,
+    component: React.lazy(() => import('./Stars')),
     options: { smoothing: 128 }
   },
   {
-    component: Waveform
+    component: React.lazy(() => import('./Waveform'))
   },
   {
-    component: Drummer,
+    component: React.lazy(() => import('./Drummer')),
     options: { smoothing: 64 }
   },
   {
-    component: Halpern
+    component: React.lazy(() => import('./Halpern'))
   }
 ];
 

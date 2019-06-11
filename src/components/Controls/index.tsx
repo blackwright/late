@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
 import classNames from 'classnames';
-import Loading from '../Loading';
+import LoadingAudio from '../LoadingAudio';
 import * as Actions from '../../store/actions';
 import * as versionInfo from '../../metadata/build-version.json';
 import AudioControls from './AudioControls';
@@ -147,7 +147,7 @@ const Controls: React.FC<Props> = props => {
 
   return (
     <>
-      {wantsToPlay && !isPlaying && <Loading />}
+      {wantsToPlay && !isPlaying && <LoadingAudio />}
       <div
         id="overlay"
         onTouchStart={onTouchStart}
