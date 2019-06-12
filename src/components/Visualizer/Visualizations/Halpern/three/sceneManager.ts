@@ -9,7 +9,7 @@ const CAMERA_MAX_DISTANCE = 200;
 const CAMERA_DRIFT = 0.025;
 const ROTATE_Y = -0.3;
 const ROTATE_X = 0.3;
-const SPHERE_SEGMENTS = 60;
+const SPHERE_SEGMENTS = 40;
 
 export default function sceneManager(rendererContainer: HTMLDivElement) {
   let animationFrameId: number;

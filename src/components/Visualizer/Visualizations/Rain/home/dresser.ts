@@ -7,6 +7,8 @@ const STEREO_DETAIL_COLOR = '#444';
 const STEREO_DARK_COLOR = '#111';
 
 export class Dresser extends Renderer {
+  public wasBeat?: boolean;
+
   constructor(ctx: CanvasRenderingContext2D) {
     super(ctx);
   }
@@ -181,6 +183,12 @@ export class Dresser extends Renderer {
   }
 
   tick(isBeat = false) {
+    if (this.wasBeat === isBeat) {
+      return;
+    }
+
+    this.wasBeat = isBeat;
+
     const { ctx, canvasWidth, canvasHeight, windowFrameThickness } = this;
 
     const dresserX = (canvasWidth * 2) / 3 + windowFrameThickness * 5;

@@ -6,7 +6,6 @@ import { Home, Cat, Lamp } from './home';
 import { useDebouncedResize } from '../../../../utils/hooks';
 import './Rain.scss';
 
-const MIN_RAINDROPS_PER_TICK = 1;
 const MAX_RAINDROPS_PER_TICK = 8;
 
 const Rain: React.FC<VisualizationHOC.WrappedProps> = ({
@@ -59,6 +58,12 @@ const Rain: React.FC<VisualizationHOC.WrappedProps> = ({
 
     const { innerWidth, innerHeight, devicePixelRatio } = window;
     createRain(innerWidth, innerHeight, devicePixelRatio);
+
+    return () => {
+      if (rainfallRef.current) {
+        rainfallRef.current = undefined;
+      }
+    };
   }, []);
 
   const homeCanvasRef = useRef<HTMLCanvasElement>(null);
@@ -143,24 +148,26 @@ const Rain: React.FC<VisualizationHOC.WrappedProps> = ({
 
     let raindropsToAdd = Math.floor(lowPassIntensity / 5);
 
-    if (raindropsToAdd < MIN_RAINDROPS_PER_TICK) {
-      raindropsToAdd = MIN_RAINDROPS_PER_TICK;
-    } else if (raindropsToAdd > MAX_RAINDROPS_PER_TICK) {
+    if (raindropsToAdd > MAX_RAINDROPS_PER_TICK) {
       raindropsToAdd = MAX_RAINDROPS_PER_TICK;
     }
 
-    let newRaindropsAdded = 0;
-
-    while (newRaindropsAdded < raindropsToAdd) {
+    for (
+      let raindropsAdded = 0;
+      raindropsAdded < raindropsToAdd;
+      raindropsAdded++
+    ) {
       rainfall.add();
-      newRaindropsAdded += 1;
     }
 
     rainfall.tick();
+    const { wasBeat } = home.dresser;
     home.dresser.tick(isBeat);
     // re-render lamp light since the dresser stereo
     // may have been repainted by changing isBeat
-    lamp.tick();
+    if (wasBeat !== isBeat) {
+      lamp.tick();
+    }
     cat.tick();
 
     const rainCanvas = rainCanvasRef.current!;

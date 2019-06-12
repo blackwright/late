@@ -30,7 +30,7 @@ export function createPoints(sphereGeometry: SphereGeometry): Points {
   (geometry.attributes.position as BufferAttribute).dynamic = true;
 
   const material = new PointsMaterial({
-    size: 0.5,
+    size: 1,
     map: new TextureLoader().load('assets/images/point.png'),
     alphaTest: 0.5,
     color: 0x666666,

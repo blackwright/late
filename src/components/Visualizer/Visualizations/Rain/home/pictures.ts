@@ -2,6 +2,8 @@ import { Renderer } from '../renderer';
 import { distanceBetween } from '../utils';
 
 const WOOD_COLOR = '#122C2B';
+const PICUTRE_NODE_COUNT = 10;
+const PICTURE_STAR_COUNT = 30;
 
 type Picture = {
   x: number;
@@ -62,7 +64,7 @@ export class Pictures extends Renderer {
     const nodes: Array<{ x: number; y: number }> = [];
     const nodeSize = windowFrameThickness / 6;
 
-    for (let i = 0; i < 20; i++) {
+    for (let i = 0; i < PICUTRE_NODE_COUNT; i++) {
       nodes.push({
         x: Math.floor(Math.random() * width + x),
         y: Math.floor(Math.random() * height + y)
@@ -170,9 +172,8 @@ export class Pictures extends Renderer {
 
     // sky
     ctx.fillStyle = '#F5E7F8';
-    const starCount = 60;
 
-    for (let i = 0; i < starCount; i++) {
+    for (let i = 0; i < PICTURE_STAR_COUNT; i++) {
       const starX = Math.floor(Math.random() * width + x);
       const starY = Math.floor(Math.random() * height + y);
       const radius = Math.floor(Math.random() * 2 + 1);

@@ -174,11 +174,6 @@ export class Cat extends Renderer {
       bodyWidth,
       tailY
     } = this;
-    ctx.clearRect(0, 0, canvasWidth, canvasHeight);
-
-    this.head();
-    this.body();
-
     // tail wag
     const timeDelta = Date.now() - createdTimestamp;
 
@@ -188,7 +183,7 @@ export class Cat extends Renderer {
 
     if (this.prevTailAngle > -Math.PI / 2 && nextTailAngle < -Math.PI / 2) {
       // each oscillation has a chance of producing a tail wag
-      this.isWagging = Math.random() < 0.1;
+      this.isWagging = Math.random() < 0.2;
     }
 
     this.prevTailAngle = nextTailAngle;
@@ -201,6 +196,11 @@ export class Cat extends Renderer {
       this.tail();
       return;
     }
+
+    ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+
+    this.head();
+    this.body();
 
     ctx.save();
     ctx.translate(x, tailY);

@@ -4,7 +4,7 @@ import * as VisualizationHOC from '../VisualizationHOC';
 import sceneManager from './three/sceneManager';
 import './Halpern.scss';
 
-const RIPPLE_SPEED = 3;
+const RIPPLE_SPEED = 2;
 const VERTEX_SEGMENT_WEIGHT_COEFFICIENT = 0.1;
 const BASELINE_VERTEX_SCALAR_FACTOR = 1;
 

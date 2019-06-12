@@ -14,8 +14,8 @@ import { createStars, createCloud } from './entities/polys';
 import { createAmbientLight, createDirectionalLight } from './entities/light';
 import { debounced } from '../../../../../utils';
 
-const STAR_COUNT = 10 * 1000;
-const CLOUD_COUNT = 40;
+const STAR_COUNT = 2000;
+const CLOUD_COUNT = 20;
 const MAX_STAR_ALPHA = 1.0;
 const MIN_STAR_ALPHA = 0.2;
 const STAR_ALPHA_DELTA = 0.75;
