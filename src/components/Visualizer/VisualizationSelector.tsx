@@ -1,22 +1,16 @@
 import React, { Suspense, useCallback } from 'react';
-import { connect } from 'react-redux';
 import { useTransition, animated } from 'react-spring';
 import * as VisualizationHOC from './Visualizations/VisualizationHOC';
 import LoadingVisualization from './Visualizations/LoadingVisualization';
+import { useVisualizationContext } from './context';
 import visualizations from './Visualizations';
 import { modulo } from '../../utils';
-import { StoreState } from '../../../src/store/types';
 
 type Props = Pick<VisualizationHOC.Props, 'data' | 'lowPassData'>;
 
 type StyledProps = Props & {
   style: React.CSSProperties;
 };
-
-const mapStateToProps = (state: StoreState) => ({
-  currentIndex: state.currentVisualizationIndex,
-  prevIndex: state.prevVisualizationIndex
-});
 
 const styledVisualizations = visualizations.map(vis => {
   return (props: StyledProps) => {
@@ -30,10 +24,14 @@ const styledVisualizations = visualizations.map(vis => {
   };
 });
 
-const VisualizationSelector: React.FC<
-  Props & ReturnType<typeof mapStateToProps>
-> = ({ data, lowPassData, prevIndex, currentIndex }) => {
-  const visIndex = modulo(currentIndex, visualizations.length);
+const VisualizationSelector: React.FC<Props> = ({ data, lowPassData }) => {
+  const { visualizationIndexState } = useVisualizationContext();
+  const {
+    prevVisualizationIndex,
+    currentVisualizationIndex
+  } = visualizationIndexState;
+
+  const visIndex = modulo(currentVisualizationIndex, visualizations.length);
 
   const direction = useCallback((current?, prev?) => {
     let translateXMultiplier = 0;
@@ -48,9 +46,13 @@ const VisualizationSelector: React.FC<
   }, []);
 
   const transitions = useTransition(visIndex, null, {
-    from: { transform: direction(currentIndex, prevIndex) },
+    from: {
+      transform: direction(currentVisualizationIndex, prevVisualizationIndex)
+    },
     enter: { transform: direction() },
-    leave: { transform: direction(prevIndex, currentIndex) },
+    leave: {
+      transform: direction(prevVisualizationIndex, currentVisualizationIndex)
+    },
     initial: { transform: direction(0, -1) }
   });
 
@@ -71,4 +73,4 @@ const VisualizationSelector: React.FC<
   );
 };
 
-export default connect(mapStateToProps)(VisualizationSelector);
+export default VisualizationSelector;

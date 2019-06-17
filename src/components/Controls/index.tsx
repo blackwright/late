@@ -1,11 +1,9 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { Dispatch } from 'redux';
-import { connect } from 'react-redux';
 import classNames from 'classnames';
 import LoadingAudio from '../LoadingAudio';
-import * as Actions from '../../store/actions';
-import * as versionInfo from '../../metadata/build-version.json';
 import AudioControls from './AudioControls';
+import { useVisualizationContext } from '../Visualizer/context';
+import * as versionInfo from '../../metadata/build-version.json';
 import './Controls.scss';
 
 const CONTROLS_FADE_OUT_DELAY = 3000;
@@ -20,7 +18,7 @@ type Props = {
   audioIndex: number;
   prevTrack: () => void;
   nextTrack: () => void;
-} & ReturnType<typeof mapDispatchToProps>;
+};
 
 type Touch = {
   timestamp: number;
@@ -30,6 +28,10 @@ type Touch = {
 const Controls: React.FC<Props> = props => {
   const [isOverlayShown, setIsOverlayShown] = useState(true);
   const [isControlHovered, setIsControlHovered] = useState(false);
+  const {
+    goToPrevVisualization,
+    goToNextVisualization
+  } = useVisualizationContext();
 
   const timeoutRef = useRef<number>();
   const touchRef = useRef<Touch>();
@@ -39,12 +41,12 @@ const Controls: React.FC<Props> = props => {
       switch (event.which) {
         case 37:
         case 38: {
-          props.goToPrevVisualization();
+          goToPrevVisualization();
           break;
         }
         case 39:
         case 40: {
-          props.goToNextVisualization();
+          goToNextVisualization();
           break;
         }
       }
@@ -111,9 +113,9 @@ const Controls: React.FC<Props> = props => {
         const deltaX = event.changedTouches[0].clientX - touchRef.current.x;
         if (Math.abs(deltaX) > 50) {
           if (deltaX < 0) {
-            props.goToPrevVisualization();
+            goToPrevVisualization();
           } else {
-            props.goToNextVisualization();
+            goToNextVisualization();
           }
         }
       }
@@ -124,7 +126,7 @@ const Controls: React.FC<Props> = props => {
   const onPrev = useCallback(
     (event: React.MouseEvent | React.TouchEvent) => {
       event.preventDefault();
-      props.goToPrevVisualization();
+      goToPrevVisualization();
       showOverlay();
     },
     [isControlHovered]
@@ -133,7 +135,7 @@ const Controls: React.FC<Props> = props => {
   const onNext = useCallback(
     (event: React.MouseEvent | React.TouchEvent) => {
       event.preventDefault();
-      props.goToNextVisualization();
+      goToNextVisualization();
       showOverlay();
     },
     [isControlHovered]
@@ -240,12 +242,4 @@ const Controls: React.FC<Props> = props => {
   );
 };
 
-const mapDispatchToProps = (dispatch: Dispatch) => ({
-  goToNextVisualization: () => dispatch(Actions.goToNextVisualization()),
-  goToPrevVisualization: () => dispatch(Actions.goToPrevVisualization())
-});
-
-export default connect(
-  null,
-  mapDispatchToProps
-)(Controls);
+export default Controls;

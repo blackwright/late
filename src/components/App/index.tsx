@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import Analyser from '../Analyser';
 import Controls from '../Controls';
+import { VisualizationContextProvider } from '../Visualizer/context';
 import { useStateRef } from '../../utils/hooks';
 import { modulo } from '../../utils';
 import { songs } from '../../songs';
@@ -26,10 +27,13 @@ const App: React.FC = () => {
 
   const prevTrack = useCallback(() => {
     const audioElement = audioRef.current!;
-    const prevAudioIndex = modulo(audioIndex - 1, songs.length);
+    // play track from beginning if enough time has elapsed,
+    // instead of changing to previous track
     const shouldStayOnThisTrack = audioElement.currentTime > 5;
-    audioElement.src =
-      songs[shouldStayOnThisTrack ? audioIndex : prevAudioIndex].path;
+    const prevAudioIndex = shouldStayOnThisTrack
+      ? audioIndex
+      : modulo(audioIndex - 1, songs.length);
+    audioElement.src = songs[prevAudioIndex].path;
     audioElement.play();
     setAudioIndex(prevAudioIndex);
   }, [audioIndex, audioRef.current]);
@@ -97,17 +101,19 @@ const App: React.FC = () => {
         crossOrigin="anonymous"
       />
 
-      <Analyser audioContext={audioContext} audioSource={audioSource} />
+      <VisualizationContextProvider>
+        <Analyser audioContext={audioContext} audioSource={audioSource} />
 
-      <Controls
-        audioContext={audioContext}
-        wantsToPlay={wantsToPlay}
-        isPlaying={isPlaying}
-        togglePlay={togglePlay}
-        audioIndex={audioIndex}
-        prevTrack={prevTrack}
-        nextTrack={nextTrack}
-      />
+        <Controls
+          audioContext={audioContext}
+          wantsToPlay={wantsToPlay}
+          isPlaying={isPlaying}
+          togglePlay={togglePlay}
+          audioIndex={audioIndex}
+          prevTrack={prevTrack}
+          nextTrack={nextTrack}
+        />
+      </VisualizationContextProvider>
     </>
   );
 };
