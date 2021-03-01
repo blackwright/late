@@ -13,7 +13,7 @@
     "react-dom": "^16.8.6",
     "react-scripts": "2.1.5",
     "react-spring": "^8.0.23",
-    "three": "^0.102.1",
+    "three": "^0.125.0",
     "typescript": "^3.3.3"
   },
   "scripts": {
